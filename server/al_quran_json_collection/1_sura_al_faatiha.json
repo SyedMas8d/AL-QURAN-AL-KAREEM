@@ -1,0 +1,94 @@
+{
+    "number": 1,
+    "name": "سُورَةُ ٱلْفَاتِحَةِ",
+    "englishName": "Al-Faatiha",
+    "englishNameTranslation": "The Opening",
+    "revelationType": "Meccan",
+    "numberOfAyahs": 7,
+    "ayahs": [
+        {
+            "number": 1,
+            "text": "﻿بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+            "tamilTransliteration": "பிஸ்மில்லாஹிர் ரஹ்மானிர் ரஹீம்",
+            "numberInSurah": 1,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+        },
+        {
+            "number": 2,
+            "text": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+            "tamilTransliteration": "அல்ஹம்^து லில்லாஹி ர^ப்பில் ஆலமீன்",
+            "numberInSurah": 2,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+        },
+        {
+            "number": 3,
+            "text": "الرَّحْمَٰنِ الرَّحِيمِ",
+            "tamilTransliteration": "அர்ரஹ்மானிர் ரஹீம்",
+            "numberInSurah": 3,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+        },
+        {
+            "number": 4,
+            "text": "مَالِكِ يَوْمِ الدِّينِ",
+            "tamilTransliteration": "மாலி•கி யவ்மி^த்தீன்",
+            "numberInSurah": 4,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+        },
+        {
+            "number": 5,
+            "text": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+            "tamilTransliteration": "இய்யா•க ந'^பு^து வ இய்யா•க நஸ்•தயீன்",
+            "numberInSurah": 5,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+        },
+        {
+            "number": 6,
+            "text": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+            "tamilTransliteration": "இஹ்^தினஸ் ஸிரா•தல் முஸ்•த•கீம்",
+            "numberInSurah": 6,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+        },
+        {
+            "number": 7,
+            "text": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+            "tamilTransliteration": "ஸிரா•தல்ல^தீன அன் அம்•த அலைஹிம் ^கய்ரில் ம^க்லூ^பி அலைஹிம் வலழ் ழால்லீன்",
+            "numberInSurah": 7,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+        }
+    ]
+}
