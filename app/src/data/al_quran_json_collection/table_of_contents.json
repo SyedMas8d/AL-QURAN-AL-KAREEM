@@ -1,0 +1,12 @@
+{
+    "suras": [
+        {
+            "number": 1,
+            "name": "سُورَةُ ٱلْفَاتِحَةِ",
+            "englishName": "Al-Faatiha",
+            "englishNameTranslation": "The Opening",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 7
+        }
+    ]
+}

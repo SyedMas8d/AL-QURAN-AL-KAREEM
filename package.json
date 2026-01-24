@@ -1,12 +1,15 @@
 {
-  "name": "al_quran_al_kareem",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "Transliteration of The Quran",
+    "name": "al_quran_al_kareem",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "Transliteration of The Quran",
+    "devDependencies": {
+        "prettier": "^3.8.1"
+    }
 }
