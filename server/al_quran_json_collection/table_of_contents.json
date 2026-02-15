@@ -7,6 +7,14 @@
             "englishNameTranslation": "The Opening",
             "revelationType": "Meccan",
             "numberOfAyahs": 7
+        },
+        {
+            "number": 2,
+            "name": "سُورَةُ البَقَرَةِ",
+            "englishName": "Al-Baqara",
+            "englishNameTranslation": "The Cow",
+            "revelationType": "Medinan",
+            "numberOfAyahs": 286
         }
     ]
 }

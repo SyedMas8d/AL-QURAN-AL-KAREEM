@@ -132,7 +132,7 @@ const SuraDetailScreen = ({ route }) => {
 
                 <View style={styles.ayahContent}>
                     <Text style={styles.arabicText}>{String(ayah.text)}</Text>
-                    <Text style={styles.transliterationText}>{String(ayah.tamilTransliteration)}</Text>
+                    {/* <Text style={styles.transliterationText}>{String(ayah.tamilTransliteration)}</Text> */}
                 </View>
             </View>
         );
@@ -217,8 +217,8 @@ const styles = StyleSheet.create({
     suraHeader: {
         backgroundColor: '#fff',
         borderRadius: 12,
-        padding: 20,
-        marginBottom: 16,
+        padding: 24,
+        marginBottom: 20,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
@@ -230,11 +230,12 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     arabicName: {
-        fontSize: 28,
+        fontSize: 36,
         fontWeight: 'bold',
-        color: '#2E8B57',
-        marginBottom: 8,
+        color: '#1a5c3a',
+        marginBottom: 12,
         textAlign: 'center',
+        lineHeight: 48,
     },
     englishName: {
         fontSize: 22,
@@ -273,16 +274,17 @@ const styles = StyleSheet.create({
         elevation: 1,
     },
     bismillahText: {
-        fontSize: 24,
-        color: '#2E8B57',
+        fontSize: 30,
+        color: '#1a5c3a',
         fontWeight: 'bold',
         textAlign: 'center',
+        lineHeight: 42,
     },
     ayahContainer: {
         backgroundColor: '#fff',
         borderRadius: 12,
-        padding: 16,
-        marginBottom: 12,
+        padding: 20,
+        marginBottom: 16,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -320,21 +322,22 @@ const styles = StyleSheet.create({
         color: '#666',
     },
     ayahContent: {
-        paddingLeft: 4,
+        paddingLeft: 8,
+        paddingRight: 4,
     },
     arabicText: {
-        fontSize: 22,
-        lineHeight: 36,
-        color: '#666',
+        fontSize: 28,
+        lineHeight: 48,
+        color: '#2c3e50',
         textAlign: 'right',
-        marginBottom: 12,
-        fontWeight: '500',
+        marginBottom: 16,
+        fontWeight: '600',
     },
     transliterationText: {
-        fontSize: 24,
+        fontSize: 20,
         lineHeight: 32,
         color: '#2E8B57',
-        fontWeight: 'bold',
+        fontWeight: '600',
         fontStyle: 'normal',
     },
 });

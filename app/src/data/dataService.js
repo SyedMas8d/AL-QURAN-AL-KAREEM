@@ -1,8 +1,18 @@
 // Data service to handle JSON data from the app data folder
 
-// Import JSON data directly
-const tableOfContentsData = require('./al_quran_json_collection/table_of_contents.json');
-const sura1Data = require('./al_quran_json_collection/1_sura_al_faatiha.json');
+// Import JSON data directly using ES6 imports for better web compatibility
+import tableOfContentsData from './al_quran_json_collection/table_of_contents.json';
+
+// Import all available sura JSON files
+import sura1Data from './al_quran_json_collection/1.json';
+import sura2Data from './al_quran_json_collection/2.json';
+
+// Create a mapping of sura numbers to their data
+const suraDataMap = {
+    1: sura1Data,
+    2: sura2Data,
+    // Add more suras as JSON files become available
+};
 
 /**
  * Get the table of contents with all surahs
@@ -16,14 +26,6 @@ export const getTableOfContents = async () => {
         // Add more sample suras to the list for demonstration
         const expandedSuras = [
             ...tableOfContentsData.suras,
-            {
-                number: 2,
-                name: 'سُورَةُ ٱلۡبَقَرَةِ',
-                englishName: 'Al-Baqarah',
-                englishNameTranslation: 'The Cow',
-                revelationType: 'Medinan',
-                numberOfAyahs: 286,
-            },
             {
                 number: 3,
                 name: 'سُورَةُ آلِ عِمۡرَانَ',
@@ -68,11 +70,11 @@ export const getSuraData = async (suraNumber) => {
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        // For now, we only have complete data for the first sura
-        if (suraNumber === 1) {
-            return sura1Data;
+        // Check if we have the sura data in our map
+        if (suraDataMap[suraNumber]) {
+            return suraDataMap[suraNumber];
         } else {
-            // Return mock data for other suras with sample ayahs
+            // Return mock data for other suras with sample ayahs (data not available yet)
             const suraNames = {
                 2: { name: 'سُورَةُ ٱلۡبَقَرَةِ', englishName: 'Al-Baqarah', translation: 'The Cow' },
                 3: { name: 'سُورَةُ آلِ عِمۡرَانَ', englishName: 'Aal-E-Imran', translation: 'The Family of Imran' },
