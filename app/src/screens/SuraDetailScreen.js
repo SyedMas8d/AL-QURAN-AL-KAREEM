@@ -12,9 +12,11 @@ const SuraDetailScreen = ({ route }) => {
     const [playingAyah, setPlayingAyah] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [playingAll, setPlayingAll] = useState(false);
+    const [paused, setPaused] = useState(false);
     const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
     const scrollViewRef = useRef(null);
     const ayahRefs = useRef({});
+    const ayahPositions = useRef({});
 
     useEffect(() => {
         loadSuraData();
@@ -112,96 +114,103 @@ const SuraDetailScreen = ({ route }) => {
         }
     };
 
+    // --- Play All, Pause, Resume, Stop Logic ---
     const playAllAyahs = async () => {
-        if (playingAll) {
-            // Stop playing all
+        if (playingAll && !paused) {
+            // Stop all
             await stopAyah();
             setPlayingAll(false);
+            setPaused(false);
             setCurrentAyahIndex(0);
             return;
         }
-
-        if (!suraData || !suraData.ayahs || suraData.ayahs.length === 0) {
+        if (paused) {
+            // Resume
+            setPaused(false);
+            if (sound) {
+                await sound.playAsync();
+            }
             return;
         }
-
+        if (!suraData || !suraData.ayahs || suraData.ayahs.length === 0) return;
         setPlayingAll(true);
+        setPaused(false);
         setCurrentAyahIndex(0);
-        playAyahAtIndex(0);
     };
 
-    const playAyahAtIndex = async (index) => {
-        if (!suraData || !suraData.ayahs || index >= suraData.ayahs.length) {
-            setPlayingAll(false);
-            setPlayingAyah(null);
-            setIsPlaying(false);
-            setCurrentAyahIndex(0);
-            return;
+    // Pause All
+    const pauseAllAyahs = async () => {
+        if (playingAll && !paused && sound) {
+            await sound.pauseAsync();
+            setPaused(true);
         }
+    };
 
-        const ayah = suraData.ayahs[index];
-        const ayahNumber = Number(ayah.number);
-
-        try {
-            // Stop current audio if playing
-            if (sound) {
-                await sound.unloadAsync();
-                setSound(null);
+    // Sequential playback effect
+    useEffect(() => {
+        let isCancelled = false;
+        const playCurrentAyah = async () => {
+            if (!playingAll || paused || !suraData || !suraData.ayahs) return;
+            const ayahs = suraData.ayahs;
+            if (currentAyahIndex >= ayahs.length) {
+                setPlayingAll(false);
+                setPlayingAyah(null);
+                setIsPlaying(false);
+                setCurrentAyahIndex(0);
+                return;
             }
-
-            setPlayingAyah(ayahNumber);
-            setIsPlaying(true);
-            setCurrentAyahIndex(index);
-
-            // Auto-scroll to the current ayah
-            if (ayahRefs.current[ayahNumber]) {
-                ayahRefs.current[ayahNumber].measureLayout(
-                    scrollViewRef.current,
-                    (x, y) => {
-                        scrollViewRef.current?.scrollTo({
-                            y: y - 100,
+            const ayah = ayahs[currentAyahIndex];
+            const ayahNumber = Number(ayah.number);
+            try {
+                if (sound) {
+                    await sound.unloadAsync();
+                    setSound(null);
+                }
+                setPlayingAyah(ayahNumber);
+                setIsPlaying(true);
+                // Auto-scroll using pre-captured positions
+                setTimeout(() => {
+                    const ayahY = ayahPositions.current[ayahNumber];
+                    if (ayahY !== undefined && scrollViewRef.current) {
+                        // Scroll to show the ayah with appropriate offset
+                        // Leave some space at the top (80px for controls and padding)
+                        const scrollTo = Math.max(0, ayahY - 20);
+                        scrollViewRef.current.scrollTo({
+                            y: scrollTo,
                             animated: true,
                         });
-                    },
-                    () => {}
-                );
-            }
-
-            // Load and play audio
-            const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
-            const { sound: newSound } = await Audio.Sound.createAsync(
-                { uri: audioUrl },
-                {
-                    shouldPlay: Boolean(true),
-                    isLooping: Boolean(false),
-                    volume: 1.0,
-                }
-            );
-
-            setSound(newSound);
-
-            newSound.setOnPlaybackStatusUpdate((status) => {
-                if (status.didJustFinish) {
-                    if (playingAll) {
-                        // Play next ayah
-                        playAyahAtIndex(index + 1);
-                    } else {
-                        setIsPlaying(false);
-                        setPlayingAyah(null);
                     }
+                }, 150);
+                const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
+                const { sound: newSound } = await Audio.Sound.createAsync(
+                    { uri: audioUrl },
+                    {
+                        shouldPlay: Boolean(true),
+                        isLooping: Boolean(false),
+                        volume: 1.0,
+                    }
+                );
+                setSound(newSound);
+                newSound.setOnPlaybackStatusUpdate((status) => {
+                    if (status.didJustFinish && playingAll && !paused && !isCancelled) {
+                        setCurrentAyahIndex((idx) => idx + 1);
+                    }
+                });
+            } catch (error) {
+                console.error('Error playing ayah:', error);
+                if (playingAll && !paused && !isCancelled) {
+                    setCurrentAyahIndex((idx) => idx + 1);
                 }
-            });
-        } catch (error) {
-            console.error('Error playing ayah:', error);
-            if (playingAll) {
-                // Try next ayah on error
-                playAyahAtIndex(index + 1);
-            } else {
-                setIsPlaying(false);
-                setPlayingAyah(null);
             }
+        };
+        if (playingAll && !paused) {
+            playCurrentAyah();
         }
-    };
+        return () => {
+            isCancelled = true;
+        };
+        // eslint-disable-next-line
+    }, [playingAll, paused, currentAyahIndex]);
 
     const renderAyah = (ayah) => {
         const ayahNumber = Number(ayah.number);
@@ -212,6 +221,10 @@ const SuraDetailScreen = ({ route }) => {
                 key={ayahNumber}
                 ref={(ref) => {
                     ayahRefs.current[ayahNumber] = ref;
+                }}
+                onLayout={(event) => {
+                    const { y } = event.nativeEvent.layout;
+                    ayahPositions.current[ayahNumber] = y;
                 }}
                 style={[styles.ayahContainer, isCurrentlyPlaying && styles.ayahContainerHighlight]}
             >
@@ -259,11 +272,37 @@ const SuraDetailScreen = ({ route }) => {
 
     return (
         <View style={styles.container}>
+            {/* Static Play All Controls */}
+            <View style={styles.staticControls}>
+                <TouchableOpacity style={styles.playAllButton} onPress={playAllAyahs} activeOpacity={0.7}>
+                    <Ionicons
+                        name={playingAll && !paused ? 'stop-circle' : 'play-circle'}
+                        size={32}
+                        color={'#2E8B57'}
+                    />
+                    <Text style={styles.playAllText}>{playingAll && !paused ? 'Stop All' : 'Play All'}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[
+                        styles.playAllButton,
+                        { marginLeft: 12, backgroundColor: paused ? '#ffe082' : '#f0f9f4', borderColor: '#fbc02d' },
+                    ]}
+                    onPress={pauseAllAyahs}
+                    disabled={!playingAll || paused}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name={'pause-circle'} size={32} color={paused ? '#fbc02d' : '#2E8B57'} />
+                    <Text style={[styles.playAllText, { color: paused ? '#fbc02d' : '#2E8B57' }]}>
+                        {paused ? 'Paused' : 'Pause'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
             <ScrollView
                 ref={scrollViewRef}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={Boolean(false)}
+                showsVerticalScrollIndicator={false}
+                nestedScrollEnabled={true}
             >
                 {/* Surah Header */}
                 <View style={styles.suraHeader}>
@@ -275,23 +314,11 @@ const SuraDetailScreen = ({ route }) => {
                             {String(suraData.revelationType)} • {String(suraData.numberOfAyahs)} Ayahs
                         </Text>
                     </View>
-
-                    {/* Play All Button */}
-                    <TouchableOpacity style={styles.playAllButton} onPress={playAllAyahs} activeOpacity={Number(0.7)}>
-                        <Ionicons
-                            name={playingAll ? 'stop-circle' : 'play-circle'}
-                            size={Number(32)}
-                            color={String('#2E8B57')}
-                        />
-                        <Text style={styles.playAllText}>{playingAll ? 'Stop All' : 'Play All'}</Text>
-                    </TouchableOpacity>
                 </View>
-
                 {/* Bismillah */}
                 <View style={styles.bismillahContainer}>
                     <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
                 </View>
-
                 {/* Ayahs */}
                 {suraData.ayahs.map(renderAyah)}
             </ScrollView>
@@ -371,6 +398,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#999',
     },
+    staticControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        paddingVertical: 12,
+        paddingHorizontal: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        zIndex: 2,
+    },
     playAllButton: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -379,7 +417,6 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 25,
-        marginTop: 16,
         borderWidth: 2,
         borderColor: '#2E8B57',
     },
