@@ -8,6 +8,7 @@
             "tamilName": "அல்‌ஃபாத்திஹா",
             "tamilNameTranslation": "தொடக்கம்‌",
             "revelationType": "Meccan",
+            "revelationTypeTamil": "மக்கீ",
             "numberOfAyahs": 7
         },
         {
@@ -18,7 +19,30 @@
             "tamilName": "அல்‌இஹ்லாஸ்‌",
             "tamilNameTranslation": "தூய்மைப்படுத்துதல்‌",
             "revelationType": "Meccan",
+            "revelationTypeTamil": "மக்கீ",
             "numberOfAyahs": 4
+        },
+        {
+            "number": 113,
+            "name": "سُورَةُ الفَلَقِ",
+            "englishName": "Al-Falaq",
+            "englishNameTranslation": "The Dawn",
+            "tamilName": "அல்‌ஃபலக்‌",
+            "tamilNameTranslation": "அதிகாலை",
+            "revelationType": "Meccan",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 5
+        },
+        {
+            "number": 114,
+            "name": "سُورَةُ النَّاسِ",
+            "englishName": "An-Naas",
+            "englishNameTranslation": "Mankind",
+            "tamilName": "அந்நாஸ்",
+            "tamilNameTranslation": "மனிதர்கள்",
+            "revelationType": "Meccan",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 6
         }
     ]
 }

@@ -15,6 +15,7 @@ const SuraDetailScreen = ({ route }) => {
     const [paused, setPaused] = useState(false);
     const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
     const [playingBismillah, setPlayingBismillah] = useState(false);
+    const [showTranslation, setShowTranslation] = useState(true);
     const scrollViewRef = useRef(null);
     const ayahRefs = useRef({});
     const ayahPositions = useRef({});
@@ -78,6 +79,7 @@ const SuraDetailScreen = ({ route }) => {
 
             setPlayingAyah(ayahNumber);
             setIsPlaying(true);
+            setShowTranslation(false);
 
             // Load and play new audio
             const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
@@ -96,6 +98,7 @@ const SuraDetailScreen = ({ route }) => {
                 if (status.didJustFinish) {
                     setIsPlaying(false);
                     setPlayingAyah(null);
+                    setShowTranslation(true);
                 }
             });
         } catch (error) {
@@ -112,6 +115,7 @@ const SuraDetailScreen = ({ route }) => {
                 setIsPlaying(false);
                 setPlayingAyah(null);
                 setPlayingAll(false);
+                setShowTranslation(true);
             }
         } catch (error) {
             console.error('Error stopping ayah:', error);
@@ -132,6 +136,7 @@ const SuraDetailScreen = ({ route }) => {
         if (paused) {
             // Resume
             setPaused(false);
+            setShowTranslation(false);
             if (sound) {
                 await sound.playAsync();
             }
@@ -141,6 +146,7 @@ const SuraDetailScreen = ({ route }) => {
 
         setPlayingAll(true);
         setPaused(false);
+        setShowTranslation(false);
 
         // Check if we need to play Bismillah first
         // All Suras except Sura 1 (Al-Fatihah) and Sura 9 (At-Tawbah) should start with Bismillah
@@ -160,6 +166,7 @@ const SuraDetailScreen = ({ route }) => {
         if (playingAll && !paused && sound) {
             await sound.pauseAsync();
             setPaused(true);
+            setShowTranslation(true);
         }
     };
 
@@ -222,6 +229,7 @@ const SuraDetailScreen = ({ route }) => {
                 setIsPlaying(false);
                 setCurrentAyahIndex(0);
                 setPlayingBismillah(false);
+                setShowTranslation(true);
                 return;
             }
             const ayah = ayahs[currentAyahIndex];
@@ -313,6 +321,7 @@ const SuraDetailScreen = ({ route }) => {
                 <View style={styles.ayahContent}>
                     <Text style={styles.arabicText}>{String(ayah.text)}</Text>
                     <Text style={styles.transliterationText}>{String(ayah.tamilTransliteration)}</Text>
+                    {showTranslation && <Text style={styles.translationText}>{String(ayah.tamilTranslation)}</Text>}
                 </View>
             </View>
         );
@@ -376,7 +385,7 @@ const SuraDetailScreen = ({ route }) => {
                     <Text style={styles.translation}>{String(suraData.tamilNameTranslation)}</Text>
                     <View style={styles.metaInfo}>
                         <Text style={styles.metaText}>
-                            {String(suraData.revelationType)} • {String(suraData.numberOfAyahs)} Ayahs
+                            {String(suraData.revelationTypeTamil)} • {String(suraData.numberOfAyahs)} வசனங்கள்
                         </Text>
                     </View>
                 </View>
@@ -579,6 +588,13 @@ const styles = StyleSheet.create({
         color: '#2E8B57',
         fontWeight: '600',
         fontStyle: 'normal',
+    },
+    translationText: {
+        fontSize: 16,
+        lineHeight: 26,
+        color: '#555',
+        marginTop: 12,
+        fontStyle: 'italic',
     },
 });
 

@@ -6,11 +6,15 @@ import tableOfContentsData from './al_quran_json_collection/table_of_contents.js
 // Import all available sura JSON files
 import sura1Data from './al_quran_json_collection/1.json';
 import sura112Data from './al_quran_json_collection/112.json';
+import sura113Data from './al_quran_json_collection/113.json';
+import sura114Data from './al_quran_json_collection/114.json';
 
 // Create a mapping of sura numbers to their data
 const suraDataMap = {
     1: sura1Data,
     112: sura112Data,
+    113: sura113Data,
+    114: sura114Data,
     // Add more suras as JSON files become available
 };
 

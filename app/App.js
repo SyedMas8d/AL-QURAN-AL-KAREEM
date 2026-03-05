@@ -23,7 +23,7 @@ export default function App() {
                     },
                 }}
             >
-                <Stack.Screen name="SuraList" component={SuraListScreen} options={{ title: 'Al-Quran Al-Kareem' }} />
+                <Stack.Screen name="SuraList" component={SuraListScreen} options={{ title: 'அல் குர்ஆன் அல் கரீம்' }} />
                 <Stack.Screen
                     name="SuraDetail"
                     component={SuraDetailScreen}

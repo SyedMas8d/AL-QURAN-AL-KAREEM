@@ -76,7 +76,7 @@ const SuraListScreen = ({ navigation }) => {
                 <Text style={styles.translation}>{String(item.tamilNameTranslation)}</Text>
                 <View style={styles.metaInfo}>
                     <Text style={styles.metaText}>
-                        {String(item.revelationType)} • {String(item.numberOfAyahs)} Ayahs
+                        {String(item.revelationTypeTamil)} • {String(item.numberOfAyahs)} வசனங்கள்
                     </Text>
                 </View>
             </View>
