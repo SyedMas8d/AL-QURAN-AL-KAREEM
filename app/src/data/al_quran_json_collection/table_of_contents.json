@@ -5,8 +5,20 @@
             "name": "سُورَةُ ٱلْفَاتِحَةِ",
             "englishName": "Al-Faatiha",
             "englishNameTranslation": "The Opening",
+            "tamilName": "அல்‌ஃபாத்திஹா",
+            "tamilNameTranslation": "தொடக்கம்‌",
             "revelationType": "Meccan",
             "numberOfAyahs": 7
+        },
+        {
+            "number": 112,
+            "name": "سُورَةُ الإِخۡلَاصِ",
+            "englishName": "Al-Ikhlaas",
+            "englishNameTranslation": "Sincerity",
+            "tamilName": "அல்‌இஹ்லாஸ்‌",
+            "tamilNameTranslation": "தூய்மைப்படுத்துதல்‌",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 4
         }
     ]
 }

@@ -8,6 +8,13 @@
 			"isBackground": true,
 			"problemMatcher": [],
 			"group": "build"
+		},
+		{
+			"label": "Start Expo Development Server",
+			"type": "shell",
+			"command": "cd ${workspaceFolder}/app && npm start",
+			"isBackground": true,
+			"group": "build"
 		}
 	]
 }

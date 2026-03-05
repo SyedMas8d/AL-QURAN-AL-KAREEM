@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL-QURAN Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #2c5f2d;
+            text-align: center;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+        input[type="color"], input[type="text"] {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #2c5f2d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1e4620;
+        }
+        .icons-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .icon-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-width: 100%;
+            margin: 10px 0;
+        }
+        .icon-info {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🕌 AL-QURAN Icon Generator</h1>
+    
+    <div class="controls">
+        <h2>Customize Your Icons</h2>
+        <div class="control-group">
+            <label>Background Color:</label>
+            <input type="color" id="bgColor" value="#2c5f2d">
+        </div>
+        <div class="control-group">
+            <label>Icon Color:</label>
+            <input type="color" id="iconColor" value="#ffffff">
+        </div>
+        <div class="control-group">
+            <label>Text (optional):</label>
+            <input type="text" id="customText" placeholder="القرآن" value="القرآن">
+        </div>
+        <button onclick="generateIcons()">🎨 Generate Icons</button>
+        <button onclick="downloadAll()">⬇️ Download All Icons</button>
+    </div>
+
+    <div class="icons-container">
+        <div class="icon-item">
+            <h3>App Icon</h3>
+            <canvas id="iconCanvas" width="1024" height="1024"></canvas>
+            <div class="icon-info">1024x1024px</div>
+            <button onclick="downloadIcon('iconCanvas', 'icon.png')">Download</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>Adaptive Icon</h3>
+            <canvas id="adaptiveCanvas" width="1024" height="1024"></canvas>
+            <div class="icon-info">1024x1024px (Android)</div>
+            <button onclick="downloadIcon('adaptiveCanvas', 'adaptive-icon.png')">Download</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>Splash Icon</h3>
+            <canvas id="splashCanvas" width="1024" height="1024"></canvas>
+            <div class="icon-info">1024x1024px</div>
+            <button onclick="downloadIcon('splashCanvas', 'splash-icon.png')">Download</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>Favicon</h3>
+            <canvas id="faviconCanvas" width="512" height="512"></canvas>
+            <div class="icon-info">512x512px</div>
+            <button onclick="downloadIcon('faviconCanvas', 'favicon.png')">Download</button>
+        </div>
+    </div>
+
+    <script>
+        function drawQuranIcon(canvas, size, bgColor, iconColor, text) {
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw book/mushaf shape
+            ctx.strokeStyle = iconColor;
+            ctx.fillStyle = iconColor;
+            ctx.lineWidth = size * 0.02;
+            
+            // Book outline
+            const bookX = size * 0.2;
+            const bookY = size * 0.15;
+            const bookWidth = size * 0.6;
+            const bookHeight = size * 0.7;
+            
+            // Main book rectangle
+            ctx.strokeRect(bookX, bookY, bookWidth, bookHeight);
+            
+            // Book spine shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(bookX, bookY, bookWidth * 0.1, bookHeight);
+            
+            // Decorative border
+            const borderPadding = size * 0.05;
+            ctx.strokeStyle = iconColor;
+            ctx.lineWidth = size * 0.01;
+            ctx.strokeRect(
+                bookX + borderPadding,
+                bookY + borderPadding,
+                bookWidth - borderPadding * 2,
+                bookHeight - borderPadding * 2
+            );
+            
+            // Draw crescent and star (Islamic symbol)
+            ctx.fillStyle = iconColor;
+            const centerX = size / 2;
+            const centerY = size * 0.35;
+            
+            // Crescent
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, size * 0.12, 0.5 * Math.PI, 1.5 * Math.PI, false);
+            ctx.arc(centerX + size * 0.03, centerY, size * 0.09, 1.5 * Math.PI, 0.5 * Math.PI, true);
+            ctx.fill();
+            
+            // Star
+            drawStar(ctx, centerX + size * 0.05, centerY, 5, size * 0.04, size * 0.02);
+            
+            // Arabic text
+            if (text) {
+                ctx.fillStyle = iconColor;
+                ctx.font = `bold ${size * 0.12}px Arial, 'Traditional Arabic', 'Arabic Typesetting'`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, centerX, size * 0.65);
+            }
+            
+            // Decorative lines
+            ctx.strokeStyle = iconColor;
+            ctx.lineWidth = size * 0.005;
+            const lineY1 = size * 0.55;
+            const lineY2 = size * 0.75;
+            const lineMargin = size * 0.3;
+            
+            ctx.beginPath();
+            ctx.moveTo(lineMargin, lineY1);
+            ctx.lineTo(size - lineMargin, lineY1);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(lineMargin, lineY2);
+            ctx.lineTo(size - lineMargin, lineY2);
+            ctx.stroke();
+        }
+        
+        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            const step = Math.PI / spikes;
+            
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+                
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        function generateIcons() {
+            const bgColor = document.getElementById('bgColor').value;
+            const iconColor = document.getElementById('iconColor').value;
+            const text = document.getElementById('customText').value;
+            
+            // Generate each icon
+            const iconCanvas = document.getElementById('iconCanvas');
+            drawQuranIcon(iconCanvas, 1024, bgColor, iconColor, text);
+            
+            const adaptiveCanvas = document.getElementById('adaptiveCanvas');
+            drawQuranIcon(adaptiveCanvas, 1024, bgColor, iconColor, text);
+            
+            const splashCanvas = document.getElementById('splashCanvas');
+            drawQuranIcon(splashCanvas, 1024, bgColor, iconColor, text);
+            
+            const faviconCanvas = document.getElementById('faviconCanvas');
+            drawQuranIcon(faviconCanvas, 512, bgColor, iconColor, '');
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function downloadAll() {
+            setTimeout(() => downloadIcon('iconCanvas', 'icon.png'), 100);
+            setTimeout(() => downloadIcon('adaptiveCanvas', 'adaptive-icon.png'), 300);
+            setTimeout(() => downloadIcon('splashCanvas', 'splash-icon.png'), 500);
+            setTimeout(() => downloadIcon('faviconCanvas', 'favicon.png'), 700);
+            alert('Downloading all icons... Check your downloads folder!');
+        }
+        
+        // Generate icons on page load
+        window.onload = function() {
+            generateIcons();
+        };
+    </script>
+</body>
+</html>

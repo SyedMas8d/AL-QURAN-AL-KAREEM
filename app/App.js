@@ -27,7 +27,7 @@ export default function App() {
                 <Stack.Screen
                     name="SuraDetail"
                     component={SuraDetailScreen}
-                    options={({ route }) => ({ title: String(route.params.sura.englishName) })}
+                    options={({ route }) => ({ title: String(route.params.sura.tamilName) })}
                 />
             </Stack.Navigator>
             <StatusBar style={String('light')} />

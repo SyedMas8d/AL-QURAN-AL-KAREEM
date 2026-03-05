@@ -72,8 +72,8 @@ const SuraListScreen = ({ navigation }) => {
             </View>
             <View style={styles.suraInfo}>
                 <Text style={styles.arabicName}>{String(item.name)}</Text>
-                <Text style={styles.englishName}>{String(item.englishName)}</Text>
-                <Text style={styles.translation}>{String(item.englishNameTranslation)}</Text>
+                <Text style={styles.englishName}>{String(item.tamilName)}</Text>
+                <Text style={styles.translation}>{String(item.tamilNameTranslation)}</Text>
                 <View style={styles.metaInfo}>
                     <Text style={styles.metaText}>
                         {String(item.revelationType)} • {String(item.numberOfAyahs)} Ayahs

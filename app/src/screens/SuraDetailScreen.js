@@ -14,9 +14,13 @@ const SuraDetailScreen = ({ route }) => {
     const [playingAll, setPlayingAll] = useState(false);
     const [paused, setPaused] = useState(false);
     const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
+    const [playingBismillah, setPlayingBismillah] = useState(false);
     const scrollViewRef = useRef(null);
     const ayahRefs = useRef({});
     const ayahPositions = useRef({});
+
+    // Bismillah audio URL (Ayah 1 from Sura 1)
+    const BISMILLAH_AUDIO_URL = 'https://cdn.islamic.network/quran/audio/128/ar.alafasy/1.mp3';
 
     useEffect(() => {
         loadSuraData();
@@ -122,6 +126,7 @@ const SuraDetailScreen = ({ route }) => {
             setPlayingAll(false);
             setPaused(false);
             setCurrentAyahIndex(0);
+            setPlayingBismillah(false);
             return;
         }
         if (paused) {
@@ -133,9 +138,21 @@ const SuraDetailScreen = ({ route }) => {
             return;
         }
         if (!suraData || !suraData.ayahs || suraData.ayahs.length === 0) return;
+
         setPlayingAll(true);
         setPaused(false);
-        setCurrentAyahIndex(0);
+
+        // Check if we need to play Bismillah first
+        // All Suras except Sura 1 (Al-Fatihah) and Sura 9 (At-Tawbah) should start with Bismillah
+        const needsBismillah = sura.number !== 1 && sura.number !== 9;
+
+        if (needsBismillah) {
+            setPlayingBismillah(true);
+            setCurrentAyahIndex(-1); // -1 indicates we're playing Bismillah
+        } else {
+            setPlayingBismillah(false);
+            setCurrentAyahIndex(0);
+        }
     };
 
     // Pause All
@@ -151,12 +168,60 @@ const SuraDetailScreen = ({ route }) => {
         let isCancelled = false;
         const playCurrentAyah = async () => {
             if (!playingAll || paused || !suraData || !suraData.ayahs) return;
+
+            // Play Bismillah first (if needed)
+            if (currentAyahIndex === -1 && playingBismillah) {
+                try {
+                    if (sound) {
+                        await sound.unloadAsync();
+                        setSound(null);
+                    }
+
+                    setPlayingAyah('bismillah');
+                    setIsPlaying(true);
+
+                    // Scroll to top to show Bismillah
+                    setTimeout(() => {
+                        if (scrollViewRef.current) {
+                            scrollViewRef.current.scrollTo({
+                                y: 0,
+                                animated: true,
+                            });
+                        }
+                    }, 150);
+
+                    const { sound: newSound } = await Audio.Sound.createAsync(
+                        { uri: BISMILLAH_AUDIO_URL },
+                        {
+                            shouldPlay: Boolean(true),
+                            isLooping: Boolean(false),
+                            volume: 1.0,
+                        }
+                    );
+
+                    setSound(newSound);
+
+                    newSound.setOnPlaybackStatusUpdate((status) => {
+                        if (status.didJustFinish && playingAll && !paused && !isCancelled) {
+                            setPlayingBismillah(false);
+                            setCurrentAyahIndex(0); // Move to first ayah
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error playing Bismillah:', error);
+                    setPlayingBismillah(false);
+                    setCurrentAyahIndex(0);
+                }
+                return;
+            }
+
             const ayahs = suraData.ayahs;
             if (currentAyahIndex >= ayahs.length) {
                 setPlayingAll(false);
                 setPlayingAyah(null);
                 setIsPlaying(false);
                 setCurrentAyahIndex(0);
+                setPlayingBismillah(false);
                 return;
             }
             const ayah = ayahs[currentAyahIndex];
@@ -210,7 +275,7 @@ const SuraDetailScreen = ({ route }) => {
             isCancelled = true;
         };
         // eslint-disable-next-line
-    }, [playingAll, paused, currentAyahIndex]);
+    }, [playingAll, paused, currentAyahIndex, playingBismillah, suraData]);
 
     const renderAyah = (ayah) => {
         const ayahNumber = Number(ayah.number);
@@ -307,8 +372,8 @@ const SuraDetailScreen = ({ route }) => {
                 {/* Surah Header */}
                 <View style={styles.suraHeader}>
                     <Text style={styles.arabicName}>{String(suraData.name)}</Text>
-                    <Text style={styles.englishName}>{String(suraData.englishName)}</Text>
-                    <Text style={styles.translation}>{String(suraData.englishNameTranslation)}</Text>
+                    <Text style={styles.englishName}>{String(suraData.tamilName)}</Text>
+                    <Text style={styles.translation}>{String(suraData.tamilNameTranslation)}</Text>
                     <View style={styles.metaInfo}>
                         <Text style={styles.metaText}>
                             {String(suraData.revelationType)} • {String(suraData.numberOfAyahs)} Ayahs
@@ -316,7 +381,7 @@ const SuraDetailScreen = ({ route }) => {
                     </View>
                 </View>
                 {/* Bismillah */}
-                <View style={styles.bismillahContainer}>
+                <View style={[styles.bismillahContainer, playingAyah === 'bismillah' && styles.ayahContainerHighlight]}>
                     <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
                 </View>
                 {/* Ayahs */}
