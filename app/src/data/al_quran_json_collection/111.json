@@ -1,0 +1,78 @@
+{
+    "number": 111,
+    "name": "سُورَةُ المَسَدِ",
+    "englishName": "Al-Masad",
+    "englishNameTranslation": "The Palm Fibre",
+    "tamilName": "ஈச்சங்கயிறு",
+    "tamilNameTranslation": "அல் மஸத்",
+    "revelationType": "Meccan",
+    "revelationTypeTamil": "மக்கீ",
+    "numberOfAyahs": 5,
+    "ayahs": [
+        {
+            "number": 6217,
+            "text": "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
+            "tamilTransliteration": "தBப்Bபத் யதா அBபீ லஹBபி(ன்)வ்-வ தBப்Bப்",
+            "tamilTranslation": "அபூலஹபின் இரண்டு கைகளும் நாசமடைக; அவனும் நாசமாகட்டும்.",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 553,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6218,
+            "text": "مَا أَغْنَىٰ عَنْهُ مَالُهُ وَمَا كَسَبَ",
+            "tamilTransliteration": "மா அக்னா 'அன்ஹு மாலுஹூ வ ம கஸBப்",
+            "tamilTranslation": "அவனுடைய பொருளும், அவன் சம்பாதித்தவையும் அவனுக்குப் பயன்படவில்லை.",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 553,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6219,
+            "text": "سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ",
+            "tamilTransliteration": "ஸ-யஸ்லா னாரன் தாத லஹBப்",
+            "tamilTranslation": "விரைவில் அவன் கொழுந்து விட்டெரியும் நெருப்பில் புகுவான்.",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 553,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6220,
+            "text": "وَامْرَأَتُهُ حَمَّالَةَ الْحَطَبِ",
+            "tamilTransliteration": "வம்ர-அதுஹூ ஹம்மா லதல்-ஹதBப்",
+            "tamilTranslation": "விறகு சுமப்பவளான அவனுடைய மனைவியோ,",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 553,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6221,
+            "text": "فِي جِيدِهَا حَبْلٌ مِنْ مَسَدٍ",
+            "tamilTransliteration": "Fபீ ஜீதிஹா ஹBப்லும் மிம்-மஸத்",
+            "tamilTranslation": "அவளுடைய கழுத்தில் முறுக்கேறிய ஈச்சங் கயிறுதான் (அதனால் அவளும் அழிவாள்).",
+            "numberInSurah": 5,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 553,
+            "hizbQuarter": 240,
+            "sajda": false
+        }
+    ]
+}
