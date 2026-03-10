@@ -43,6 +43,50 @@
             "revelationType": "Meccan",
             "revelationTypeTamil": "மக்கீ",
             "numberOfAyahs": 6
+        },
+        {
+            "number": 111,
+            "name": "سُورَةُ المَسَدِ",
+            "englishName": "Al-Masad",
+            "englishNameTranslation": "The Palm Fibre",
+            "tamilName": "ஈச்சங்கயிறு",
+            "tamilNameTranslation": "அல் மஸத்",
+            "revelationType": "Meccan",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 5
+        },
+        {
+            "number": 110,
+            "name": "سُورَةُ النَّصۡرِ",
+            "englishName": "An-Nasr",
+            "englishNameTranslation": "Divine Support",
+            "revelationType": "Medinan",
+            "tamilName": "அந்-நஸ்ர்",
+            "tamilNameTranslation": "உதவி",
+            "revelationTypeTamil": "மதனீ",
+            "numberOfAyahs": 3
+        },
+        {
+            "number": 109,
+            "name": "سُورَةُ الكَافِرُونَ",
+            "englishName": "Al-Kaafiroon",
+            "englishNameTranslation": "The Disbelievers",
+            "revelationType": "Meccan",
+            "tamilName": "அல்-காஃபிரூன்",
+            "tamilNameTranslation": "காஃபிர்கள்",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 6
+        },
+        {
+            "number": 108,
+            "name": "سُورَةُ الكَوۡثَرِ",
+            "englishName": "Al-Kawthar",
+            "englishNameTranslation": "Abundance",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 3,
+            "tamilName": "அல்-கவ்ஸர்",
+            "tamilNameTranslation": "மிகுந்த நன்மைகள்",
+            "revelationTypeTamil": "மக்கீ"
         }
     ]
 }

@@ -1,0 +1,91 @@
+{
+    "number": 109,
+    "name": "سُورَةُ الكَافِرُونَ",
+    "englishName": "Al-Kaafiroon",
+    "englishNameTranslation": "The Disbelievers",
+    "revelationType": "Meccan",
+    "tamilName": "அல்-காஃபிரூன்",
+    "tamilNameTranslation": "காஃபிர்கள்",
+    "revelationTypeTamil": "மக்கீ",
+    "numberOfAyahs": 6,
+    "ayahs": [
+        {
+            "number": 6208,
+            "text": "قُلْ يَا أَيُّهَا الْكَافِرُونَ",
+            "tamilTransliteration": "குல் யா-அய்யுஹல் காFபிரூன்",
+            "tamilTranslation": "(நபியே!) நீர் சொல்வீராக: காஃபிர்களே!",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6209,
+            "text": "لَا أَعْبُدُ مَا تَعْبُدُونَ",
+            "tamilTransliteration": "லா அஃBபுது மா த்'அBபுதூன்",
+            "tamilTranslation": "நீங்கள் வணங்குபவற்றை நான் வணங்கமாட்டேன்.",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6210,
+            "text": "وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ",
+            "tamilTransliteration": "வ லா அன்தும் 'ஆBபிதூன மா அஃBபுத்",
+            "tamilTranslation": "இன்னும், நான் வணங்குகிறவனை நீங்கள் வணங்குகிறவர்களல்லர்.",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6211,
+            "text": "وَلَا أَنَا عَابِدٌ مَا عَبَدْتُمْ",
+            "tamilTransliteration": "வ லா அன 'அBபிதும் மா 'அBபத்தும்",
+            "tamilTranslation": "அன்றியும், நீங்கள் வணங்குபவற்றை நான் வணங்குபவனல்லன்.",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6212,
+            "text": "وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ",
+            "tamilTransliteration": "வ லா அன்தும் 'ஆBபிதூன மா அஃBபுத்",
+            "tamilTranslation": "மேலும், நான் வணங்குபவனை நீங்கள் வணங்குபவர்கள் அல்லர்.",
+            "numberInSurah": 5,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6213,
+            "text": "لَكُمْ دِينُكُمْ وَلِيَ دِينِ",
+            "tamilTransliteration": "லகும் தீனுகும் வ லிய தீன்.",
+            "tamilTranslation": "உங்களுக்கு உங்களுடைய மார்க்கம்; எனக்கு என்னுடைய மார்க்கம்.",
+            "numberInSurah": 6,
+            "juz": 30,
+            "manzil": 7,
+            "page": 603,
+            "ruku": 551,
+            "hizbQuarter": 240,
+            "sajda": false
+        }
+    ]
+}

@@ -1,0 +1,52 @@
+{
+    "number": 108,
+    "name": "سُورَةُ الكَوۡثَرِ",
+    "englishName": "Al-Kawthar",
+    "englishNameTranslation": "Abundance",
+    "revelationType": "Meccan",
+    "numberOfAyahs": 3,
+    "tamilName": "அல்-கவ்ஸர்",
+    "tamilNameTranslation": "மிகுந்த நன்மைகள்",
+    "revelationTypeTamil": "மக்கீ",
+    "ayahs": [
+        {
+            "number": 6205,
+            "text": "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ",
+            "tamilTransliteration": "இன்னா அஃதய்னா கல் கவ்தர்",
+            "tamilTranslation": "(நபியே!) நிச்சயமாக நாம் உமக்கு கவ்ஸர் (என்ற தடாகத்தை) கொடுத்திருக்கின்றோம்.",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 550,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6206,
+            "text": "فَصَلِّ لِرَبِّكَ وَانْحَرْ",
+            "tamilTransliteration": "Fபஸல்லி லி ரBப்Bபிக வன்ஹர்",
+            "tamilTranslation": "எனவே, உம் இறைவனுக்கு நீர் தொழுது, குர்பானியும் கொடுப்பீராக.",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 550,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6207,
+            "text": "إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ",
+            "tamilTransliteration": "இன்ன ஷானி'அக ஹுவல் அBப்தர்",
+            "tamilTranslation": "நிச்சயமாக உம்முடைய பகைவன் (எவனோ) அவன்தான் சந்ததியற்றவன்.",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 550,
+            "hizbQuarter": 240,
+            "sajda": false
+        }
+    ]
+}
