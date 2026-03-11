@@ -87,6 +87,17 @@
             "tamilName": "அல்-கவ்ஸர்",
             "tamilNameTranslation": "மிகுந்த நன்மைகள்",
             "revelationTypeTamil": "மக்கீ"
+        },
+        {
+            "number": 107,
+            "name": "سُورَةُ المَاعُونِ",
+            "englishName": "Al-Maa'un",
+            "englishNameTranslation": "Almsgiving",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 7,
+            "tamilName": "அல்-மாஊன்",
+            "tamilNameTranslation": "அற்பப் பொருட்கள்",
+            "revelationTypeTamil": "மக்கீ"
         }
     ]
 }

@@ -87,21 +87,111 @@ export const knowledgeData = {
         ],
     },
     learn_to_read_quran: {
-        title: 'குர்ஆனை வாசிக்க கற்றுக்கொள்வோம்.',
+        title: 'குர்ஆனை வாசிக்க கற்றுக்கொள்வோம். (21 நாட்களில்)',
         data: [
             {
-                title: 'Episode 1',
+                title: 'நாள் 1',
                 youtube_link: 'https://www.youtube.com/watch?v=L0JNBvn8fLg&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU',
             },
             {
-                title: 'Episode 2',
+                title: 'நாள் 2',
                 youtube_link:
                     'https://www.youtube.com/watch?v=z9yT6ocfCeU&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=2',
             },
             {
-                title: 'Episode 3',
+                title: 'நாள் 3',
                 youtube_link:
                     'https://www.youtube.com/watch?v=aUG9RcC9ug4&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=3',
+            },
+            {
+                title: 'நாள் 4',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=9yFHfGgQk_w&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=4',
+            },
+            {
+                title: 'நாள் 5',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=NQVCbwIc4D0&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=5',
+            },
+            {
+                title: 'நாள் 6',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=qDzvhPs-2ho&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=6',
+            },
+            {
+                title: 'நாள் 7',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=r4NYoGG3qCY&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=7',
+            },
+            {
+                title: 'நாள் 8',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=qM489CQK4uA&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=8',
+            },
+            {
+                title: 'நாள் 9',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=4mLd6zClJqc&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=9',
+            },
+            {
+                title: 'நாள் 10',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=tmXULq0sodc&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=10',
+            },
+            {
+                title: 'நாள் 11',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=FGUxuD1vdVo&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=11',
+            },
+            {
+                title: 'நாள் 12',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=FkS10m9ZbKI&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=12',
+            },
+            {
+                title: 'நாள் 13',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=A05gzsix4HQ&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=13',
+            },
+            {
+                title: 'நாள் 14',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=W9c6495lDmk&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=14',
+            },
+            {
+                title: 'நாள் 15',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=iQa6sxYFzW0&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=15',
+            },
+            {
+                title: 'நாள் 16',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=9ZNfjjYiGXw&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=16',
+            },
+            {
+                title: 'நாள் 17',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=jErpd6pl7wk&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=17',
+            },
+            {
+                title: 'நாள் 18',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=EtAzF9l3KG0&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=18',
+            },
+            {
+                title: 'நாள் 19',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=OT6bJEwUeQc&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=19',
+            },
+            {
+                title: 'நாள் 20',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=LbuLsl8GF8U&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=20',
+            },
+            {
+                title: 'நாள் 21',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=LbTHQVqwdDY&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=21',
             },
         ],
     },
