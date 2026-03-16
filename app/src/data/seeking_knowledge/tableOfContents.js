@@ -96,6 +96,11 @@ export const knowledgeData = {
                 youtube_link:
                     'https://www.youtube.com/watch?v=0HtSgm0uErk&list=PLwM5TcqtLM4g9-iUtTN4n76jwH2xXohL_&index=21',
             },
+            {
+                title: 'Evidence of Reflecting Moon The Sun Light',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=22zIePmVkP4&list=PLwM5TcqtLM4g9-iUtTN4n76jwH2xXohL_&index=24',
+            },
         ],
     },
     learn_to_read_quran: {
@@ -204,6 +209,18 @@ export const knowledgeData = {
                 title: 'நாள் 20',
                 youtube_link:
                     'https://www.youtube.com/watch?v=LbTHQVqwdDY&list=PLKdfd_fbZcB8nWpjEm6d0iDOeaESnHpyU&index=21',
+            },
+        ],
+    },
+    hajjaththul_vida: {
+        title: 'நபி (ஸல்) அவர்கள் நிகழ்த்திய இறுதிப் பேருரை (ஹஜ்ஜத்துல் விதா)',
+        data: [
+            {
+                title: 'ஹிஜ்ரி 10-ம் ஆண்டு, துல்ஹஜ் 9-ம் நாள் (கி.பி. 632 மார்ச் 9) அரபாத் பெருவெளியில், ஒரு லட்சத்திற்கும் அதிகமான சஹாபாக்கள் முன்னிலையில் நபி (ஸல்) அவர்கள் நிகழ்த்திய இறுதிப் பேருரை (ஹஜ்ஜத்துல் விதா) மனித உரிமைகள், சமத்துவம், பெண்கள் உரிமை, வட்டி ஒழிப்பு மற்றும் குர்ஆன்-சுன்னாவைப் பின்பற்றுதல் ஆகியவற்றை வலியுறுத்திய மிக முக்கிய உரை.',
+                description:
+                    'ஹிஜ்ரி 10-ம் ஆண்டு, துல்ஹஜ் 9-ம் நாள் (கி.பி. 632 மார்ச் 9) அரபாத் பெருவெளியில், ஒரு லட்சத்திற்கும் அதிகமான சஹாபாக்கள் முன்னிலையில் நபி (ஸல்) அவர்கள் நிகழ்த்திய இறுதிப் பேருரை (ஹஜ்ஜத்துல் விதா) மனித உரிமைகள், சமத்துவம், பெண்கள் உரிமை, வட்டி ஒழிப்பு மற்றும் குர்ஆன்-சுன்னாவைப் பின்பற்றுதல் ஆகியவற்றை வலியுறுத்திய மிக முக்கிய உரை.',
+                youtube_link:
+                    'https://www.youtube.com/watch?v=QiY-cWQUTHQ&list=PLOtm8_F6Y-DtG51dGCdG3eRvJmpkKfmWP&index=42',
             },
         ],
     },
