@@ -21,6 +21,7 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
                 id: key,
                 title: knowledgeData[key].title,
                 episodes: knowledgeData[key].data,
+                description: knowledgeData[key].data[0]?.description || null, // Get description from first episode if available
             }));
             console.log('Transformed data:', transformedData);
             setCategories(transformedData);
@@ -32,10 +33,14 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
     };
 
     const toggleCategory = (categoryId) => {
-        setExpandedCategories((prev) => ({
-            ...prev,
-            [categoryId]: !prev[categoryId],
-        }));
+        setExpandedCategories((prev) => {
+            // If this category is already expanded, close it
+            if (prev[categoryId]) {
+                return {};
+            }
+            // Otherwise, close all others and open only this one
+            return { [categoryId]: true };
+        });
     };
 
     const handleVideoPress = (episode, categoryTitle) => {
@@ -62,6 +67,15 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
 
                 {isExpanded && (
                     <View style={styles.episodesContainer}>
+                        {/* Description Section */}
+                        {item.description && (
+                            <View style={styles.descriptionContainer}>
+                                <Text style={styles.descriptionTitle}>📖 விவரம் (Description)</Text>
+                                <Text style={styles.descriptionText}>{item.description}</Text>
+                            </View>
+                        )}
+
+                        {/* Episodes List */}
                         {item.episodes.map((episode, index) => (
                             <TouchableOpacity
                                 key={index}
@@ -162,6 +176,26 @@ const styles = StyleSheet.create({
     episodesContainer: {
         padding: 12,
         gap: 8,
+    },
+    descriptionContainer: {
+        backgroundColor: '#fffbf0',
+        borderRadius: 10,
+        padding: 16,
+        marginBottom: 12,
+        borderLeftWidth: 4,
+        borderLeftColor: '#ffc107',
+    },
+    descriptionTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#2E8B57',
+        marginBottom: 8,
+    },
+    descriptionText: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#333',
+        textAlign: 'left',
     },
     episodeButton: {
         backgroundColor: '#f0f8f4',
