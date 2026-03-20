@@ -12,6 +12,8 @@ import sura111Data from './al_quran_json_collection/111.json';
 import sura110Data from './al_quran_json_collection/110.json';
 import sura109Data from './al_quran_json_collection/109.json';
 import sura108Data from './al_quran_json_collection/108.json';
+import sura107Data from './al_quran_json_collection/107.json';
+import sura87Data from './al_quran_json_collection/87.json';
 
 // Create a mapping of sura numbers to their data
 const suraDataMap = {
@@ -23,6 +25,8 @@ const suraDataMap = {
     110: sura110Data,
     109: sura109Data,
     108: sura108Data,
+    107: sura107Data,
+    87: sura87Data,
     // Add more suras as JSON files become available
 };
 
