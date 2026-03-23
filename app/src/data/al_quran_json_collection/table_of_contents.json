@@ -23,6 +23,50 @@
             "revelationTypeTamil": "மக்கீ"
         },
         {
+            "number": 103,
+            "name": "سُورَةُ العَصۡرِ",
+            "englishName": "Al-Asr",
+            "englishNameTranslation": "The Declining Day, Epoch",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 3,
+            "tamilName": "அல்-அஸ்ரி",
+            "tamilNameTranslation": "காலம்",
+            "revelationTypeTamil": "மக்கீ"
+        },
+        {
+            "number": 104,
+            "name": "سُورَةُ الهُمَزَةِ",
+            "englishName": "Al-Humaza",
+            "englishNameTranslation": "The Traducer",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 9,
+            "tamilName": "அல்-ஹுமஜா",
+            "tamilNameTranslation": "புறங்கூறல்",
+            "revelationTypeTamil": "மக்கீ"
+        },
+        {
+            "number": 105,
+            "name": "سُورَةُ الفِيلِ",
+            "englishName": "Al-Fil",
+            "englishNameTranslation": "The Elephant",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 5,
+            "tamilName": "அல்-ஃபீல்",
+            "tamilNameTranslation": "யானை",
+            "revelationTypeTamil": "மக்கீ"
+        },
+        {
+            "number": 106,
+            "name": "سُورَةُ قُرَيۡشٍ",
+            "englishName": "Quraish",
+            "englishNameTranslation": "Quraysh",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 4,
+            "tamilName": "குறைஷின்",
+            "tamilNameTranslation": "குறைஷிகள்",
+            "revelationTypeTamil": "மக்கீ"
+        },
+        {
             "number": 107,
             "name": "سُورَةُ المَاعُونِ",
             "englishName": "Al-Maa'un",

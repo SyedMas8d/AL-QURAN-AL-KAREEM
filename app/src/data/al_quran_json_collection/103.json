@@ -1,0 +1,52 @@
+{
+    "number": 103,
+    "name": "سُورَةُ العَصۡرِ",
+    "englishName": "Al-Asr",
+    "englishNameTranslation": "The Declining Day, Epoch",
+    "revelationType": "Meccan",
+    "numberOfAyahs": 3,
+    "tamilName": "அல்-அஸ்ரி",
+    "tamilNameTranslation": "காலம்",
+    "revelationTypeTamil": "மக்கீ",
+    "ayahs": [
+        {
+            "number": 6177,
+            "text": "وَالْعَصْرِ",
+            "tamilTransliteration": "வல் 'அஸ்ர்",
+            "tamilTranslation": "காலத்தின் மீது சத்தியமாக.",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 545,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6178,
+            "text": "إِنَّ الْإِنْسَانَ لَفِي خُسْرٍ",
+            "tamilTransliteration": "இன்னல் இன்ஸான லFபீ குஸ்ர்",
+            "tamilTranslation": "நிச்சயமாக மனிதன் நஷ்டத்தில் இருக்கின்றான்.",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 545,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6179,
+            "text": "إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ",
+            "tamilTransliteration": "இல்லல் லதீன ஆமனூ வ 'அமிலுஸ் ஸாலிஹாதி வ தவாஸவ் Bபில்ஹக்கி வ தவாஸவ் Bபிஸ்ஸBப்ர்",
+            "tamilTranslation": "ஆயினும், எவர்கள் ஈமான் கொண்டு ஸாலிஹான (நல்ல) அமல்கள் செய்து, சத்தியத்தைக் கொண்டு ஒருவருக்கொருவர் உபதேசம் செய்து, மேலும் பொறுமையைக் கொண்டும் ஒருவருக்கொருவர் உபதேசிக்கிறார்களோ அவர்களைத் தவிர (அவர்கள் நஷ்டத்திலில்லை).",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 545,
+            "hizbQuarter": 240,
+            "sajda": false
+        }
+    ]
+}

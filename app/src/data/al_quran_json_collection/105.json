@@ -1,0 +1,78 @@
+{
+    "number": 105,
+    "name": "سُورَةُ الفِيلِ",
+    "englishName": "Al-Fil",
+    "englishNameTranslation": "The Elephant",
+    "revelationType": "Meccan",
+    "numberOfAyahs": 5,
+    "tamilName": "அல்-ஃபீல்",
+    "tamilNameTranslation": "யானை",
+    "revelationTypeTamil": "மக்கீ",
+    "ayahs": [
+        {
+            "number": 6189,
+            "text": "أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ",
+            "tamilTransliteration": "அலம் தர கய்Fப Fப'அல ரBப்Bபுக Bபி அஸ்ஹாBபில் Fபீல்",
+            "tamilTranslation": "(நபியே!) யானை(ப் படை)க் காரர்களை உம் இறைவன் என்ன செய்தான் என்பதை நீர் பார்க்கவில்லையா?",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 547,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6190,
+            "text": "أَلَمْ يَجْعَلْ كَيْدَهُمْ فِي تَضْلِيلٍ",
+            "tamilTransliteration": "அலம் யஜ்'அல் கய்தஹும் Fபீ தள்லீல்",
+            "tamilTranslation": "அவர்களுடைய சூழ்ச்சியை அவன் பாழாக்கி விடவில்லையா?",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 547,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6191,
+            "text": "وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ",
+            "tamilTransliteration": "வ அர்ஸல 'அலய்ஹிம் தய்ரன் அBபாBபீல்",
+            "tamilTranslation": "மேலும், அவர்கள் மீது பறவைகளைக் கூட்டங் கூட்டமாக அவன் அனுப்பினான்.",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 547,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6192,
+            "text": "تَرْمِيهِمْ بِحِجَارَةٍ مِنْ سِجِّيلٍ",
+            "tamilTransliteration": "தர்மீஹிம் Bபிஹிஜாரதிம் மின் ஸிஜ்ஜீல்",
+            "tamilTranslation": "சுடப்பட்ட சிறு கற்களை அவர்கள் மீது அவை எறிந்தன.",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 547,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6193,
+            "text": "فَجَعَلَهُمْ كَعَصْفٍ مَأْكُولٍ",
+            "tamilTransliteration": "Fபஜ 'அலஹும் க'அஸ்Fபிம் ம்'அகூல்",
+            "tamilTranslation": "அதனால், அவர்களை மென்று தின்னப்பட்ட வைக்கோலைப் போல் அவன் ஆக்கி விட்டான்.",
+            "numberInSurah": 5,
+            "juz": 30,
+            "manzil": 7,
+            "page": 601,
+            "ruku": 547,
+            "hizbQuarter": 240,
+            "sajda": false
+        }
+    ]
+}

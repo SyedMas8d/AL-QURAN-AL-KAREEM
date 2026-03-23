@@ -1,0 +1,65 @@
+{
+    "number": 106,
+    "name": "سُورَةُ قُرَيۡشٍ",
+    "englishName": "Quraish",
+    "englishNameTranslation": "Quraysh",
+    "revelationType": "Meccan",
+    "numberOfAyahs": 4,
+    "tamilName": "குறைஷின்",
+    "tamilNameTranslation": "குறைஷிகள்",
+    "revelationTypeTamil": "மக்கீ",
+    "ayahs": [
+        {
+            "number": 6194,
+            "text": "لِإِيلَافِ قُرَيْشٍ",
+            "tamilTransliteration": "லி-ஈலாFபி குரய்ஷ்",
+            "tamilTranslation": "குரைஷியர்களுக்கு (பிரயாணத்தில்) விருப்பமுண்டாக்குவதற்காக,",
+            "numberInSurah": 1,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6195,
+            "text": "إِيلَافِهِمْ رِحْلَةَ الشِّتَاءِ وَالصَّيْفِ",
+            "tamilTransliteration": "ஈலாFபிஹிம் ரிஹ்லதஷ் ஷிதா'இ வஸ்ஸய்Fப்",
+            "tamilTranslation": "மாரிகால, கோடைகால பிரயாணத்தில் அவர்களுக்கு விருப்பமுண்டாக்குவதற்காக (யானைப்படையினரை அழித்து கஃபாவை அல்லாஹ் காப்பாற்றினான்).",
+            "numberInSurah": 2,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6196,
+            "text": "فَلْيَعْبُدُوا رَبَّ هَٰذَا الْبَيْتِ",
+            "tamilTransliteration": "Fபல்யஃBபுதூ ரBப்Bப ஹாதல்-Bபய்த்",
+            "tamilTranslation": "எனவே (கஅபாவாகிய) இவ்வீட்டின் இரட்சகனையே அவர்கள் வணங்குவார்களாக!",
+            "numberInSurah": 3,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false
+        },
+        {
+            "number": 6197,
+            "text": "الَّذِي أَطْعَمَهُمْ مِنْ جُوعٍ وَآمَنَهُمْ مِنْ خَوْفٍ",
+            "tamilTransliteration": "அல்லதீ அத்'அமஹும் மின் ஜூ'இ(ன்)வ்-வஆமனஹும் மின் கவ்Fப்",
+            "tamilTranslation": "அவன் எத்தகையவனென்றால், (இந்த வர்த்தக பிரயாணத்தின் மூலம்) பசிக்கு அவர்களுக்கு உணவளித்தான், மேலும், அவர்களுக்கு (பிறரால் ஏற்பட்டுக்கொண்டிருந்த) பயத்திலிருந்து அவன் அபயமளித்தான்.",
+            "numberInSurah": 4,
+            "juz": 30,
+            "manzil": 7,
+            "page": 602,
+            "ruku": 548,
+            "hizbQuarter": 240,
+            "sajda": false
+        }
+    ]
+}

@@ -20,8 +20,8 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
             const transformedData = Object.keys(knowledgeData).map((key) => ({
                 id: key,
                 title: knowledgeData[key].title,
+                description: knowledgeData[key].description || null,
                 episodes: knowledgeData[key].data,
-                description: knowledgeData[key].data[0]?.description || null, // Get description from first episode if available
             }));
             console.log('Transformed data:', transformedData);
             setCategories(transformedData);

@@ -381,18 +381,30 @@ const SuraDetailScreen = ({ route }) => {
                 {/* Surah Header */}
                 <View style={styles.suraHeader}>
                     <Text style={styles.arabicName}>{String(suraData.name)}</Text>
-                    <Text style={styles.englishName}>{String(suraData.tamilName)}</Text>
-                    <Text style={styles.translation}>{String(suraData.tamilNameTranslation)}</Text>
+                    <Text style={styles.englishName}>{String(suraData.tamilName || suraData.englishName)}</Text>
+                    <Text style={styles.translation}>
+                        {String(suraData.tamilNameTranslation || suraData.englishNameTranslation)}
+                    </Text>
                     <View style={styles.metaInfo}>
                         <Text style={styles.metaText}>
-                            {String(suraData.revelationTypeTamil)} • {String(suraData.numberOfAyahs)} வசனங்கள்
+                            {String(suraData.revelationTypeTamil || suraData.revelationType)} •{' '}
+                            {String(suraData.numberOfAyahs)} வசனங்கள்
                         </Text>
                     </View>
                 </View>
+
                 {/* Bismillah */}
-                <View style={[styles.bismillahContainer, playingAyah === 'bismillah' && styles.ayahContainerHighlight]}>
-                    <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
-                </View>
+                {sura.number != 1 && sura.number != 9 && (
+                    <View
+                        style={[
+                            styles.bismillahContainer,
+                            playingAyah === 'bismillah' && styles.ayahContainerHighlight,
+                        ]}
+                    >
+                        <Text style={styles.bismillahText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
+                    </View>
+                )}
+
                 {/* Ayahs */}
                 {suraData.ayahs.map(renderAyah)}
             </ScrollView>
@@ -595,6 +607,14 @@ const styles = StyleSheet.create({
         color: '#555',
         marginTop: 12,
         fontStyle: 'italic',
+    },
+    notAvailableText: {
+        fontSize: 16,
+        lineHeight: 26,
+        color: '#999',
+        marginTop: 12,
+        fontStyle: 'italic',
+        textAlign: 'center',
     },
 });
 
