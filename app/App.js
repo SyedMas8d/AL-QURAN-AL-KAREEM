@@ -9,7 +9,7 @@ import SignificantListScreen from './src/screens/SignificantListScreen';
 import SignificantDetailScreen from './src/screens/SignificantDetailScreen';
 import SeekingKnowledgeListScreen from './src/screens/SeekingKnowledgeListScreen';
 import VideoDetailScreen from './src/screens/VideoDetailScreen';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -104,28 +104,23 @@ export default function App() {
             <Tab.Navigator
                 screenOptions={{
                     tabBarActiveTintColor: '#2E8B57',
-                    tabBarInactiveTintColor: '#666',
+                    tabBarInactiveTintColor: '#888',
                     tabBarStyle: {
                         backgroundColor: '#fff',
-                        borderTopWidth: 2,
-                        borderTopColor: '#2E8B57',
-                        paddingTop: 8,
-                        paddingBottom: 8,
-                        height: 75,
+                        borderTopWidth: 1,
+                        borderTopColor: '#e0e0e0',
+                        paddingTop: 5,
+                        paddingBottom: 5,
+                        height: 60,
                         shadowColor: '#000',
-                        shadowOffset: { width: 0, height: -2 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 3,
-                        elevation: 8,
+                        shadowOffset: { width: 0, height: -1 },
+                        shadowOpacity: 0.05,
+                        shadowRadius: 2,
+                        elevation: 4,
                     },
-                    tabBarLabelStyle: {
-                        fontSize: 13,
-                        fontWeight: 'bold',
-                        marginTop: 4,
-                        marginBottom: 4,
-                    },
+                    tabBarShowLabel: false,
                     tabBarIconStyle: {
-                        marginTop: 4,
+                        marginTop: 0,
                     },
                     headerShown: false,
                 }}
@@ -134,9 +129,21 @@ export default function App() {
                     name="QuranTab"
                     component={QuranStack}
                     options={{
-                        tabBarLabel: 'குர்ஆன்',
                         tabBarIcon: ({ color, focused }) => (
-                            <Text style={{ fontSize: focused ? 32 : 28, color }}>📖</Text>
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={{ fontSize: focused ? 36 : 32 }}>📖</Text>
+                                {focused && (
+                                    <View
+                                        style={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            backgroundColor: '#2E8B57',
+                                            marginTop: 4,
+                                        }}
+                                    />
+                                )}
+                            </View>
                         ),
                     }}
                 />
@@ -144,9 +151,21 @@ export default function App() {
                     name="SignificantTab"
                     component={SignificantStack}
                     options={{
-                        tabBarLabel: 'முக்கியமானவை',
                         tabBarIcon: ({ color, focused }) => (
-                            <Text style={{ fontSize: focused ? 32 : 28, color }}>⭐</Text>
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={{ fontSize: focused ? 36 : 32 }}>⭐</Text>
+                                {focused && (
+                                    <View
+                                        style={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            backgroundColor: '#2E8B57',
+                                            marginTop: 4,
+                                        }}
+                                    />
+                                )}
+                            </View>
                         ),
                     }}
                 />
@@ -154,9 +173,21 @@ export default function App() {
                     name="KnowledgeTab"
                     component={KnowledgeStack}
                     options={{
-                        tabBarLabel: 'கல்வி',
                         tabBarIcon: ({ color, focused }) => (
-                            <Text style={{ fontSize: focused ? 32 : 28, color }}>🎓</Text>
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={{ fontSize: focused ? 36 : 32 }}>🎓</Text>
+                                {focused && (
+                                    <View
+                                        style={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            backgroundColor: '#2E8B57',
+                                            marginTop: 4,
+                                        }}
+                                    />
+                                )}
+                            </View>
                         ),
                     }}
                 />
