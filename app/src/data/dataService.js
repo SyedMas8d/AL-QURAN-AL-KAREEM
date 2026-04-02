@@ -3,6 +3,14 @@
 // Import JSON data directly using ES6 imports for better web compatibility
 import tableOfContentsData from './al_quran_json_collection/table_of_contents.json';
 
+// Import significant verses and suras (tableOfContents as JS, data files as JSON)
+import significantTableOfContents from './significants/tableOfContents';
+import aayathulKursiData from './significants/aayathul_kursi.json';
+import aamanarRasoolData from './significants/aamanar_rasool.json';
+import surathulMulkData from './significants/surathul_mulk.json';
+import suraYaseenData from './significants/sura_yaseen.json';
+import suarAssajdaData from './significants/suar_assajda.json';
+
 // Import all available sura JSON files
 import sura1Data from './al_quran_json_collection/1.json';
 import sura2Data from './al_quran_json_collection/2.json';
@@ -147,4 +155,48 @@ export const getSuraData = async (suraNumber) => {
  */
 export const getAudioUrl = (ayahNumber) => {
     return `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
+};
+
+/**
+ * Get the table of contents for significant verses and suras
+ * @returns {Promise<Object>} Significant table of contents data
+ */
+export const getSignificantTableOfContents = async () => {
+    try {
+        // Simulate API delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        return significantTableOfContents;
+    } catch (error) {
+        throw new Error('Failed to load significant table of contents');
+    }
+};
+
+/**
+ * Get data for a specific significant verse or sura
+ * @param {string} filename - The filename of the significant content
+ * @returns {Promise<Object>} Significant content data
+ */
+export const getSignificantData = async (filename) => {
+    try {
+        // Simulate API delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        // Map filenames to their imported data
+        const significantDataMap = {
+            'aayathul_kursi.json': aayathulKursiData,
+            'aamanar_rasool.json': aamanarRasoolData,
+            'surathul_mulk.json': surathulMulkData,
+            'sura_yaseen.json': suraYaseenData,
+            'suar_assajda.json': suarAssajdaData,
+        };
+
+        const data = significantDataMap[filename];
+        if (!data) {
+            throw new Error(`Significant data for ${filename} not found`);
+        }
+
+        return data;
+    } catch (error) {
+        throw new Error(`Failed to load significant data: ${error.message}`);
+    }
 };

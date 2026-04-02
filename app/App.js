@@ -5,6 +5,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import SuraListScreen from './src/screens/SuraListScreen';
 import SuraDetailScreen from './src/screens/SuraDetailScreen';
+import SignificantListScreen from './src/screens/SignificantListScreen';
+import SignificantDetailScreen from './src/screens/SignificantDetailScreen';
 import SeekingKnowledgeListScreen from './src/screens/SeekingKnowledgeListScreen';
 import VideoDetailScreen from './src/screens/VideoDetailScreen';
 import { StyleSheet, Text } from 'react-native';
@@ -31,6 +33,34 @@ function QuranStack() {
                 name="SuraDetail"
                 component={SuraDetailScreen}
                 options={({ route }) => ({ title: String(route.params.sura.tamilName) })}
+            />
+        </Stack.Navigator>
+    );
+}
+
+// Stack Navigator for Significant Tab
+function SignificantStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen
+                name="SignificantList"
+                component={SignificantListScreen}
+                options={{ title: 'முக்கியமானவை' }}
+            />
+            <Stack.Screen
+                name="SignificantDetail"
+                component={SignificantDetailScreen}
+                options={({ route }) => ({ title: route.params?.item?.title || 'விவரங்கள்' })}
             />
         </Stack.Navigator>
     );
@@ -74,17 +104,28 @@ export default function App() {
             <Tab.Navigator
                 screenOptions={{
                     tabBarActiveTintColor: '#2E8B57',
-                    tabBarInactiveTintColor: '#888',
+                    tabBarInactiveTintColor: '#666',
                     tabBarStyle: {
                         backgroundColor: '#fff',
-                        borderTopWidth: 1,
-                        borderTopColor: '#e0e0e0',
-                        paddingBottom: 5,
-                        height: 60,
+                        borderTopWidth: 2,
+                        borderTopColor: '#2E8B57',
+                        paddingTop: 8,
+                        paddingBottom: 8,
+                        height: 75,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: -2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 3,
+                        elevation: 8,
                     },
                     tabBarLabelStyle: {
-                        fontSize: 12,
-                        fontWeight: '600',
+                        fontSize: 13,
+                        fontWeight: 'bold',
+                        marginTop: 4,
+                        marginBottom: 4,
+                    },
+                    tabBarIconStyle: {
+                        marginTop: 4,
                     },
                     headerShown: false,
                 }}
@@ -94,7 +135,19 @@ export default function App() {
                     component={QuranStack}
                     options={{
                         tabBarLabel: 'குர்ஆன்',
-                        tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>📖</Text>,
+                        tabBarIcon: ({ color, focused }) => (
+                            <Text style={{ fontSize: focused ? 32 : 28, color }}>📖</Text>
+                        ),
+                    }}
+                />
+                <Tab.Screen
+                    name="SignificantTab"
+                    component={SignificantStack}
+                    options={{
+                        tabBarLabel: 'முக்கியமானவை',
+                        tabBarIcon: ({ color, focused }) => (
+                            <Text style={{ fontSize: focused ? 32 : 28, color }}>⭐</Text>
+                        ),
                     }}
                 />
                 <Tab.Screen
@@ -102,7 +155,9 @@ export default function App() {
                     component={KnowledgeStack}
                     options={{
                         tabBarLabel: 'கல்வி',
-                        tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>🎓</Text>,
+                        tabBarIcon: ({ color, focused }) => (
+                            <Text style={{ fontSize: focused ? 32 : 28, color }}>🎓</Text>
+                        ),
                     }}
                 />
             </Tab.Navigator>
