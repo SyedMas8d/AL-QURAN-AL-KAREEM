@@ -10,6 +10,7 @@ import aamanarRasoolData from './significants/aamanar_rasool.json';
 import surathulMulkData from './significants/surathul_mulk.json';
 import suraYaseenData from './significants/sura_yaseen.json';
 import suarAssajdaData from './significants/suar_assajda.json';
+import { threeKulSuraas } from './significants/three_kul_suraas.js';
 
 // Import all available sura JSON files
 import sura1Data from './al_quran_json_collection/1.json';
@@ -188,6 +189,7 @@ export const getSignificantData = async (filename) => {
             'surathul_mulk.json': surathulMulkData,
             'sura_yaseen.json': suraYaseenData,
             'suar_assajda.json': suarAssajdaData,
+            'three_kul_suraas.js': threeKulSuraas,
         };
 
         const data = significantDataMap[filename];

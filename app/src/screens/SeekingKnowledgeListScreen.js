@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import knowledgeData from '../data/seeking_knowledge/tableOfContents';
 
 const SeekingKnowledgeListScreen = ({ navigation }) => {
@@ -82,8 +83,13 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
                                 style={styles.episodeButton}
                                 onPress={() => handleVideoPress(episode, item.title)}
                             >
-                                <Text style={styles.episodeText}>{episode.title}</Text>
-                                <Text style={styles.playIcon}>▶</Text>
+                                <View style={styles.episodeIconContainer}>
+                                    <Ionicons name="play-circle" size={24} color="#FF6B6B" />
+                                </View>
+                                <View style={styles.episodeInfo}>
+                                    <Text style={styles.episodeText}>{episode.title}</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={20} color="#999" />
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -202,20 +208,25 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 12,
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#d0e8dc',
     },
+    episodeIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#ffe8e8',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    episodeInfo: {
+        flex: 1,
+    },
     episodeText: {
         fontSize: 16,
         color: '#333',
-        flex: 1,
-    },
-    playIcon: {
-        fontSize: 18,
-        color: '#2E8B57',
-        marginLeft: 8,
     },
 });
 

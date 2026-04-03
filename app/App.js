@@ -62,6 +62,13 @@ function SignificantStack() {
                 component={SignificantDetailScreen}
                 options={({ route }) => ({ title: route.params?.item?.title || 'விவரங்கள்' })}
             />
+            <Stack.Screen
+                name="VideoDetail"
+                component={VideoDetailScreen}
+                options={({ route }) => ({
+                    title: route.params?.categoryTitle || 'Video',
+                })}
+            />
         </Stack.Navigator>
     );
 }

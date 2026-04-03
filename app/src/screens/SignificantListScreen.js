@@ -6,6 +6,7 @@ import { getSignificantTableOfContents } from '../data/dataService';
 const SignificantListScreen = ({ navigation }) => {
     const [verses, setVerses] = useState([]);
     const [suras, setSuras] = useState([]);
+    const [adkhars, setAdkhars] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -17,6 +18,7 @@ const SignificantListScreen = ({ navigation }) => {
             const data = await getSignificantTableOfContents();
             setVerses(data.verses || []);
             setSuras(data.suras || []);
+            setAdkhars(data.morning_and_evening_adkhars || []);
         } catch (error) {
             console.error('Error loading significant content:', error);
         } finally {
@@ -28,6 +30,26 @@ const SignificantListScreen = ({ navigation }) => {
         navigation.navigate('SignificantDetail', { item, type });
     };
 
+    const navigateToVideo = (item) => {
+        navigation.navigate('VideoDetail', {
+            title: item.title,
+            youtubeLink: item.youtube_link,
+            categoryTitle: 'காலை & மாலை திக்ருகள்',
+        });
+    };
+
+    const renderAdkharItem = ({ item }) => (
+        <TouchableOpacity style={styles.item} onPress={() => navigateToVideo(item)} activeOpacity={0.7}>
+            <View style={styles.itemIconContainer}>
+                <Ionicons name="play-circle" size={24} color="#FF6B6B" />
+            </View>
+            <View style={styles.itemInfo}>
+                <Text style={styles.itemTitle}>{item.title}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" style={styles.chevron} />
+        </TouchableOpacity>
+    );
+
     const renderVerseItem = ({ item }) => (
         <TouchableOpacity style={styles.item} onPress={() => navigateToDetail(item, 'verse')} activeOpacity={0.7}>
             <View style={styles.itemIconContainer}>
@@ -35,13 +57,9 @@ const SignificantListScreen = ({ navigation }) => {
             </View>
             <View style={styles.itemInfo}>
                 <Text style={styles.itemTitle}>{item.title}</Text>
-                {item.description && (
-                    <Text style={styles.itemDescription} numberOfLines={2}>
-                        {item.description}
-                    </Text>
-                )}
+                {item.description && <Text style={styles.itemDescription}>{item.description}</Text>}
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#999" />
+            <Ionicons name="chevron-forward" size={20} color="#999" style={styles.chevron} />
         </TouchableOpacity>
     );
 
@@ -52,13 +70,9 @@ const SignificantListScreen = ({ navigation }) => {
             </View>
             <View style={styles.itemInfo}>
                 <Text style={styles.itemTitle}>{item.title}</Text>
-                {item.description && (
-                    <Text style={styles.itemDescription} numberOfLines={2}>
-                        {item.description}
-                    </Text>
-                )}
+                {item.description && <Text style={styles.itemDescription}>{item.description}</Text>}
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#999" />
+            <Ionicons name="chevron-forward" size={20} color="#999" style={styles.chevron} />
         </TouchableOpacity>
     );
 
@@ -85,22 +99,31 @@ const SignificantListScreen = ({ navigation }) => {
                         <View style={styles.header}>
                             <Text style={styles.headerTitle}>முக்கியமான வசனங்கள் மற்றும் ஸூராக்கள்</Text>
                             <Text style={styles.headerSubtitle}>
-                                நபி ﷺ வின் அறிவுரைப்படி சிறப்பு மிக்க வசனங்களும் ஸூராக்களும்
+                                ஹதீஸ்களில் இருந்து பெறப்பட்ட சில முக்கிய வசனங்களும் ஸூராக்களும்
                             </Text>
                         </View>
-                        {verses.length > 0 && renderSectionHeader('முக்கியமான வசனங்கள்')}
+                        {adkhars.length > 0 && renderSectionHeader('காலை & மாலை திக்ருகள்')}
+                        {adkhars.length > 0 && (
+                            <FlatList
+                                data={adkhars}
+                                renderItem={renderAdkharItem}
+                                keyExtractor={(item, index) => `adkhar-${index}`}
+                                scrollEnabled={false}
+                            />
+                        )}
+                        {suras.length > 0 && renderSectionHeader('முக்கியமான ஸூராக்கள்')}
                     </>
                 )}
-                data={verses}
-                renderItem={renderVerseItem}
-                keyExtractor={(item, index) => `verse-${index}`}
+                data={suras}
+                renderItem={renderSuraItem}
+                keyExtractor={(item, index) => `sura-${index}`}
                 ListFooterComponent={() => (
                     <>
-                        {suras.length > 0 && renderSectionHeader('முக்கியமான ஸூராக்கள்')}
+                        {verses.length > 0 && renderSectionHeader('முக்கியமான வசனங்கள்')}
                         <FlatList
-                            data={suras}
-                            renderItem={renderSuraItem}
-                            keyExtractor={(item, index) => `sura-${index}`}
+                            data={verses}
+                            renderItem={renderVerseItem}
+                            keyExtractor={(item, index) => `verse-${index}`}
                             scrollEnabled={false}
                         />
                     </>
@@ -163,7 +186,7 @@ const styles = StyleSheet.create({
     },
     item: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         backgroundColor: '#fff',
         padding: 16,
         marginHorizontal: 10,
@@ -193,12 +216,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
-        marginBottom: 4,
+        marginBottom: 8,
     },
     itemDescription: {
-        fontSize: 13,
-        color: '#666',
-        lineHeight: 18,
+        fontSize: 14,
+        color: '#555',
+        lineHeight: 22,
+        textAlign: 'justify',
+    },
+    chevron: {
+        marginTop: 2,
     },
 });
 

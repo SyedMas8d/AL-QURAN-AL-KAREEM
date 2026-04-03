@@ -259,6 +259,33 @@ const SignificantDetailScreen = ({ route }) => {
                         <Text style={styles.translationText}>{ayah.tamilTranslation}</Text>
                     </View>
                 )}
+
+                {ayah.sajdaDua && (
+                    <View style={styles.sajdaDuaContainer}>
+                        <View style={styles.sajdaHeader}>
+                            <Ionicons name="moon" size={20} color="#8B4513" />
+                            <Text style={styles.sajdaHeaderText}>ஸஜ்தா செய்யும் போது ஓத வேண்டிய துஆ</Text>
+                        </View>
+                        {ayah.sajdaDua.description && (
+                            <View style={styles.sajdaDuaDescription}>
+                                <Text style={styles.sajdaDuaDescriptionText}>{ayah.sajdaDua.description}</Text>
+                            </View>
+                        )}
+                        <Text style={styles.sajdaDuaArabic}>{ayah.sajdaDua.arabic}</Text>
+                        {ayah.sajdaDua.tamilTransliteration && (
+                            <View style={styles.sajdaDuaTransliteration}>
+                                <Text style={styles.sajdaDuaTransliterationText}>
+                                    {ayah.sajdaDua.tamilTransliteration}
+                                </Text>
+                            </View>
+                        )}
+                        {ayah.sajdaDua.tamilTranslation && (
+                            <View style={styles.sajdaDuaTranslation}>
+                                <Text style={styles.sajdaDuaTranslationText}>{ayah.sajdaDua.tamilTranslation}</Text>
+                            </View>
+                        )}
+                    </View>
+                )}
             </View>
         );
     };
@@ -282,7 +309,26 @@ const SignificantDetailScreen = ({ route }) => {
     }
 
     // Handle both verse format (data array) and sura format (ayahs array)
-    const ayahs = data.data || data.ayahs || [];
+    // Also handle multiple suras format (like three_kul_suraas with 112, 113, 114 keys)
+    let ayahs = [];
+    let multipleSuras = null;
+
+    if (data.data) {
+        // Single verse format (e.g., aayathul_kursi)
+        ayahs = data.data;
+    } else if (data.ayahs) {
+        // Single sura format (e.g., surathul_mulk)
+        ayahs = data.ayahs;
+    } else if (data[112] || data[113] || data[114]) {
+        // Multiple suras format (three_kul_suraas)
+        multipleSuras = [data[112], data[113], data[114]].filter(Boolean);
+        // Flatten all ayahs for play all functionality
+        multipleSuras.forEach((sura) => {
+            if (sura && sura.ayahs) {
+                ayahs = [...ayahs, ...sura.ayahs];
+            }
+        });
+    }
 
     return (
         <View style={styles.container}>
@@ -322,20 +368,55 @@ const SignificantDetailScreen = ({ route }) => {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Bismillah - Display if available in data */}
-                {data.bismillah && (
-                    <View style={styles.bismillahContainer}>
-                        <Text style={styles.bismillahText}>{data.bismillah.text}</Text>
-                        {showTranslation && data.bismillah.tamilTransliteration && (
-                            <Text style={styles.bismillahTransliteration}>{data.bismillah.tamilTransliteration}</Text>
-                        )}
-                        {showTranslation && data.bismillah.tamilTranslation && (
-                            <Text style={styles.bismillahTranslation}>{data.bismillah.tamilTranslation}</Text>
-                        )}
-                    </View>
-                )}
+                {/* Render multiple suras if present */}
+                {multipleSuras ? (
+                    multipleSuras.map((sura, suraIndex) => (
+                        <View key={suraIndex}>
+                            {/* Sura header for multiple suras */}
+                            {suraIndex > 0 && <View style={styles.suraDivider} />}
 
-                {ayahs.map((ayah, index) => renderAyah(ayah, index))}
+                            {/* Bismillah for each sura */}
+                            {sura.bismillah && (
+                                <View style={styles.bismillahContainer}>
+                                    <Text style={styles.bismillahText}>{sura.bismillah.text}</Text>
+                                    {showTranslation && sura.bismillah.tamilTransliteration && (
+                                        <Text style={styles.bismillahTransliteration}>
+                                            {sura.bismillah.tamilTransliteration}
+                                        </Text>
+                                    )}
+                                    {showTranslation && sura.bismillah.tamilTranslation && (
+                                        <Text style={styles.bismillahTranslation}>
+                                            {sura.bismillah.tamilTranslation}
+                                        </Text>
+                                    )}
+                                </View>
+                            )}
+
+                            {/* Ayahs for this sura */}
+                            {sura.ayahs && sura.ayahs.map((ayah, ayahIndex) => renderAyah(ayah, ayahIndex))}
+                        </View>
+                    ))
+                ) : (
+                    <>
+                        {/* Single bismillah for single sura/verse */}
+                        {data.bismillah && (
+                            <View style={styles.bismillahContainer}>
+                                <Text style={styles.bismillahText}>{data.bismillah.text}</Text>
+                                {showTranslation && data.bismillah.tamilTransliteration && (
+                                    <Text style={styles.bismillahTransliteration}>
+                                        {data.bismillah.tamilTransliteration}
+                                    </Text>
+                                )}
+                                {showTranslation && data.bismillah.tamilTranslation && (
+                                    <Text style={styles.bismillahTranslation}>{data.bismillah.tamilTranslation}</Text>
+                                )}
+                            </View>
+                        )}
+
+                        {/* Ayahs for single sura/verse */}
+                        {ayahs.map((ayah, index) => renderAyah(ayah, index))}
+                    </>
+                )}
 
                 <View style={styles.footer}>
                     <Ionicons name="leaf-outline" size={24} color="#2E8B57" />
@@ -604,6 +685,81 @@ const styles = StyleSheet.create({
         fontSize: 15,
         lineHeight: 24,
         color: '#333',
+    },
+    sajdaDuaContainer: {
+        marginTop: 16,
+        padding: 16,
+        backgroundColor: '#FFF8DC',
+        borderRadius: 10,
+        borderLeftWidth: 4,
+        borderLeftColor: '#8B4513',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    sajdaHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    sajdaHeaderText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#8B4513',
+        marginLeft: 8,
+    },
+    sajdaDuaDescription: {
+        backgroundColor: '#FAEBD7',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 12,
+        borderLeftWidth: 3,
+        borderLeftColor: '#D2691E',
+    },
+    sajdaDuaDescriptionText: {
+        fontSize: 14,
+        lineHeight: 22,
+        color: '#654321',
+        fontStyle: 'italic',
+    },
+    sajdaDuaArabic: {
+        fontSize: 22,
+        lineHeight: 38,
+        textAlign: 'right',
+        color: '#333',
+        marginBottom: 12,
+        fontWeight: '600',
+    },
+    sajdaDuaTransliteration: {
+        backgroundColor: '#FFF',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 8,
+    },
+    sajdaDuaTransliterationText: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#555',
+        fontStyle: 'italic',
+    },
+    sajdaDuaTranslation: {
+        backgroundColor: '#FFF',
+        padding: 12,
+        borderRadius: 8,
+    },
+    sajdaDuaTranslationText: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#333',
+    },
+    suraDivider: {
+        height: 2,
+        backgroundColor: '#2E8B57',
+        marginVertical: 24,
+        marginHorizontal: 32,
+        borderRadius: 1,
     },
     footer: {
         shadowRadius: 4,
