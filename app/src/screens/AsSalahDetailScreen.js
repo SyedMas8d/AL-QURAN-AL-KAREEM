@@ -15,7 +15,10 @@ export default function AsSalahDetailScreen({ route }) {
                 {point.audio !== undefined && (
                     <View style={styles.audioPlaceholder}>
                         <Ionicons name="volume-medium-outline" size={20} color="#999" />
-                        <Text style={styles.audioText}>ஒலி விரைவில்</Text>
+                        <View style={styles.audioTextContainer}>
+                            <Text style={styles.audioTextArabic}>இன்ஷா அல்லாஹ்</Text>
+                            <Text style={styles.audioText}>ஒலி விரைவில்</Text>
+                        </View>
                     </View>
                 )}
 
@@ -222,9 +225,19 @@ const styles = StyleSheet.create({
         borderColor: '#e0e0e0',
         borderStyle: 'dashed',
     },
+    audioTextContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginLeft: 8,
+    },
+    audioTextArabic: {
+        fontSize: 16,
+        color: '#2E8B57',
+        fontWeight: '500',
+        marginBottom: 2,
+    },
     audioText: {
         fontSize: 14,
         color: '#999',
-        marginLeft: 6,
     },
 });
