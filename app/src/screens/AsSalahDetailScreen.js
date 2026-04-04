@@ -1,9 +1,57 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
 
 export default function AsSalahDetailScreen({ route }) {
     const { section } = route.params;
+    const [sound, setSound] = useState(null);
+    const [playingAudio, setPlayingAudio] = useState(null);
+    const [loadingAudio, setLoadingAudio] = useState(null);
+
+    useEffect(() => {
+        return sound
+            ? () => {
+                  sound.unloadAsync();
+              }
+            : undefined;
+    }, [sound]);
+
+    const playAudio = async (audioUrl, pointIndex) => {
+        try {
+            if (playingAudio === pointIndex) {
+                // Pause if already playing
+                if (sound) {
+                    await sound.pauseAsync();
+                    setPlayingAudio(null);
+                }
+            } else {
+                // Stop previous audio if any
+                if (sound) {
+                    await sound.stopAsync();
+                    await sound.unloadAsync();
+                }
+
+                setLoadingAudio(pointIndex);
+                const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl });
+                setSound(newSound);
+                setPlayingAudio(pointIndex);
+                setLoadingAudio(null);
+
+                await newSound.playAsync();
+
+                newSound.setOnPlaybackStatusUpdate((status) => {
+                    if (status.didJustFinish) {
+                        setPlayingAudio(null);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error playing audio:', error);
+            setLoadingAudio(null);
+            setPlayingAudio(null);
+        }
+    };
 
     const renderPoint = (point, index) => {
         return (
@@ -11,16 +59,41 @@ export default function AsSalahDetailScreen({ route }) {
                 {/* Point Title */}
                 <Text style={styles.pointTitle}>{point.title}</Text>
 
-                {/* Audio Placeholder - Now shown before Arabic text */}
-                {point.audio !== undefined && (
-                    <View style={styles.audioPlaceholder}>
-                        <Ionicons name="volume-medium-outline" size={20} color="#999" />
-                        <View style={styles.audioTextContainer}>
-                            <Text style={styles.audioTextArabic}>இன்ஷா அல்லாஹ்</Text>
-                            <Text style={styles.audioText}>ஒலி விரைவில்</Text>
+                {/* Audio Player or Coming Soon */}
+                {point.audio !== undefined &&
+                    (point.audio && point.audio.trim() !== '' ? (
+                        <TouchableOpacity
+                            style={styles.audioPlayer}
+                            onPress={() => playAudio(point.audio, index)}
+                            activeOpacity={0.7}
+                        >
+                            {loadingAudio === index ? (
+                                <ActivityIndicator size="small" color="#2E8B57" />
+                            ) : (
+                                <Ionicons
+                                    name={playingAudio === index ? 'pause-circle' : 'play-circle'}
+                                    size={28}
+                                    color="#2E8B57"
+                                />
+                            )}
+                            <View style={styles.audioTextContainer}>
+                                <Text style={styles.audioPlayerTextMain}>
+                                    {playingAudio === index ? 'ஒலியை நிறுத்து' : 'ஒலியைக் கேளுங்கள்'}
+                                </Text>
+                                <Text style={styles.audioPlayerTextSub}>
+                                    {playingAudio === index ? 'இயக்கத்தில்...' : 'தட்டவும்'}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.audioPlaceholder}>
+                            <Ionicons name="volume-medium-outline" size={20} color="#999" />
+                            <View style={styles.audioTextContainer}>
+                                <Text style={styles.audioTextArabic}>இன்ஷா அல்லாஹ்</Text>
+                                <Text style={styles.audioText}>ஒலி விரைவில்</Text>
+                            </View>
                         </View>
-                    </View>
-                )}
+                    ))}
 
                 {/* Arabic Text */}
                 {point.arabic && (
@@ -41,6 +114,17 @@ export default function AsSalahDetailScreen({ route }) {
                 {point.tamilTranslation && (
                     <View style={styles.translationContainer}>
                         <Text style={styles.translationText}>{point.tamilTranslation}</Text>
+                    </View>
+                )}
+
+                {/* Hadith - for context and authenticity */}
+                {point.hadith && (
+                    <View style={styles.hadithContainer}>
+                        <View style={styles.hadithHeader}>
+                            <Ionicons name="book" size={16} color="#8B4513" />
+                            <Text style={styles.hadithHeaderText}>ஹதீஸ்</Text>
+                        </View>
+                        <Text style={styles.hadithText}>{point.hadith}</Text>
                     </View>
                 )}
 
@@ -181,6 +265,36 @@ const styles = StyleSheet.create({
         lineHeight: 26,
         color: '#333',
     },
+    hadithContainer: {
+        backgroundColor: '#FFFAF0',
+        padding: 14,
+        borderRadius: 10,
+        marginBottom: 12,
+        borderLeftWidth: 4,
+        borderLeftColor: '#8B4513',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    hadithHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    hadithHeaderText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#8B4513',
+        marginLeft: 6,
+    },
+    hadithText: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#654321',
+        fontStyle: 'italic',
+    },
     referenceContainer: {
         flexDirection: 'row',
         alignItems: 'flex-start',
@@ -212,6 +326,30 @@ const styles = StyleSheet.create({
         lineHeight: 22,
         marginLeft: 8,
         flex: 1,
+    },
+    audioPlayer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        marginBottom: 12,
+        backgroundColor: '#E8F5E9',
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: '#2E8B57',
+        borderStyle: 'dashed',
+    },
+    audioPlayerTextMain: {
+        fontSize: 15,
+        color: '#2E8B57',
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    audioPlayerTextSub: {
+        fontSize: 12,
+        color: '#999',
+        textAlign: 'center',
+        marginTop: 2,
     },
     audioPlaceholder: {
         flexDirection: 'row',

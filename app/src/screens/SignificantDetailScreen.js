@@ -15,6 +15,7 @@ const SignificantDetailScreen = ({ route }) => {
     const [paused, setPaused] = useState(false);
     const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
     const [showTranslation, setShowTranslation] = useState(false);
+    const [hadithExpanded, setHadithExpanded] = useState(false);
     const scrollViewRef = useRef(null);
     const ayahRefs = useRef({});
     const ayahPositions = useRef({});
@@ -336,6 +337,44 @@ const SignificantDetailScreen = ({ route }) => {
                 <Text style={styles.title}>{item.title}</Text>
             </View>
 
+            {/* Hadith Section - Collapsible */}
+            {item.hadith && item.hadith.length > 0 && (
+                <View style={styles.hadithSection}>
+                    <TouchableOpacity
+                        style={styles.hadithHeaderButton}
+                        onPress={() => setHadithExpanded(!hadithExpanded)}
+                        activeOpacity={0.7}
+                    >
+                        <View style={styles.hadithHeaderLeft}>
+                            <Ionicons name="book" size={20} color="#8B4513" />
+                            <Text style={styles.hadithSectionTitle}>ஹதீஸில் குறிப்பிட்டுள்ள சிறப்புகள்</Text>
+                        </View>
+                        <Ionicons name={hadithExpanded ? 'chevron-up' : 'chevron-down'} size={24} color="#8B4513" />
+                    </TouchableOpacity>
+
+                    {hadithExpanded && (
+                        <View style={styles.hadithContent}>
+                            {item.hadith.map((hadith, index) => (
+                                <View key={index} style={styles.hadithItem}>
+                                    <View style={styles.hadithNumber}>
+                                        <Text style={styles.hadithNumberText}>{index + 1}</Text>
+                                    </View>
+                                    <View style={styles.hadithTextContainer}>
+                                        <Text style={styles.hadithText}>{hadith.text}</Text>
+                                        {hadith.ref && (
+                                            <View style={styles.hadithRefContainer}>
+                                                <Ionicons name="bookmark-outline" size={14} color="#888" />
+                                                <Text style={styles.hadithRef}>{hadith.ref}</Text>
+                                            </View>
+                                        )}
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                </View>
+            )}
+
             {/* Static Play All Controls */}
             <View style={styles.staticControls}>
                 <TouchableOpacity style={styles.playAllButton} onPress={playAllAyahs} activeOpacity={0.7}>
@@ -459,6 +498,79 @@ const styles = StyleSheet.create({
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
+    },
+    hadithSection: {
+        backgroundColor: '#fff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        marginBottom: 0,
+    },
+    hadithHeaderButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 16,
+        paddingVertical: 14,
+    },
+    hadithHeaderLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    hadithSectionTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#8B4513',
+        marginLeft: 10,
+        flex: 1,
+    },
+    hadithContent: {
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+        backgroundColor: '#FFFAF0',
+    },
+    hadithItem: {
+        flexDirection: 'row',
+        marginBottom: 16,
+        paddingBottom: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F5DEB3',
+    },
+    hadithNumber: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: '#8B4513',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+        marginTop: 2,
+    },
+    hadithNumberText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    hadithTextContainer: {
+        flex: 1,
+    },
+    hadithText: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#333',
+        marginBottom: 8,
+        fontWeight: '600',
+    },
+    hadithRefContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    hadithRef: {
+        fontSize: 13,
+        color: '#666',
+        fontStyle: 'italic',
+        marginLeft: 6,
     },
     staticControls: {
         flexDirection: 'row',
