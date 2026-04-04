@@ -9,6 +9,8 @@ import SignificantListScreen from './src/screens/SignificantListScreen';
 import SignificantDetailScreen from './src/screens/SignificantDetailScreen';
 import SeekingKnowledgeListScreen from './src/screens/SeekingKnowledgeListScreen';
 import VideoDetailScreen from './src/screens/VideoDetailScreen';
+import AsSalahListScreen from './src/screens/AsSalahListScreen';
+import AsSalahDetailScreen from './src/screens/AsSalahDetailScreen';
 import { StyleSheet, Text, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -103,6 +105,30 @@ function KnowledgeStack() {
     );
 }
 
+// Stack Navigator for Prayer Tab
+function PrayerStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen name="AsSalahList" component={AsSalahListScreen} options={{ title: 'தொழுகை' }} />
+            <Stack.Screen
+                name="AsSalahDetail"
+                component={AsSalahDetailScreen}
+                options={({ route }) => ({ title: route.params?.section?.title || 'விவரங்கள்' })}
+            />
+        </Stack.Navigator>
+    );
+}
+
 export default function App() {
     console.log('App rendering...');
 
@@ -161,6 +187,28 @@ export default function App() {
                         tabBarIcon: ({ color, focused }) => (
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontSize: focused ? 36 : 32 }}>⭐</Text>
+                                {focused && (
+                                    <View
+                                        style={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: 3,
+                                            backgroundColor: '#2E8B57',
+                                            marginTop: 4,
+                                        }}
+                                    />
+                                )}
+                            </View>
+                        ),
+                    }}
+                />
+                <Tab.Screen
+                    name="PrayerTab"
+                    component={PrayerStack}
+                    options={{
+                        tabBarIcon: ({ color, focused }) => (
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={{ fontSize: focused ? 36 : 32 }}>🕌</Text>
                                 {focused && (
                                     <View
                                         style={{
