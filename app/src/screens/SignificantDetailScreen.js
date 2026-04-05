@@ -131,6 +131,8 @@ const SignificantDetailScreen = ({ route }) => {
         }
         if (!data || ayahs.length === 0) return;
 
+        // Close hadith dropdown for better UX
+        setHadithExpanded(false);
         setPlayingAll(true);
         setPaused(false);
         setShowTranslation(false);
@@ -333,80 +335,56 @@ const SignificantDetailScreen = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>{item.title}</Text>
-            </View>
-
-            {/* Hadith Section - Collapsible */}
-            {item.hadith && item.hadith.length > 0 && (
-                <View style={styles.hadithSection}>
-                    <TouchableOpacity
-                        style={styles.hadithHeaderButton}
-                        onPress={() => setHadithExpanded(!hadithExpanded)}
-                        activeOpacity={0.7}
-                    >
-                        <View style={styles.hadithHeaderLeft}>
-                            <Ionicons name="book" size={20} color="#8B4513" />
-                            <Text style={styles.hadithSectionTitle}>ஹதீஸில் குறிப்பிட்டுள்ள சிறப்புகள்</Text>
-                        </View>
-                        <Ionicons name={hadithExpanded ? 'chevron-up' : 'chevron-down'} size={24} color="#8B4513" />
-                    </TouchableOpacity>
-
-                    {hadithExpanded && (
-                        <ScrollView style={styles.hadithContent} nestedScrollEnabled={true}>
-                            {item.hadith.map((hadith, index) => (
-                                <View key={index} style={styles.hadithItem}>
-                                    <View style={styles.hadithNumber}>
-                                        <Text style={styles.hadithNumberText}>{index + 1}</Text>
-                                    </View>
-                                    <View style={styles.hadithTextContainer}>
-                                        <Text style={styles.hadithText}>{hadith.text}</Text>
-                                        {hadith.ref && (
-                                            <View style={styles.hadithRefContainer}>
-                                                <Ionicons name="bookmark-outline" size={14} color="#888" />
-                                                <Text style={styles.hadithRef}>{hadith.ref}</Text>
-                                            </View>
-                                        )}
-                                    </View>
-                                </View>
-                            ))}
-                        </ScrollView>
-                    )}
-                </View>
-            )}
-
-            {/* Static Play All Controls */}
-            <View style={styles.staticControls}>
-                <TouchableOpacity style={styles.playAllButton} onPress={playAllAyahs} activeOpacity={0.7}>
-                    <Ionicons name={playingAll && !paused ? 'stop-circle' : 'play-circle'} size={24} color={'#fff'} />
-                    <Text style={styles.playAllText}>{playingAll && !paused ? 'Stop' : 'Play All'}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.pauseButton, paused && styles.pauseButtonActive]}
-                    onPress={pauseAllAyahs}
-                    disabled={!playingAll || paused}
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name={'pause-circle'} size={24} color={'#fff'} />
-                    <Text style={styles.pauseButtonText}>{paused ? 'Paused' : 'Pause'}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.eyeButton, showTranslation && styles.eyeButtonActive]}
-                    onPress={() => setShowTranslation(!showTranslation)}
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name={showTranslation ? 'eye' : 'eye-off'} size={24} color="#fff" />
-                </TouchableOpacity>
-            </View>
-
             <ScrollView
                 ref={scrollViewRef}
                 style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={[styles.scrollContent, { paddingTop: 80 }]}
                 showsVerticalScrollIndicator={false}
             >
+                <View style={styles.header}>
+                    <Text style={styles.title}>{item.title}</Text>
+                </View>
+
+                {/* Hadith Section - Collapsible */}
+                {item.hadith && item.hadith.length > 0 && (
+                    <View style={styles.hadithSection}>
+                        <TouchableOpacity
+                            style={styles.hadithHeaderButton}
+                            onPress={() => setHadithExpanded(!hadithExpanded)}
+                            activeOpacity={0.7}
+                        >
+                            <View style={styles.hadithHeaderLeft}>
+                                <Ionicons name="book" size={20} color="#8B4513" />
+                                <Text style={styles.hadithSectionTitle}>ஹதீஸில் குறிப்பிட்டுள்ள சிறப்புகள்</Text>
+                            </View>
+                            <Ionicons name={hadithExpanded ? 'chevron-up' : 'chevron-down'} size={24} color="#8B4513" />
+                        </TouchableOpacity>
+
+                        {hadithExpanded && (
+                            <View style={styles.hadithContent}>
+                                {item.hadith.map((hadith, index) => (
+                                    <View key={index} style={styles.hadithItem}>
+                                        <View style={styles.hadithNumber}>
+                                            <Text style={styles.hadithNumberText}>{index + 1}</Text>
+                                        </View>
+                                        <View style={styles.hadithTextContainer}>
+                                            <Text style={styles.hadithText}>{hadith.text}</Text>
+                                            {hadith.ref && (
+                                                <View style={styles.hadithRefContainer}>
+                                                    <Ionicons name="bookmark-outline" size={14} color="#888" />
+                                                    <Text style={styles.hadithRef}>{hadith.ref}</Text>
+                                                </View>
+                                            )}
+                                        </View>
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+                    </View>
+                )}
+
+                {/* Content padding for floating controls */}
+                <View style={{ height: 80 }} />
                 {/* Render multiple suras if present */}
                 {multipleSuras ? (
                     multipleSuras.map((sura, suraIndex) => (
@@ -462,6 +440,32 @@ const SignificantDetailScreen = ({ route }) => {
                     <Text style={styles.footerText}>صَدَقَ اللَّهُ الْعَظِيمُ</Text>
                 </View>
             </ScrollView>
+
+            {/* Floating Play All Controls */}
+            <View style={styles.floatingControls}>
+                <TouchableOpacity style={styles.playAllButton} onPress={playAllAyahs} activeOpacity={0.7}>
+                    <Ionicons name={playingAll && !paused ? 'stop-circle' : 'play-circle'} size={24} color={'#fff'} />
+                    <Text style={styles.playAllText}>{playingAll && !paused ? 'Stop' : 'Play All'}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[styles.pauseButton, paused && styles.pauseButtonActive]}
+                    onPress={pauseAllAyahs}
+                    disabled={!playingAll || paused}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name={'pause-circle'} size={24} color={'#fff'} />
+                    <Text style={styles.pauseButtonText}>{paused ? 'Paused' : 'Pause'}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[styles.eyeButton, showTranslation && styles.eyeButtonActive]}
+                    onPress={() => setShowTranslation(!showTranslation)}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name={showTranslation ? 'eye' : 'eye-off'} size={24} color="#fff" />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -528,7 +532,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingBottom: 16,
         backgroundColor: '#FFFAF0',
-        maxHeight: 300,
     },
     hadithItem: {
         flexDirection: 'row',
@@ -574,6 +577,11 @@ const styles = StyleSheet.create({
         marginLeft: 6,
     },
     staticControls: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -588,6 +596,27 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 3,
         elevation: 2,
+    },
+    floatingControls: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 10,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        backgroundColor: '#fff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 5,
     },
     playAllButton: {
         flexDirection: 'row',
