@@ -353,7 +353,7 @@ const SignificantDetailScreen = ({ route }) => {
                     </TouchableOpacity>
 
                     {hadithExpanded && (
-                        <View style={styles.hadithContent}>
+                        <ScrollView style={styles.hadithContent} nestedScrollEnabled={true}>
                             {item.hadith.map((hadith, index) => (
                                 <View key={index} style={styles.hadithItem}>
                                     <View style={styles.hadithNumber}>
@@ -370,7 +370,7 @@ const SignificantDetailScreen = ({ route }) => {
                                     </View>
                                 </View>
                             ))}
-                        </View>
+                        </ScrollView>
                     )}
                 </View>
             )}
@@ -528,6 +528,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingBottom: 16,
         backgroundColor: '#FFFAF0',
+        maxHeight: 300,
     },
     hadithItem: {
         flexDirection: 'row',
