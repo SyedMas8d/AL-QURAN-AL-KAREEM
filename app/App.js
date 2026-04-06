@@ -229,18 +229,22 @@ export default function App() {
                 screenOptions={{
                     drawerStyle: {
                         backgroundColor: '#f8f9fa',
-                        width: 280,
+                        width: 300,
                     },
                     drawerActiveTintColor: '#2E8B57',
                     drawerInactiveTintColor: '#666',
                     drawerLabelStyle: {
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: '600',
-                        marginLeft: -16,
+                        marginLeft: -8,
+                        flexWrap: 'wrap',
+                        flex: 1,
                     },
                     drawerItemStyle: {
                         borderRadius: 8,
-                        marginVertical: 2,
+                        marginVertical: 4,
+                        marginHorizontal: 12,
+                        paddingVertical: 4,
                     },
                     drawerActiveBackgroundColor: '#e8f5e9',
                     headerStyle: {
@@ -257,7 +261,7 @@ export default function App() {
                     component={QuranStack}
                     options={{
                         title: 'அல் குர்ஆன்',
-                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📖</Text>,
+                        drawerIcon: ({ color }) => <Ionicons name="book" size={24} color={color} />,
                     }}
                 />
                 <Drawer.Screen
@@ -265,7 +269,7 @@ export default function App() {
                     component={LearnQuranStack}
                     options={{
                         title: 'குர்ஆனை வாசிக்க கற்றுக்கொள்வோம். (20 நாட்களில்)',
-                        drawerIcon: ({ color }) => <Ionicons name="book" size={22} color={color} />,
+                        drawerIcon: ({ color }) => <Ionicons name="school" size={24} color={color} />,
                     }}
                 />
                 <Drawer.Screen
@@ -273,7 +277,7 @@ export default function App() {
                     component={AdhkarStack}
                     options={{
                         title: 'காலை & மாலை திக்ருகள்',
-                        drawerIcon: ({ color }) => <Ionicons name="sunny" size={22} color={color} />,
+                        drawerIcon: ({ color }) => <Ionicons name="sunny" size={24} color={color} />,
                     }}
                 />
                 <Drawer.Screen
@@ -281,7 +285,7 @@ export default function App() {
                     component={SignificantStack}
                     options={{
                         title: 'முக்கியமான ஸூராக்கள் & வசனங்கள்',
-                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>⭐</Text>,
+                        drawerIcon: ({ color }) => <Ionicons name="star" size={24} color={color} />,
                     }}
                 />
                 <Drawer.Screen
@@ -289,7 +293,7 @@ export default function App() {
                     component={PrayerStack}
                     options={{
                         title: 'தொழுகை வழிகாட்டி',
-                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🕌</Text>,
+                        drawerIcon: ({ color }) => <Ionicons name="moon" size={24} color={color} />,
                     }}
                 />
                 <Drawer.Screen
@@ -297,7 +301,7 @@ export default function App() {
                     component={KnowledgeStack}
                     options={{
                         title: 'கல்வியைத் தேடுதல்',
-                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🎓</Text>,
+                        drawerIcon: ({ color }) => <Ionicons name="bulb" size={24} color={color} />,
                     }}
                 />
             </Drawer.Navigator>
