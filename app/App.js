@@ -194,15 +194,21 @@ function PrayerStack() {
             <Stack.Screen
                 name="AsSalahList"
                 component={AsSalahListScreen}
-                options={{
+                options={({ navigation }) => ({
                     title: 'தொழுகை வழிகாட்டி',
-                    headerShown: false,
-                }}
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
             />
             <Stack.Screen
                 name="AsSalahDetail"
                 component={AsSalahDetailScreen}
-                options={({ route }) => ({ title: route.params?.section?.title || 'விவரங்கள்' })}
+                options={{
+                    title: 'தொழுகை வழிகாட்டி',
+                }}
             />
         </Stack.Navigator>
     );
@@ -342,6 +348,7 @@ export default function App() {
                     options={{
                         title: 'தொழுகை வழிகாட்டி',
                         drawerIcon: ({ color }) => <Ionicons name="moon" size={24} color={color} />,
+                        headerShown: false,
                     }}
                 />
                 <Drawer.Screen
