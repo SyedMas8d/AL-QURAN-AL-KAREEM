@@ -6,7 +6,6 @@ import { getSignificantTableOfContents } from '../data/dataService';
 const SignificantListScreen = ({ navigation }) => {
     const [verses, setVerses] = useState([]);
     const [suras, setSuras] = useState([]);
-    const [adkhars, setAdkhars] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,7 +17,6 @@ const SignificantListScreen = ({ navigation }) => {
             const data = await getSignificantTableOfContents();
             setVerses(data.verses || []);
             setSuras(data.suras || []);
-            setAdkhars(data.morning_and_evening_adkhars || []);
         } catch (error) {
             console.error('Error loading significant content:', error);
         } finally {
@@ -30,33 +28,21 @@ const SignificantListScreen = ({ navigation }) => {
         navigation.navigate('SignificantDetail', { item, type });
     };
 
-    const navigateToVideo = (item) => {
-        navigation.navigate('VideoDetail', {
-            title: item.title,
-            youtubeLink: item.youtube_link,
-            categoryTitle: 'காலை & மாலை திக்ருகள்',
-        });
-    };
-
-    const renderAdkharItem = ({ item }) => (
-        <TouchableOpacity style={styles.item} onPress={() => navigateToVideo(item)} activeOpacity={0.7}>
-            <View style={styles.itemIconContainer}>
-                <Ionicons name="play-circle" size={24} color="#FF6B6B" />
-            </View>
-            <View style={styles.itemInfo}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#999" style={styles.chevron} />
-        </TouchableOpacity>
-    );
-
     const renderVerseItem = ({ item }) => (
         <TouchableOpacity style={styles.item} onPress={() => navigateToDetail(item, 'verse')} activeOpacity={0.7}>
             <View style={styles.itemIconContainer}>
                 <Ionicons name="bookmark" size={24} color="#2E8B57" />
             </View>
             <View style={styles.itemInfo}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
+                <View style={styles.titleRow}>
+                    <Text style={styles.itemTitle}>{item.title}</Text>
+                    {item.hadith && item.hadith.length > 0 && (
+                        <View style={styles.hadithBadge}>
+                            <Ionicons name="chatbox-ellipses" size={14} color="#2E8B57" />
+                            <Text style={styles.hadithCount}>{item.hadith.length} நபி மொழி</Text>
+                        </View>
+                    )}
+                </View>
                 {item.description && <Text style={styles.itemDescription}>{item.description}</Text>}
             </View>
             <Ionicons name="chevron-forward" size={20} color="#999" style={styles.chevron} />
@@ -69,7 +55,15 @@ const SignificantListScreen = ({ navigation }) => {
                 <Ionicons name="book" size={24} color="#2E8B57" />
             </View>
             <View style={styles.itemInfo}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
+                <View style={styles.titleRow}>
+                    <Text style={styles.itemTitle}>{item.title}</Text>
+                    {item.hadith && item.hadith.length > 0 && (
+                        <View style={styles.hadithBadge}>
+                            <Ionicons name="chatbox-ellipses" size={14} color="#2E8B57" />
+                            <Text style={styles.hadithCount}>{item.hadith.length} நபி மொழி</Text>
+                        </View>
+                    )}
+                </View>
                 {item.description && <Text style={styles.itemDescription}>{item.description}</Text>}
             </View>
             <Ionicons name="chevron-forward" size={20} color="#999" style={styles.chevron} />
@@ -102,15 +96,6 @@ const SignificantListScreen = ({ navigation }) => {
                                 ஹதீஸ்களில் இருந்து பெறப்பட்ட சில முக்கிய வசனங்களும் ஸூராக்களும்
                             </Text>
                         </View>
-                        {adkhars.length > 0 && renderSectionHeader('காலை & மாலை திக்ருகள்')}
-                        {adkhars.length > 0 && (
-                            <FlatList
-                                data={adkhars}
-                                renderItem={renderAdkharItem}
-                                keyExtractor={(item, index) => `adkhar-${index}`}
-                                scrollEnabled={false}
-                            />
-                        )}
                         {suras.length > 0 && renderSectionHeader('முக்கியமான ஸூராக்கள்')}
                     </>
                 )}
@@ -212,11 +197,33 @@ const styles = StyleSheet.create({
     itemInfo: {
         flex: 1,
     },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        marginBottom: 8,
+    },
     itemTitle: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
-        marginBottom: 8,
+        marginRight: 8,
+    },
+    hadithBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#e8f5e9',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#2E8B57',
+    },
+    hadithCount: {
+        fontSize: 11,
+        color: '#2E8B57',
+        fontWeight: '600',
+        marginLeft: 4,
     },
     itemDescription: {
         fontSize: 14,

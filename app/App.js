@@ -10,6 +10,7 @@ import SignificantDetailScreen from './src/screens/SignificantDetailScreen';
 import SeekingKnowledgeListScreen from './src/screens/SeekingKnowledgeListScreen';
 import VideoDetailScreen from './src/screens/VideoDetailScreen';
 import VideoListScreen from './src/screens/VideoListScreen';
+import AdhkarListScreen from './src/screens/AdhkarListScreen';
 import AsSalahListScreen from './src/screens/AsSalahListScreen';
 import AsSalahDetailScreen from './src/screens/AsSalahDetailScreen';
 import { StyleSheet, Text, View } from 'react-native';
@@ -99,9 +100,8 @@ function AdhkarStack() {
             }}
         >
             <Stack.Screen
-                name="VideoList"
-                component={VideoListScreen}
-                initialParams={{ categoryKey: 'morning_evening_adhkar' }}
+                name="AdhkarList"
+                component={AdhkarListScreen}
                 options={{
                     title: 'காலை & மாலை திக்ருகள்',
                     headerShown: false,

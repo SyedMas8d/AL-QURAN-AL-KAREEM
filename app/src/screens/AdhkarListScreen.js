@@ -1,21 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import knowledgeData from '../data/seeking_knowledge/tableOfContents';
+import { adkhars } from '../data/adkhars/tableOfContent';
 
-export default function VideoListScreen({ route, navigation }) {
-    const { categoryKey } = route.params;
-    const category = knowledgeData[categoryKey];
-
-    if (!category) {
-        return (
-            <View style={styles.errorContainer}>
-                <Ionicons name="alert-circle" size={48} color="#999" />
-                <Text style={styles.errorText}>Category not found</Text>
-            </View>
-        );
-    }
-
+export default function AdhkarListScreen({ navigation }) {
     const renderVideoItem = ({ item, index }) => (
         <TouchableOpacity
             style={styles.card}
@@ -23,7 +11,7 @@ export default function VideoListScreen({ route, navigation }) {
                 navigation.navigate('VideoDetail', {
                     youtubeLink: item.youtube_link,
                     title: item.title,
-                    categoryTitle: category.title,
+                    categoryTitle: adkhars.title,
                 })
             }
             activeOpacity={0.7}
@@ -42,17 +30,17 @@ export default function VideoListScreen({ route, navigation }) {
     return (
         <View style={styles.container}>
             <FlatList
-                data={category.data}
+                data={adkhars.data.morning_and_evening_adkhars_videos}
                 renderItem={renderVideoItem}
                 keyExtractor={(item, index) => index.toString()}
                 ListHeaderComponent={
-                    category.description ? (
+                    adkhars.description ? (
                         <View style={styles.descriptionBox}>
                             <View style={styles.descriptionIconRow}>
                                 <Ionicons name="information-circle" size={24} color="#2E8B57" />
                                 <Text style={styles.descriptionTitle}>விவரம் (Description)</Text>
                             </View>
-                            <Text style={styles.descriptionText}>{category.description}</Text>
+                            <Text style={styles.descriptionText}>{adkhars.description}</Text>
                         </View>
                     ) : null
                 }
@@ -66,17 +54,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f8f9fa',
-    },
-    errorContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f8f9fa',
-    },
-    errorText: {
-        marginTop: 10,
-        fontSize: 16,
-        color: '#999',
     },
     descriptionBox: {
         backgroundColor: '#FFFEF7',
