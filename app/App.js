@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { StatusBar } from 'expo-status-bar';
 import SuraListScreen from './src/screens/SuraListScreen';
 import SuraDetailScreen from './src/screens/SuraDetailScreen';
@@ -9,14 +9,17 @@ import SignificantListScreen from './src/screens/SignificantListScreen';
 import SignificantDetailScreen from './src/screens/SignificantDetailScreen';
 import SeekingKnowledgeListScreen from './src/screens/SeekingKnowledgeListScreen';
 import VideoDetailScreen from './src/screens/VideoDetailScreen';
+import VideoListScreen from './src/screens/VideoListScreen';
 import AsSalahListScreen from './src/screens/AsSalahListScreen';
 import AsSalahDetailScreen from './src/screens/AsSalahDetailScreen';
 import { StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
-// Stack Navigator for Quran Tab
+// Stack Navigator for Quran
 function QuranStack() {
     return (
         <Stack.Navigator
@@ -30,7 +33,14 @@ function QuranStack() {
                 },
             }}
         >
-            <Stack.Screen name="SuraList" component={SuraListScreen} options={{ title: 'அல் குர்ஆன் அல் கரீம்' }} />
+            <Stack.Screen
+                name="SuraList"
+                component={SuraListScreen}
+                options={{
+                    title: 'அல் குர்ஆன் அல் கரீம்',
+                    headerShown: false,
+                }}
+            />
             <Stack.Screen
                 name="SuraDetail"
                 component={SuraDetailScreen}
@@ -40,7 +50,75 @@ function QuranStack() {
     );
 }
 
-// Stack Navigator for Significant Tab
+// Stack Navigator for Learn to Read Quran (20 days)
+function LearnQuranStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen
+                name="VideoList"
+                component={VideoListScreen}
+                initialParams={{ categoryKey: 'learn_to_read_quran' }}
+                options={{
+                    title: 'குர்ஆனை வாசிக்க கற்றுக்கொள்வோம்',
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="VideoDetail"
+                component={VideoDetailScreen}
+                options={({ route }) => ({
+                    title: route.params?.categoryTitle || 'Video',
+                })}
+            />
+        </Stack.Navigator>
+    );
+}
+
+// Stack Navigator for Morning & Evening Adhkar
+function AdhkarStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen
+                name="VideoList"
+                component={VideoListScreen}
+                initialParams={{ categoryKey: 'morning_evening_adhkar' }}
+                options={{
+                    title: 'காலை & மாலை திக்ருகள்',
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="VideoDetail"
+                component={VideoDetailScreen}
+                options={({ route }) => ({
+                    title: route.params?.categoryTitle || 'Video',
+                })}
+            />
+        </Stack.Navigator>
+    );
+}
+
+// Stack Navigator for Significant
 function SignificantStack() {
     return (
         <Stack.Navigator
@@ -57,7 +135,10 @@ function SignificantStack() {
             <Stack.Screen
                 name="SignificantList"
                 component={SignificantListScreen}
-                options={{ title: 'முக்கியமானவை' }}
+                options={{
+                    title: 'முக்கியமானவை',
+                    headerShown: false,
+                }}
             />
             <Stack.Screen
                 name="SignificantDetail"
@@ -75,7 +156,38 @@ function SignificantStack() {
     );
 }
 
-// Stack Navigator for Seeking Knowledge Tab
+// Stack Navigator for Prayer
+function PrayerStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen
+                name="AsSalahList"
+                component={AsSalahListScreen}
+                options={{
+                    title: 'தொழுகை வழிகாட்டி',
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="AsSalahDetail"
+                component={AsSalahDetailScreen}
+                options={({ route }) => ({ title: route.params?.section?.title || 'விவரங்கள்' })}
+            />
+        </Stack.Navigator>
+    );
+}
+
+// Stack Navigator for Seeking Knowledge
 function KnowledgeStack() {
     return (
         <Stack.Navigator
@@ -92,7 +204,10 @@ function KnowledgeStack() {
             <Stack.Screen
                 name="KnowledgeList"
                 component={SeekingKnowledgeListScreen}
-                options={{ title: 'கல்வியைத் தேடுதல்' }}
+                options={{
+                    title: 'கல்வியைத் தேடுதல்',
+                    headerShown: false,
+                }}
             />
             <Stack.Screen
                 name="VideoDetail"
@@ -105,148 +220,87 @@ function KnowledgeStack() {
     );
 }
 
-// Stack Navigator for Prayer Tab
-function PrayerStack() {
-    return (
-        <Stack.Navigator
-            screenOptions={{
-                headerStyle: {
-                    backgroundColor: '#2E8B57',
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    fontWeight: 'bold',
-                },
-            }}
-        >
-            <Stack.Screen name="AsSalahList" component={AsSalahListScreen} options={{ title: 'தொழுகை' }} />
-            <Stack.Screen
-                name="AsSalahDetail"
-                component={AsSalahDetailScreen}
-                options={({ route }) => ({ title: route.params?.section?.title || 'விவரங்கள்' })}
-            />
-        </Stack.Navigator>
-    );
-}
-
 export default function App() {
     console.log('App rendering...');
 
     return (
         <NavigationContainer>
-            <Tab.Navigator
+            <Drawer.Navigator
                 screenOptions={{
-                    tabBarActiveTintColor: '#2E8B57',
-                    tabBarInactiveTintColor: '#888',
-                    tabBarStyle: {
-                        backgroundColor: '#fff',
-                        borderTopWidth: 1,
-                        borderTopColor: '#e0e0e0',
-                        paddingTop: 5,
-                        paddingBottom: 5,
-                        height: 60,
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: -1 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 2,
-                        elevation: 4,
+                    drawerStyle: {
+                        backgroundColor: '#f8f9fa',
+                        width: 280,
                     },
-                    tabBarShowLabel: false,
-                    tabBarIconStyle: {
-                        marginTop: 0,
+                    drawerActiveTintColor: '#2E8B57',
+                    drawerInactiveTintColor: '#666',
+                    drawerLabelStyle: {
+                        fontSize: 15,
+                        fontWeight: '600',
+                        marginLeft: -16,
                     },
-                    headerShown: false,
+                    drawerItemStyle: {
+                        borderRadius: 8,
+                        marginVertical: 2,
+                    },
+                    drawerActiveBackgroundColor: '#e8f5e9',
+                    headerStyle: {
+                        backgroundColor: '#2E8B57',
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
                 }}
             >
-                <Tab.Screen
-                    name="QuranTab"
+                <Drawer.Screen
+                    name="Quran"
                     component={QuranStack}
                     options={{
-                        tabBarIcon: ({ color, focused }) => (
-                            <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontSize: focused ? 36 : 32 }}>📖</Text>
-                                {focused && (
-                                    <View
-                                        style={{
-                                            width: 6,
-                                            height: 6,
-                                            borderRadius: 3,
-                                            backgroundColor: '#2E8B57',
-                                            marginTop: 4,
-                                        }}
-                                    />
-                                )}
-                            </View>
-                        ),
+                        title: 'அல் குர்ஆன்',
+                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📖</Text>,
                     }}
                 />
-                <Tab.Screen
-                    name="SignificantTab"
+                <Drawer.Screen
+                    name="LearnQuran"
+                    component={LearnQuranStack}
+                    options={{
+                        title: 'குர்ஆனை வாசிக்க கற்றுக்கொள்வோம். (20 நாட்களில்)',
+                        drawerIcon: ({ color }) => <Ionicons name="book" size={22} color={color} />,
+                    }}
+                />
+                <Drawer.Screen
+                    name="Adhkar"
+                    component={AdhkarStack}
+                    options={{
+                        title: 'காலை & மாலை திக்ருகள்',
+                        drawerIcon: ({ color }) => <Ionicons name="sunny" size={22} color={color} />,
+                    }}
+                />
+                <Drawer.Screen
+                    name="Significant"
                     component={SignificantStack}
                     options={{
-                        tabBarIcon: ({ color, focused }) => (
-                            <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontSize: focused ? 36 : 32 }}>⭐</Text>
-                                {focused && (
-                                    <View
-                                        style={{
-                                            width: 6,
-                                            height: 6,
-                                            borderRadius: 3,
-                                            backgroundColor: '#2E8B57',
-                                            marginTop: 4,
-                                        }}
-                                    />
-                                )}
-                            </View>
-                        ),
+                        title: 'முக்கியமான ஸூராக்கள் & வசனங்கள்',
+                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>⭐</Text>,
                     }}
                 />
-                <Tab.Screen
-                    name="PrayerTab"
+                <Drawer.Screen
+                    name="Prayer"
                     component={PrayerStack}
                     options={{
-                        tabBarIcon: ({ color, focused }) => (
-                            <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontSize: focused ? 36 : 32 }}>🕌</Text>
-                                {focused && (
-                                    <View
-                                        style={{
-                                            width: 6,
-                                            height: 6,
-                                            borderRadius: 3,
-                                            backgroundColor: '#2E8B57',
-                                            marginTop: 4,
-                                        }}
-                                    />
-                                )}
-                            </View>
-                        ),
+                        title: 'தொழுகை வழிகாட்டி',
+                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🕌</Text>,
                     }}
                 />
-                <Tab.Screen
-                    name="KnowledgeTab"
+                <Drawer.Screen
+                    name="Knowledge"
                     component={KnowledgeStack}
                     options={{
-                        tabBarIcon: ({ color, focused }) => (
-                            <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontSize: focused ? 36 : 32 }}>🎓</Text>
-                                {focused && (
-                                    <View
-                                        style={{
-                                            width: 6,
-                                            height: 6,
-                                            borderRadius: 3,
-                                            backgroundColor: '#2E8B57',
-                                            marginTop: 4,
-                                        }}
-                                    />
-                                )}
-                            </View>
-                        ),
+                        title: 'கல்வியைத் தேடுதல்',
+                        drawerIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🎓</Text>,
                     }}
                 />
-            </Tab.Navigator>
+            </Drawer.Navigator>
             <StatusBar style="light" />
         </NavigationContainer>
     );

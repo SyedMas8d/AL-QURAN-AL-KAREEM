@@ -84,7 +84,7 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
                                 onPress={() => handleVideoPress(episode, item.title)}
                             >
                                 <View style={styles.episodeIconContainer}>
-                                    <Ionicons name="play-circle" size={24} color="#FF6B6B" />
+                                    <Ionicons name="play-circle" size={32} color="#FF6B6B" />
                                 </View>
                                 <View style={styles.episodeInfo}>
                                     <Text style={styles.episodeText}>{episode.title}</Text>
@@ -213,9 +213,9 @@ const styles = StyleSheet.create({
         borderColor: '#d0e8dc',
     },
     episodeIconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
         backgroundColor: '#ffe8e8',
         justifyContent: 'center',
         alignItems: 'center',

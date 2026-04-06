@@ -10,6 +10,8 @@ const VideoDetailScreen = ({ route }) => {
 
     // Extract video ID from YouTube link
     const getYouTubeVideoId = (url) => {
+        if (!url) return null;
+
         let videoId = null;
 
         // Handle different YouTube URL formats

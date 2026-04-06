@@ -110,6 +110,28 @@ export const knowledgeData = {
             },
         ],
     },
+    morning_evening_adhkar: {
+        title: 'காலை & மாலை திக்ருகள்',
+        description: 'காலை மற்றும் மாலை நேரங்களில் ஓதவேண்டிய திக்ருகள் (நினைவுகூர்தல்கள்)',
+        data: [
+            {
+                title: 'காலை திக்ருகள் - பகுதி 1',
+                youtube_link: 'https://www.youtube.com/watch?v=JSSOZ9uMPpg',
+            },
+            {
+                title: 'காலை திக்ருகள் - பகுதி 2',
+                youtube_link: 'https://www.youtube.com/watch?v=example1',
+            },
+            {
+                title: 'மாலை திக்ருகள் - பகுதி 1',
+                youtube_link: 'https://www.youtube.com/watch?v=example2',
+            },
+            {
+                title: 'மாலை திக்ருகள் - பகுதி 2',
+                youtube_link: 'https://www.youtube.com/watch?v=example3',
+            },
+        ],
+    },
     hajjaththul_vida: {
         title: 'நபி (ஸல்) அவர்கள் நிகழ்த்திய இறுதிப் பேருரை (ஹஜ்ஜத்துல் விதா) மற்றும் தூய வாழ்வின் இறுதிப் பகுதி',
         description:
