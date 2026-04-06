@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import { getAudioSource } from '../utils/audioAssets';
 
 export default function AsSalahDetailScreen({ route }) {
     const { section } = route.params;
@@ -33,7 +34,19 @@ export default function AsSalahDetailScreen({ route }) {
                 }
 
                 setLoadingAudio(pointIndex);
-                const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl });
+
+                // Get the audio source (local or remote)
+                const audioSource = getAudioSource(audioUrl);
+
+                if (!audioSource) {
+                    // Audio file not available
+                    setLoadingAudio(null);
+                    console.warn('Audio file not available yet');
+                    return;
+                }
+
+                const { sound: newSound } = await Audio.Sound.createAsync(audioSource);
+
                 setSound(newSound);
                 setPlayingAudio(pointIndex);
                 setLoadingAudio(null);
@@ -60,8 +73,8 @@ export default function AsSalahDetailScreen({ route }) {
                 <Text style={styles.pointTitle}>{point.title}</Text>
 
                 {/* Audio Player or Coming Soon */}
-                {point.audio !== undefined &&
-                    (point.audio && point.audio.trim() !== '' ? (
+                {point.audio !== undefined && point.audio !== null ? (
+                    point.audio && point.audio.trim() !== '' ? (
                         <TouchableOpacity
                             style={styles.audioPlayer}
                             onPress={() => playAudio(point.audio, index)}
@@ -93,7 +106,8 @@ export default function AsSalahDetailScreen({ route }) {
                                 <Text style={styles.audioText}>ஒலி விரைவில்</Text>
                             </View>
                         </View>
-                    ))}
+                    )
+                ) : null}
 
                 {/* Arabic Text */}
                 {point.arabic && (

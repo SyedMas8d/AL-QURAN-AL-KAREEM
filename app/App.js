@@ -11,9 +11,12 @@ import SeekingKnowledgeListScreen from './src/screens/SeekingKnowledgeListScreen
 import VideoDetailScreen from './src/screens/VideoDetailScreen';
 import VideoListScreen from './src/screens/VideoListScreen';
 import AdhkarListScreen from './src/screens/AdhkarListScreen';
+import AdhkarTimeDetailScreen from './src/screens/AdhkarTimeDetailScreen';
+import AdhkarDetailScreen from './src/screens/AdhkarDetailScreen';
 import AsSalahListScreen from './src/screens/AsSalahListScreen';
 import AsSalahDetailScreen from './src/screens/AsSalahDetailScreen';
-import { StyleSheet, Text, View } from 'react-native';
+import ReportIssueScreen from './src/screens/ReportIssueScreen';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import 'react-native-gesture-handler';
 
@@ -102,10 +105,28 @@ function AdhkarStack() {
             <Stack.Screen
                 name="AdhkarList"
                 component={AdhkarListScreen}
+                options={({ navigation }) => ({
+                    title: 'காலை & மாலை திக்ருகள்',
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
+            />
+            <Stack.Screen
+                name="AdhkarTimeDetail"
+                component={AdhkarTimeDetailScreen}
                 options={{
                     title: 'காலை & மாலை திக்ருகள்',
-                    headerShown: false,
                 }}
+            />
+            <Stack.Screen
+                name="AdhkarDetail"
+                component={AdhkarDetailScreen}
+                options={({ route }) => ({
+                    title: route.params?.title || 'துஆ',
+                })}
             />
             <Stack.Screen
                 name="VideoDetail"
@@ -220,6 +241,32 @@ function KnowledgeStack() {
     );
 }
 
+// Stack Navigator for Report Issue
+function ReportIssueStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen
+                name="ReportIssue"
+                component={ReportIssueScreen}
+                options={{
+                    title: 'தவறுகளை சுட்டிக்காட்டு',
+                    headerShown: false,
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
 export default function App() {
     console.log('App rendering...');
 
@@ -278,6 +325,7 @@ export default function App() {
                     options={{
                         title: 'காலை & மாலை திக்ருகள்',
                         drawerIcon: ({ color }) => <Ionicons name="sunny" size={24} color={color} />,
+                        headerShown: false,
                     }}
                 />
                 <Drawer.Screen
@@ -302,6 +350,14 @@ export default function App() {
                     options={{
                         title: 'கல்வியைத் தேடுதல்',
                         drawerIcon: ({ color }) => <Ionicons name="bulb" size={24} color={color} />,
+                    }}
+                />
+                <Drawer.Screen
+                    name="ReportIssueNav"
+                    component={ReportIssueStack}
+                    options={{
+                        title: 'தவறுகளை சுட்டிக்காட்டு',
+                        drawerIcon: ({ color }) => <Ionicons name="alert-circle" size={24} color={color} />,
                     }}
                 />
             </Drawer.Navigator>
