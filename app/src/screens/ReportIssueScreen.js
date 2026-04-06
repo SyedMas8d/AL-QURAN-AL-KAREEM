@@ -13,7 +13,7 @@ const ReportIssueScreen = () => {
         }
 
         const email = 'syedmasood.s@foodhub.com';
-        const subject = 'அல் குர்ஆன் அல் கரீம் - தவறு அறிக்கை / பின்னூட்டம்';
+        const subject = 'பயன்பாட்டு - தவறு அறிக்கை / பின்னூட்டம்';
         const body = description;
 
         // Encode the email, subject, and body
