@@ -23,6 +23,50 @@
             "revelationTypeTamil": "மக்கீ"
         },
         {
+            "number": 93,
+            "name": "سُورَةُ الضُّحَىٰ",
+            "englishName": "Ad-Dhuhaa",
+            "englishNameTranslation": "The Morning Hours",
+            "tamilName": "ளுஹா",
+            "tamilNameTranslation": "முற்பகல்",
+            "revelationTypeTamil": "மக்கீ",
+            "revelationType": "Meccan",
+            "numberOfAyahs": 11
+        },
+        {
+            "number": 94,
+            "name": "سُورَةُ الشَّرۡحِ",
+            "englishName": "Ash-Sharh",
+            "englishNameTranslation": "The Consolation",
+            "revelationType": "Meccan",
+            "tamilName": "அலம் நஷ்ரஹ்",
+            "tamilNameTranslation": "விரிவாக்கல்",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 8
+        },
+        {
+            "number": 97,
+            "name": "سُورَةُ القَدۡرِ",
+            "englishName": "Al-Qadr",
+            "englishNameTranslation": "The Power, Fate",
+            "revelationType": "Meccan",
+            "tamilName": "அல்-கத்ரி",
+            "tamilNameTranslation": "கண்ணியமிக்க இரவு",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 5
+        },
+        {
+            "number": 100,
+            "name": "سُورَةُ العَادِيَاتِ",
+            "englishName": "Al-Aadiyaat",
+            "englishNameTranslation": "The Chargers",
+            "revelationType": "Meccan",
+            "tamilName": "அல்-ஆதியாத்தி",
+            "tamilNameTranslation": "வேகமாகச் செல்லுபவை",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 11
+        },
+        {
             "number": 103,
             "name": "سُورَةُ العَصۡرِ",
             "englishName": "Al-Asr",

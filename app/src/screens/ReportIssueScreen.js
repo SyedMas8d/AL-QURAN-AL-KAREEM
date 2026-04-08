@@ -12,7 +12,7 @@ const ReportIssueScreen = () => {
             return;
         }
 
-        const email = 'syedmasood.s@foodhub.com';
+        const email = 'quran.tamiltransliteration@gmail.com';
         const subject = 'பயன்பாட்டு - தவறு அறிக்கை / பின்னூட்டம்';
         const body = description;
 
@@ -77,7 +77,7 @@ const ReportIssueScreen = () => {
 
                 <View style={styles.contactInfo}>
                     <Text style={styles.contactLabel}>தொடர்பு மின்னஞ்சல்:</Text>
-                    <Text style={styles.contactEmail}>syedmasood.s@foodhub.com</Text>
+                    <Text style={styles.contactEmail}>quran.tamiltransliteration@gmail.com</Text>
                 </View>
             </View>
         </ScrollView>
