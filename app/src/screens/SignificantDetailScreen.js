@@ -4,6 +4,32 @@ import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
 import { getSignificantData } from '../data/dataService';
 
+// Helper function to render text with <b> tags as bold
+const renderTextWithBold = (text, style, boldStyle) => {
+    if (!text) return null;
+
+    // Split by <b> and </b> tags
+    const parts = text.split(/(<b>|<\/b>)/);
+    let isBold = false;
+    const elements = [];
+
+    parts.forEach((part, index) => {
+        if (part === '<b>') {
+            isBold = true;
+        } else if (part === '</b>') {
+            isBold = false;
+        } else if (part) {
+            elements.push(
+                <Text key={index} style={isBold ? [style, boldStyle] : style}>
+                    {part}
+                </Text>
+            );
+        }
+    });
+
+    return <Text style={style}>{elements}</Text>;
+};
+
 const SignificantDetailScreen = ({ route }) => {
     const { item, type } = route.params;
     const [data, setData] = useState(null);
@@ -271,7 +297,11 @@ const SignificantDetailScreen = ({ route }) => {
                         </View>
                         {ayah.sajdaDua.description && (
                             <View style={styles.sajdaDuaDescription}>
-                                <Text style={styles.sajdaDuaDescriptionText}>{ayah.sajdaDua.description}</Text>
+                                {renderTextWithBold(
+                                    ayah.sajdaDua.description,
+                                    styles.sajdaDuaDescriptionText,
+                                    styles.boldText
+                                )}
                             </View>
                         )}
                         <Text style={styles.sajdaDuaArabic}>{ayah.sajdaDua.arabic}</Text>
@@ -912,6 +942,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
         marginLeft: 8,
+    },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#1A5F3E',
     },
 });
 

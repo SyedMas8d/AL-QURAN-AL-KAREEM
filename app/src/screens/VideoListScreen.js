@@ -3,6 +3,32 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import knowledgeData from '../data/seeking_knowledge/tableOfContents';
 
+// Helper function to render text with <b> tags as bold
+const renderTextWithBold = (text, style, boldStyle) => {
+    if (!text) return null;
+
+    // Split by <b> and </b> tags
+    const parts = text.split(/(<b>|<\/b>)/);
+    let isBold = false;
+    const elements = [];
+
+    parts.forEach((part, index) => {
+        if (part === '<b>') {
+            isBold = true;
+        } else if (part === '</b>') {
+            isBold = false;
+        } else if (part) {
+            elements.push(
+                <Text key={index} style={isBold ? [style, boldStyle] : style}>
+                    {part}
+                </Text>
+            );
+        }
+    });
+
+    return <Text style={style}>{elements}</Text>;
+};
+
 export default function VideoListScreen({ route, navigation }) {
     const { categoryKey } = route.params;
     const category = knowledgeData[categoryKey];
@@ -33,7 +59,7 @@ export default function VideoListScreen({ route, navigation }) {
             </View>
             <View style={styles.contentContainer}>
                 <Text style={styles.videoTitle}>{item.title}</Text>
-                {item.description && <Text style={styles.videoDescription}>{item.description}</Text>}
+                {item.description && renderTextWithBold(item.description, styles.videoDescription, styles.boldText)}
             </View>
             <Ionicons name="chevron-forward" size={24} color="#999" />
         </TouchableOpacity>
@@ -52,7 +78,7 @@ export default function VideoListScreen({ route, navigation }) {
                                 <Ionicons name="information-circle" size={24} color="#2E8B57" />
                                 <Text style={styles.descriptionTitle}>விவரம் (Description)</Text>
                             </View>
-                            <Text style={styles.descriptionText}>{category.description}</Text>
+                            {renderTextWithBold(category.description, styles.descriptionText, styles.boldText)}
                         </View>
                     ) : null
                 }
@@ -151,5 +177,9 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#666',
         lineHeight: 18,
+    },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#1A5F3E',
     },
 });

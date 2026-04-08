@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Act
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { getAudioSource } from '../utils/audioAssets';
+import RichText from '../components/RichText';
 
 export default function AsSalahDetailScreen({ route }) {
     const { section } = route.params;
     const [sound, setSound] = useState(null);
     const [playingAudio, setPlayingAudio] = useState(null);
     const [loadingAudio, setLoadingAudio] = useState(null);
+    const [expandedStages, setExpandedStages] = useState({});
 
     useEffect(() => {
         return sound
@@ -17,6 +19,13 @@ export default function AsSalahDetailScreen({ route }) {
               }
             : undefined;
     }, [sound]);
+
+    const toggleStage = (pointIndex) => {
+        setExpandedStages((prev) => ({
+            ...prev,
+            [pointIndex]: !prev[pointIndex],
+        }));
+    };
 
     const playAudio = async (audioUrl, pointIndex) => {
         try {
@@ -67,10 +76,59 @@ export default function AsSalahDetailScreen({ route }) {
     };
 
     const renderPoint = (point, index) => {
+        // Check if point has a stage array
+        if (point.stage && Array.isArray(point.stage)) {
+            return (
+                <View key={index} style={styles.pointContainer}>
+                    {/* Point Title - Clickable to expand/collapse */}
+                    <TouchableOpacity style={styles.stageHeader} onPress={() => toggleStage(index)} activeOpacity={0.7}>
+                        <Text style={styles.pointTitle}>{point.title}</Text>
+                        <Ionicons
+                            name={expandedStages[index] ? 'chevron-up' : 'chevron-down'}
+                            size={24}
+                            color="#2E8B57"
+                        />
+                    </TouchableOpacity>
+
+                    {/* Simple description if available */}
+                    {point.description ? <Text style={styles.simpleDescription}>{point.description}</Text> : null}
+
+                    {/* Expandable Stage Content */}
+                    {expandedStages[index] && (
+                        <View style={styles.stageContainer}>
+                            {point.stage.map((stageItem, stageIndex) => (
+                                <View key={stageIndex} style={styles.stageItem}>
+                                    <Text style={styles.stageTitle}>{stageItem.title}</Text>
+                                    {stageItem.description ? (
+                                        <Text style={styles.stageDescription}>{stageItem.description}</Text>
+                                    ) : null}
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                </View>
+            );
+        }
+
+        // Regular point rendering (no stage array)
         return (
             <View key={index} style={styles.pointContainer}>
                 {/* Point Title */}
                 <Text style={styles.pointTitle}>{point.title}</Text>
+
+                {/* descriptionRichText - with HTML formatting */}
+                {point.descriptionRichText ? (
+                    <View style={styles.richTextContainer}>
+                        <RichText style={styles.richText} boldStyle={styles.boldText}>
+                            {point.descriptionRichText}
+                        </RichText>
+                    </View>
+                ) : null}
+
+                {/* Simple description if available (for points without detailed fields) */}
+                {point.description && !point.arabic && !point.tamilTranslation && !point.descriptionRichText ? (
+                    <Text style={styles.simpleDescription}>{point.description}</Text>
+                ) : null}
 
                 {/* Audio Player or Coming Soon */}
                 {point.audio !== undefined && point.audio !== null ? (
@@ -110,29 +168,29 @@ export default function AsSalahDetailScreen({ route }) {
                 ) : null}
 
                 {/* Arabic Text */}
-                {point.arabic && (
+                {point.arabic ? (
                     <View style={styles.arabicContainer}>
                         <Text style={styles.arabicText}>{point.arabic}</Text>
                     </View>
-                )}
+                ) : null}
 
                 {/* Tamil Transliteration */}
-                {point.tamilTransliteration && point.tamilTransliteration.trim() !== '' && (
+                {point.tamilTransliteration && point.tamilTransliteration.trim() !== '' ? (
                     <View style={styles.transliterationContainer}>
                         <Ionicons name="leaf-outline" size={16} color="#8B4513" style={styles.leafIcon} />
                         <Text style={styles.transliterationText}>{point.tamilTransliteration}</Text>
                     </View>
-                )}
+                ) : null}
 
                 {/* Tamil Translation */}
-                {point.tamilTranslation && (
+                {point.tamilTranslation ? (
                     <View style={styles.translationContainer}>
                         <Text style={styles.translationText}>{point.tamilTranslation}</Text>
                     </View>
-                )}
+                ) : null}
 
                 {/* Hadith - for context and authenticity */}
-                {point.hadith && (
+                {point.hadith ? (
                     <View style={styles.hadithContainer}>
                         <View style={styles.hadithHeader}>
                             <Ionicons name="book" size={16} color="#8B4513" />
@@ -140,23 +198,23 @@ export default function AsSalahDetailScreen({ route }) {
                         </View>
                         <Text style={styles.hadithText}>{point.hadith}</Text>
                     </View>
-                )}
+                ) : null}
 
                 {/* Reference */}
-                {point.ref && (
+                {point.ref ? (
                     <View style={styles.referenceContainer}>
                         <Ionicons name="bookmark-outline" size={14} color="#888" />
                         <Text style={styles.referenceText}>{point.ref}</Text>
                     </View>
-                )}
+                ) : null}
 
                 {/* Note */}
-                {point.note && (
+                {point.note ? (
                     <View style={styles.noteContainer}>
                         <Ionicons name="information-circle" size={18} color="#8B4513" />
                         <Text style={styles.noteText}>{point.note}</Text>
                     </View>
-                )}
+                ) : null}
             </View>
         );
     };
@@ -167,7 +225,11 @@ export default function AsSalahDetailScreen({ route }) {
                 {/* Section Header */}
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionTitle}>{section.title}</Text>
-                    <Text style={styles.sectionDescription}>{section.description}</Text>
+                    {section.description && (
+                        <RichText style={styles.sectionDescription} boldStyle={styles.boldText}>
+                            {section.description}
+                        </RichText>
+                    )}
                 </View>
 
                 {/* Points */}
@@ -213,6 +275,24 @@ const styles = StyleSheet.create({
         color: '#555',
         lineHeight: 24,
     },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#000',
+    },
+    richTextContainer: {
+        marginVertical: 10,
+        paddingHorizontal: 16,
+        backgroundColor: '#FFFEF7',
+        borderRadius: 8,
+        padding: 12,
+        borderLeftWidth: 3,
+        borderLeftColor: '#2E8B57',
+    },
+    richText: {
+        fontSize: 16,
+        lineHeight: 26,
+        color: '#333',
+    },
     pointsWrapper: {
         padding: 16,
     },
@@ -235,6 +315,44 @@ const styles = StyleSheet.create({
         color: '#2E8B57',
         marginBottom: 16,
         lineHeight: 26,
+    },
+    stageHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    simpleDescription: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#555',
+        marginBottom: 8,
+    },
+    stageContainer: {
+        marginTop: 12,
+        paddingTop: 12,
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+    },
+    stageItem: {
+        backgroundColor: '#F8FFF8',
+        padding: 14,
+        borderRadius: 8,
+        marginBottom: 10,
+        borderLeftWidth: 3,
+        borderLeftColor: '#4CAF50',
+    },
+    stageTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#1A5F3E',
+        marginBottom: 8,
+        lineHeight: 24,
+    },
+    stageDescription: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#444',
     },
     arabicContainer: {
         backgroundColor: '#FFF8DC',

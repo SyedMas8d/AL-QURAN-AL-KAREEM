@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { adkhars } from '../data/adkhars/tableOfContent';
+import RichText from '../components/RichText';
 
 export default function AdhkarListScreen({ navigation }) {
     const renderVideoItem = ({ item, index }) => (
@@ -71,7 +72,9 @@ export default function AdhkarListScreen({ navigation }) {
                             <Ionicons name="information-circle" size={24} color="#2E8B57" />
                             <Text style={styles.descriptionTitle}>விவரம் (Description)</Text>
                         </View>
-                        <Text style={styles.descriptionText}>{adkhars.description}</Text>
+                        <RichText style={styles.descriptionText} boldStyle={styles.boldText}>
+                            {adkhars.description}
+                        </RichText>
                     </View>
                 )}
 
@@ -149,6 +152,10 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         color: '#444',
         textAlign: 'left',
+    },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#000',
     },
     section: {
         marginBottom: 8,

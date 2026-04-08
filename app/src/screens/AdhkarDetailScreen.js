@@ -4,6 +4,32 @@ import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { getAudioSource } from '../utils/audioAssets';
 
+// Helper function to render text with <b> tags as bold
+const renderTextWithBold = (text, style, boldStyle) => {
+    if (!text) return null;
+
+    // Split by <b> and </b> tags
+    const parts = text.split(/(<b>|<\/b>)/);
+    let isBold = false;
+    const elements = [];
+
+    parts.forEach((part, index) => {
+        if (part === '<b>') {
+            isBold = true;
+        } else if (part === '</b>') {
+            isBold = false;
+        } else if (part) {
+            elements.push(
+                <Text key={index} style={isBold ? [style, boldStyle] : style}>
+                    {part}
+                </Text>
+            );
+        }
+    });
+
+    return <Text style={style}>{elements}</Text>;
+};
+
 export default function AdhkarDetailScreen({ route }) {
     const { item, title } = route.params;
     const [sound, setSound] = useState(null);
@@ -72,7 +98,8 @@ export default function AdhkarDetailScreen({ route }) {
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>{title}</Text>
-                    {item.description && <Text style={styles.headerDescription}>{item.description}</Text>}
+                    {item.description &&
+                        renderTextWithBold(item.description, styles.headerDescription, styles.boldText)}
                 </View>
 
                 {/* Audio Player */}
@@ -184,6 +211,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#555',
         lineHeight: 22,
+    },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#1A5F3E',
     },
     audioContainer: {
         paddingHorizontal: 16,

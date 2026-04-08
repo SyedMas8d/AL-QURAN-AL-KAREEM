@@ -3,6 +3,32 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator }
 import { Ionicons } from '@expo/vector-icons';
 import knowledgeData from '../data/seeking_knowledge/tableOfContents';
 
+// Helper function to render text with <b> tags as bold
+const renderTextWithBold = (text, style, boldStyle) => {
+    if (!text) return null;
+
+    // Split by <b> and </b> tags
+    const parts = text.split(/(<b>|<\/b>)/);
+    let isBold = false;
+    const elements = [];
+
+    parts.forEach((part, index) => {
+        if (part === '<b>') {
+            isBold = true;
+        } else if (part === '</b>') {
+            isBold = false;
+        } else if (part) {
+            elements.push(
+                <Text key={index} style={isBold ? [style, boldStyle] : style}>
+                    {part}
+                </Text>
+            );
+        }
+    });
+
+    return <Text style={style}>{elements}</Text>;
+};
+
 const SeekingKnowledgeListScreen = ({ navigation }) => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -72,7 +98,7 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
                         {item.description && (
                             <View style={styles.descriptionContainer}>
                                 <Text style={styles.descriptionTitle}>📖 விவரம் (Description)</Text>
-                                <Text style={styles.descriptionText}>{item.description}</Text>
+                                {renderTextWithBold(item.description, styles.descriptionText, styles.boldText)}
                             </View>
                         )}
 
@@ -202,6 +228,10 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         color: '#333',
         textAlign: 'left',
+    },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#1A5F3E',
     },
     episodeButton: {
         backgroundColor: '#f0f8f4',

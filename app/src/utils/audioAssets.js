@@ -17,6 +17,13 @@ export const getAudioSource = (audioPath) => {
         '/assets/audios/after_salah/DUA_AFT_SALAH_TASBEEH.mp3': require('../../assets/audios/after_salah/DUA_AFT_SALAH_TASBEEH.mp3'),
         '/assets/audios/adkhars/DUA_MRNG_ADKHAR.mp3': require('../../assets/audios/adkhars/DUA_MRNG_ADKHAR.mp3'),
         '/assets/audios/adkhars/DUA_MRN_EVE_RALITHU.mp3': require('../../assets/audios/adkhars/DUA_MRN_EVE_RALITHU.mp3'),
+        '/assets/audios/at_salah/DUA_AT_SALAH_BAID.mp3': require('../../assets/audios/at_salah/DUA_AT_SALAH_BAID.mp3'),
+        '/assets/audios/at_salah/DUA_AT_RUKU.mp3': require('../../assets/audios/at_salah/DUA_AT_RUKU.mp3'),
+        '/assets/audios/at_salah/DUA_AT_SAJDA.mp3': require('../../assets/audios/at_salah/DUA_AT_SAJDA.mp3'),
+        '/assets/audios/at_salah/DUA_AT_THASUHUDHU.mp3': require('../../assets/audios/at_salah/DUA_AT_THASUHUDHU.mp3'),
+        '/assets/audios/at_salah/DUA_BTW_2_SAJDA.mp3': require('../../assets/audios/at_salah/DUA_BTW_2_SAJDA.mp3'),
+        '/assets/audios/at_salah/DUA_BTW_2_SAJDA_OPT.mp3': require('../../assets/audios/at_salah/DUA_BTW_2_SAJDA_OPT.mp3'),
+        '/assets/audios/at_salah/DUA_SALAWATH.mp3': require('../../assets/audios/at_salah/DUA_SALAWATH.mp3'),
     };
 
     if (audioRequireMap[audioPath]) {
