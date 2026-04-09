@@ -67,6 +67,28 @@
             "numberOfAyahs": 11
         },
         {
+            "number": 101,
+            "name": "سُورَةُ القَارِعَةِ",
+            "englishName": "Al-Qaari'a",
+            "englishNameTranslation": "The Calamity",
+            "revelationType": "Meccan",
+            "tamilName": "அல்-காரி'அஹ்",
+            "tamilNameTranslation": "திடுக்கிடச் செய்யும் நிகழ்ச்சி",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 11
+        },
+        {
+            "number": 102,
+            "name": "سُورَةُ التَّكَاثُرِ",
+            "englishName": "At-Takaathur",
+            "englishNameTranslation": "Competition",
+            "revelationType": "Meccan",
+            "tamilName": "அத்-தகாஸுர்",
+            "tamilNameTranslation": "பேராசை",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 8
+        },
+        {
             "number": 103,
             "name": "سُورَةُ العَصۡرِ",
             "englishName": "Al-Asr",
