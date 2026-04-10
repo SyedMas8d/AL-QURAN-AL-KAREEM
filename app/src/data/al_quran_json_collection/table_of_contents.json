@@ -45,6 +45,17 @@
             "numberOfAyahs": 8
         },
         {
+            "number": 95,
+            "name": "سُورَةُ التِّينِ",
+            "englishName": "At-Tin",
+            "englishNameTranslation": "The Fig",
+            "revelationType": "Meccan",
+            "tamilName": "அத்-தீன்",
+            "tamilNameTranslation": "அத்தி",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 8
+        },
+        {
             "number": 97,
             "name": "سُورَةُ القَدۡرِ",
             "englishName": "Al-Qadr",
@@ -54,6 +65,17 @@
             "tamilNameTranslation": "கண்ணியமிக்க இரவு",
             "revelationTypeTamil": "மக்கீ",
             "numberOfAyahs": 5
+        },
+        {
+            "number": 99,
+            "name": "سُورَةُ الزَّلۡزَلَةِ",
+            "englishName": "Az-Zalzala",
+            "englishNameTranslation": "The Earthquake",
+            "revelationType": "Medinan",
+            "tamilName": "ஜில்ஜால்",
+            "tamilNameTranslation": "அதிர்ச்சி",
+            "revelationTypeTamil": "மக்கீ",
+            "numberOfAyahs": 8
         },
         {
             "number": 100,

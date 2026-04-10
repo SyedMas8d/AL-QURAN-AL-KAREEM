@@ -30,7 +30,9 @@ import sura103Data from './al_quran_json_collection/103.json';
 import sura102Data from './al_quran_json_collection/102.json';
 import sura101Data from './al_quran_json_collection/101.json';
 import sura100Data from './al_quran_json_collection/100.json';
+import sura99Data from './al_quran_json_collection/99.json';
 import sura97Data from './al_quran_json_collection/97.json';
+import sura95Data from './al_quran_json_collection/95.json';
 import sura94Data from './al_quran_json_collection/94.json';
 import sura93Data from './al_quran_json_collection/93.json';
 import sura87Data from './al_quran_json_collection/87.json';
@@ -54,7 +56,9 @@ const suraDataMap = {
     102: sura102Data,
     101: sura101Data,
     100: sura100Data,
+    99: sura99Data,
     97: sura97Data,
+    95: sura95Data,
     94: sura94Data,
     93: sura93Data,
     87: sura87Data,
