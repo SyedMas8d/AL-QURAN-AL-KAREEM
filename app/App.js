@@ -15,6 +15,7 @@ import AdhkarTimeDetailScreen from './src/screens/AdhkarTimeDetailScreen';
 import AdhkarDetailScreen from './src/screens/AdhkarDetailScreen';
 import AsSalahListScreen from './src/screens/AsSalahListScreen';
 import AsSalahDetailScreen from './src/screens/AsSalahDetailScreen';
+import DailyDuasListScreen from './src/screens/DailyDuasListScreen';
 import ReportIssueScreen from './src/screens/ReportIssueScreen';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -214,6 +215,36 @@ function PrayerStack() {
     );
 }
 
+// Stack Navigator for Daily Duas
+function DailyDuasStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen
+                name="DailyDuasList"
+                component={DailyDuasListScreen}
+                options={({ navigation }) => ({
+                    title: 'தினசரி துஆக்கள்',
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
+            />
+        </Stack.Navigator>
+    );
+}
+
 // Stack Navigator for Seeking Knowledge
 function KnowledgeStack() {
     return (
@@ -348,6 +379,15 @@ export default function App() {
                     options={{
                         title: 'தொழுகை வழிகாட்டி',
                         drawerIcon: ({ color }) => <Ionicons name="moon" size={24} color={color} />,
+                        headerShown: false,
+                    }}
+                />
+                <Drawer.Screen
+                    name="DailyDuas"
+                    component={DailyDuasStack}
+                    options={{
+                        title: 'தினசரி துஆக்கள்',
+                        drawerIcon: ({ color }) => <Ionicons name="calendar" size={24} color={color} />,
                         headerShown: false,
                     }}
                 />

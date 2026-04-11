@@ -1,0 +1,433 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
+import { dailyDua } from '../data/daily_duas/tableOfContent';
+import { getAudioSource } from '../utils/audioAssets';
+import RichText from '../components/RichText';
+
+export default function DailyDuasListScreen() {
+    const [playingAudios, setPlayingAudios] = useState({});
+    const [loadingAudios, setLoadingAudios] = useState({});
+    const [expandedItems, setExpandedItems] = useState({});
+
+    useEffect(() => {
+        return () => {
+            // Cleanup: stop all audios when component unmounts
+            Object.values(playingAudios).forEach(({ sound }) => {
+                if (sound) {
+                    sound.unloadAsync();
+                }
+            });
+        };
+    }, [playingAudios]);
+
+    const toggleItem = (index) => {
+        setExpandedItems((prev) => ({
+            ...prev,
+            [index]: !prev[index],
+        }));
+    };
+
+    const toggleAudio = async (index, audioPath) => {
+        const audioKey = `dua-${index}`;
+
+        if (!audioPath) {
+            return;
+        }
+
+        const audioSource = getAudioSource(audioPath);
+        if (!audioSource) {
+            return;
+        }
+
+        try {
+            if (playingAudios[audioKey]) {
+                // Stop the audio
+                const { sound } = playingAudios[audioKey];
+                await sound.stopAsync();
+                await sound.unloadAsync();
+                setPlayingAudios((prev) => {
+                    const newState = { ...prev };
+                    delete newState[audioKey];
+                    return newState;
+                });
+            } else {
+                // Start the audio
+                setLoadingAudios((prev) => ({ ...prev, [audioKey]: true }));
+                const { sound } = await Audio.Sound.createAsync(audioSource);
+                await sound.playAsync();
+
+                sound.setOnPlaybackStatusUpdate((status) => {
+                    if (status.didJustFinish) {
+                        setPlayingAudios((prev) => {
+                            const newState = { ...prev };
+                            delete newState[audioKey];
+                            return newState;
+                        });
+                        sound.unloadAsync();
+                    }
+                });
+
+                setPlayingAudios((prev) => ({ ...prev, [audioKey]: { sound } }));
+                setLoadingAudios((prev) => ({ ...prev, [audioKey]: false }));
+            }
+        } catch (error) {
+            console.error('Error playing audio:', error);
+            setLoadingAudios((prev) => ({ ...prev, [audioKey]: false }));
+        }
+    };
+
+    const renderDuaItem = (item, index) => {
+        const audioKey = `dua-${index}`;
+        const isPlaying = !!playingAudios[audioKey];
+        const isLoading = !!loadingAudios[audioKey];
+        const audioSource = item.audio ? getAudioSource(item.audio) : null;
+        const isExpanded = expandedItems[index];
+
+        return (
+            <View key={index} style={styles.duaContainer}>
+                {/* Dua Header - Clickable to expand/collapse */}
+                <TouchableOpacity style={styles.duaHeader} onPress={() => toggleItem(index)} activeOpacity={0.7}>
+                    <View style={styles.duaNumberContainer}>
+                        <Text style={styles.duaNumber}>{index + 1}</Text>
+                    </View>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.duaTitle}>{item.title}</Text>
+                    </View>
+                    <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color="#2E8B57" />
+                </TouchableOpacity>
+
+                {/* Expandable Content */}
+                {isExpanded && (
+                    <View style={styles.expandedContent}>
+                        {/* Audio Player */}
+                        <View style={styles.audioContainer}>
+                            {audioSource ? (
+                                <TouchableOpacity
+                                    style={styles.audioPlayer}
+                                    onPress={() => toggleAudio(index, item.audio)}
+                                    disabled={isLoading}
+                                >
+                                    <Ionicons
+                                        name={isPlaying ? 'pause-circle' : 'play-circle'}
+                                        size={28}
+                                        color="#2E8B57"
+                                    />
+                                    <View style={styles.audioTextContainer}>
+                                        <Text style={styles.audioPlayerTextMain}>
+                                            {isPlaying ? 'ஒலியை நிறுத்து' : 'ஒலியைக் கேளுங்கள்'}
+                                        </Text>
+                                        <Text style={styles.audioPlayerTextSub}>
+                                            {isPlaying ? 'இயக்கத்தில்...' : 'தட்டவும்'}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ) : (
+                                <View style={styles.audioPlaceholder}>
+                                    <Ionicons name="volume-medium-outline" size={20} color="#999" />
+                                    <View style={styles.audioTextContainer}>
+                                        <Text style={styles.audioTextArabic}>இன்ஷா அல்லாஹ்</Text>
+                                        <Text style={styles.audioText}>ஒலி விரைவில்</Text>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+
+                        {/* Arabic Text */}
+                        {item.arabic && (
+                            <View style={styles.arabicContainer}>
+                                <Text style={styles.arabicText}>{item.arabic}</Text>
+                            </View>
+                        )}
+
+                        {/* Tamil Transliteration */}
+                        {item.tamilTransliteration && (
+                            <View style={styles.transliterationContainer}>
+                                <View style={styles.sectionHeader}>
+                                    <Ionicons name="leaf" size={16} color="#2E8B57" />
+                                    <Text style={styles.sectionTitle}>தமிழ் எழுத்துருவாக்கம் (Transliteration)</Text>
+                                </View>
+                                <Text style={styles.transliterationText}>{item.tamilTransliteration}</Text>
+                            </View>
+                        )}
+
+                        {/* Tamil Translation */}
+                        {item.tamilTranslation && (
+                            <View style={styles.translationContainer}>
+                                <View style={styles.sectionHeader}>
+                                    <Ionicons name="language" size={16} color="#2E8B57" />
+                                    <Text style={styles.sectionTitle}>தமிழ் மொழிபெயர்ப்பு (Translation)</Text>
+                                </View>
+                                <Text style={styles.translationText}>{item.tamilTranslation}</Text>
+                            </View>
+                        )}
+
+                        {/* Reference */}
+                        {item.ref && (
+                            <View style={styles.referenceContainer}>
+                                <Ionicons name="bookmark" size={14} color="#666" />
+                                <Text style={styles.referenceText}>{item.ref}</Text>
+                            </View>
+                        )}
+                    </View>
+                )}
+            </View>
+        );
+    };
+
+    return (
+        <View style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+                {/* Header Description */}
+                <View style={styles.headerContainer}>
+                    <View style={styles.headerIconRow}>
+                        <Ionicons name="calendar" size={28} color="#2E8B57" />
+                        <Text style={styles.headerTitle}>{dailyDua.title}</Text>
+                    </View>
+                    {dailyDua.description && (
+                        <RichText
+                            style={styles.headerDescription}
+                            boldStyle={styles.boldText}
+                            italicStyle={styles.italicText}
+                        >
+                            {dailyDua.description}
+                        </RichText>
+                    )}
+                    <View style={styles.countBadge}>
+                        <Ionicons name="list" size={16} color="#2E8B57" />
+                        <Text style={styles.countText}>{dailyDua.points.length} துஆக்கள்</Text>
+                    </View>
+                </View>
+
+                {/* Duas List */}
+                <View style={styles.duasListContainer}>
+                    {dailyDua.points.map((item, index) => renderDuaItem(item, index))}
+                </View>
+
+                <View style={{ height: 40 }} />
+            </ScrollView>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    headerContainer: {
+        backgroundColor: '#FFFEF7',
+        padding: 20,
+        marginHorizontal: 16,
+        marginTop: 16,
+        marginBottom: 16,
+        borderRadius: 12,
+        borderLeftWidth: 4,
+        borderLeftColor: '#2E8B57',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    headerIconRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    headerTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#2E8B57',
+        marginLeft: 12,
+    },
+    headerDescription: {
+        fontSize: 14,
+        color: '#666',
+        lineHeight: 20,
+        marginBottom: 12,
+    },
+    countBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#e8f5e9',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        alignSelf: 'flex-start',
+    },
+    countText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#2E8B57',
+        marginLeft: 6,
+    },
+    duasListContainer: {
+        paddingHorizontal: 16,
+    },
+    expandedContent: {
+        marginTop: 12,
+    },
+    duaContainer: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+        borderLeftWidth: 3,
+        borderLeftColor: '#2E8B57',
+    },
+    duaHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    duaNumberContainer: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#2E8B57',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    duaNumber: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    titleContainer: {
+        flex: 1,
+        marginRight: 8,
+    },
+    duaTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+        lineHeight: 22,
+    },
+    audioContainer: {
+        marginBottom: 12,
+    },
+    audioPlayer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#e8f5e9',
+        padding: 12,
+        borderRadius: 8,
+    },
+    audioPlayerTextMain: {
+        fontSize: 15,
+        color: '#2E8B57',
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    audioPlayerTextSub: {
+        fontSize: 12,
+        color: '#999',
+        textAlign: 'center',
+        marginTop: 2,
+    },
+    audioPlaceholder: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 10,
+        backgroundColor: '#f9f9f9',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        borderStyle: 'dashed',
+    },
+    audioTextContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginLeft: 8,
+    },
+    audioTextArabic: {
+        fontSize: 16,
+        color: '#2E8B57',
+        fontWeight: '500',
+        marginBottom: 2,
+    },
+    audioText: {
+        fontSize: 14,
+        color: '#999',
+    },
+    arabicContainer: {
+        backgroundColor: '#FFFEF7',
+        padding: 16,
+        borderRadius: 8,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+    },
+    arabicText: {
+        fontSize: 24,
+        lineHeight: 40,
+        textAlign: 'right',
+        color: '#1a1a1a',
+        fontWeight: '500',
+    },
+    transliterationContainer: {
+        backgroundColor: '#f5f5f5',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 12,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    sectionTitle: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#2E8B57',
+        marginLeft: 6,
+    },
+    transliterationText: {
+        fontSize: 16,
+        lineHeight: 24,
+        color: '#333',
+    },
+    translationContainer: {
+        backgroundColor: '#e8f5e9',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 12,
+    },
+    translationText: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#333',
+    },
+    referenceContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingTop: 8,
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+    },
+    referenceText: {
+        fontSize: 12,
+        color: '#666',
+        fontStyle: 'italic',
+        marginLeft: 6,
+    },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#000',
+    },
+    italicText: {
+        fontStyle: 'italic',
+    },
+});
