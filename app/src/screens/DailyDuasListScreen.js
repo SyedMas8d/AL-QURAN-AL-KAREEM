@@ -173,9 +173,7 @@ export default function DailyDuasListScreen() {
                                 {item.hadith.map((hadithItem, hadithIndex) => (
                                     <View key={hadithIndex} style={styles.hadithContainer}>
                                         <Text style={styles.hadithText}>{hadithItem.text}</Text>
-                                        {hadithItem.ref && (
-                                            <Text style={styles.hadithRef}>— {hadithItem.ref}</Text>
-                                        )}
+                                        {hadithItem.ref && <Text style={styles.hadithRef}>— {hadithItem.ref}</Text>}
                                     </View>
                                 ))}
                             </View>
