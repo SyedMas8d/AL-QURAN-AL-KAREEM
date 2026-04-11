@@ -172,7 +172,9 @@ export default function DailyDuasListScreen() {
                                 </View>
                                 {item.hadith.map((hadithItem, hadithIndex) => (
                                     <View key={hadithIndex} style={styles.hadithContainer}>
-                                        <Text style={styles.hadithText}>{hadithItem.text}</Text>
+                                        <RichText style={styles.hadithText} boldStyle={styles.hadithBoldText}>
+                                            {hadithItem.text}
+                                        </RichText>
                                         {hadithItem.ref && <Text style={styles.hadithRef}>— {hadithItem.ref}</Text>}
                                     </View>
                                 ))}
@@ -475,6 +477,10 @@ const styles = StyleSheet.create({
         color: '#8B4513',
         fontStyle: 'italic',
         marginTop: 4,
+    },
+    hadithBoldText: {
+        fontWeight: 'bold',
+        color: '#8B4513',
     },
     boldText: {
         fontWeight: 'bold',
