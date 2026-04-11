@@ -163,6 +163,24 @@ export default function DailyDuasListScreen() {
                             </View>
                         )}
 
+                        {/* Hadith - for context and authenticity */}
+                        {item.hadith && item.hadith.length > 0 && (
+                            <View style={styles.hadithSection}>
+                                <View style={styles.hadithHeader}>
+                                    <Ionicons name="book" size={18} color="#8B4513" />
+                                    <Text style={styles.hadithHeaderText}>தொடர்புடைய ஹதீஸ்கள்</Text>
+                                </View>
+                                {item.hadith.map((hadithItem, hadithIndex) => (
+                                    <View key={hadithIndex} style={styles.hadithContainer}>
+                                        <Text style={styles.hadithText}>{hadithItem.text}</Text>
+                                        {hadithItem.ref && (
+                                            <Text style={styles.hadithRef}>— {hadithItem.ref}</Text>
+                                        )}
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+
                         {/* Reference */}
                         {item.ref && (
                             <View style={styles.referenceContainer}>
@@ -422,6 +440,43 @@ const styles = StyleSheet.create({
         color: '#666',
         fontStyle: 'italic',
         marginLeft: 6,
+    },
+    hadithSection: {
+        marginBottom: 12,
+    },
+    hadithHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+        paddingBottom: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+    },
+    hadithHeaderText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#8B4513',
+        marginLeft: 8,
+    },
+    hadithContainer: {
+        backgroundColor: '#FFF8DC',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 10,
+        borderLeftWidth: 3,
+        borderLeftColor: '#8B4513',
+    },
+    hadithText: {
+        fontSize: 14,
+        lineHeight: 22,
+        color: '#333',
+        marginBottom: 6,
+    },
+    hadithRef: {
+        fontSize: 12,
+        color: '#8B4513',
+        fontStyle: 'italic',
+        marginTop: 4,
     },
     boldText: {
         fontWeight: 'bold',
