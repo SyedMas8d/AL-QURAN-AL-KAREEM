@@ -24,6 +24,14 @@ export const getAudioSource = (audioPath) => {
         '/assets/audios/at_salah/DUA_BTW_2_SAJDA.mp3': require('../../assets/audios/at_salah/DUA_BTW_2_SAJDA.mp3'),
         '/assets/audios/at_salah/DUA_BTW_2_SAJDA_OPT.mp3': require('../../assets/audios/at_salah/DUA_BTW_2_SAJDA_OPT.mp3'),
         '/assets/audios/at_salah/DUA_SALAWATH.mp3': require('../../assets/audios/at_salah/DUA_SALAWATH.mp3'),
+        '/assets/audios/daily_duas/DUA_WAKEUP.mp3': require('../../assets/audios/daily_duas/DUA_WAKEUP.mp3'),
+        '/assets/audios/daily_duas/DUA_ENT_TOILET.mp3': require('../../assets/audios/daily_duas/DUA_ENT_TOILET.mp3'),
+        '/assets/audios/daily_duas/DUA_AFT_ODU.mp3': require('../../assets/audios/daily_duas/DUA_AFT_ODU.mp3'),
+        '/assets/audios/daily_duas/DUA_AFT_DRESS_UP.mp3': require('../../assets/audios/daily_duas/DUA_AFT_DRESS_UP.mp3'),
+        '/assets/audios/daily_duas/DUA_SEEING_MIRROR.mp3': require('../../assets/audios/daily_duas/DUA_SEEING_MIRROR.mp3'),
+        '/assets/audios/daily_duas/DUA_AFT_MEAL.mp3': require('../../assets/audios/daily_duas/DUA_AFT_MEAL.mp3'),
+        '/assets/audios/daily_duas/DUA_LEAVE_HOUSE.mp3': require('../../assets/audios/daily_duas/DUA_LEAVE_HOUSE.mp3'),
+        '/assets/audios/daily_duas/DUA_TRAVEL.mp3': require('../../assets/audios/daily_duas/DUA_TRAVEL.mp3'),
     };
 
     if (audioRequireMap[audioPath]) {
