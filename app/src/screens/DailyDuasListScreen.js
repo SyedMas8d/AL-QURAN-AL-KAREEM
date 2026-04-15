@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import * as Clipboard from 'expo-clipboard';
 import { dailyDua } from '../data/daily_duas/tableOfContent';
 import { getAudioSource } from '../utils/audioAssets';
 import RichText from '../components/RichText';
@@ -78,6 +79,35 @@ export default function DailyDuasListScreen() {
         }
     };
 
+    const copyToClipboard = async (item) => {
+        try {
+            let textToCopy = '';
+
+            // Add Arabic text
+            if (item.arabic) {
+                textToCopy += `${item.arabic}\n\n`;
+            }
+
+            // Add Tamil transliteration
+            if (item.tamilTransliteration) {
+                textToCopy += `${item.tamilTransliteration}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (item.tamilTranslation) {
+                textToCopy += `${item.tamilTranslation}`;
+            }
+
+            await Clipboard.setStringAsync(textToCopy);
+            Alert.alert('நகலெடுக்கப்பட்டது', 'துஆ உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
+                { text: 'சரி', style: 'default' },
+            ]);
+        } catch (error) {
+            console.error('Error copying to clipboard:', error);
+            Alert.alert('பிழை', 'நகலெடுக்க முடியவில்லை');
+        }
+    };
+
     const renderDuaItem = (item, index) => {
         const audioKey = `dua-${index}`;
         const isPlaying = !!playingAudios[audioKey];
@@ -95,6 +125,16 @@ export default function DailyDuasListScreen() {
                     <View style={styles.titleContainer}>
                         <Text style={styles.duaTitle}>{item.title}</Text>
                     </View>
+                    <TouchableOpacity
+                        style={styles.copyButton}
+                        onPress={(e) => {
+                            e.stopPropagation();
+                            copyToClipboard(item);
+                        }}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="copy-outline" size={22} color="#2E8B57" />
+                    </TouchableOpacity>
                     <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color="#2E8B57" />
                 </TouchableOpacity>
 
@@ -330,6 +370,12 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#333',
         lineHeight: 22,
+    },
+    copyButton: {
+        padding: 8,
+        marginRight: 8,
+        borderRadius: 20,
+        backgroundColor: '#e8f5e9',
     },
     audioContainer: {
         marginBottom: 12,

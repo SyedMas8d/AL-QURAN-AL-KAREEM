@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    SafeAreaView,
+    TouchableOpacity,
+    ActivityIndicator,
+    Alert,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import * as Clipboard from 'expo-clipboard';
 import { getAudioSource } from '../utils/audioAssets';
 import RichText from '../components/RichText';
 
@@ -75,6 +85,38 @@ export default function AsSalahDetailScreen({ route }) {
         }
     };
 
+    const copyToClipboard = async (point) => {
+        try {
+            let textToCopy = '';
+
+            // Add Arabic text
+            if (point.arabic) {
+                textToCopy += `${point.arabic}\n\n`;
+            }
+
+            // Add Tamil transliteration
+            if (point.tamilTransliteration) {
+                textToCopy += `${point.tamilTransliteration}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (point.tamilTranslation) {
+                textToCopy += `${point.tamilTranslation}`;
+            }
+
+            // Only show alert if we have content to copy
+            if (textToCopy.trim()) {
+                await Clipboard.setStringAsync(textToCopy);
+                Alert.alert('நகலெடுக்கப்பட்டது', 'துஆ உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
+                    { text: 'சரி', style: 'default' },
+                ]);
+            }
+        } catch (error) {
+            console.error('Error copying to clipboard:', error);
+            Alert.alert('பிழை', 'நகலெடுக்க முடியவில்லை');
+        }
+    };
+
     const renderPoint = (point, index) => {
         // Check if point has a stage array
         if (point.stage && Array.isArray(point.stage)) {
@@ -113,8 +155,19 @@ export default function AsSalahDetailScreen({ route }) {
         // Regular point rendering (no stage array)
         return (
             <View key={index} style={styles.pointContainer}>
-                {/* Point Title */}
-                <Text style={styles.pointTitle}>{point.title}</Text>
+                {/* Point Title with Copy Button */}
+                <View style={styles.pointTitleRow}>
+                    <Text style={[styles.pointTitle, styles.pointTitleFlex]}>{point.title}</Text>
+                    {(point.arabic || point.tamilTransliteration || point.tamilTranslation) && (
+                        <TouchableOpacity
+                            style={styles.copyButton}
+                            onPress={() => copyToClipboard(point)}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons name="copy-outline" size={20} color="#2E8B57" />
+                        </TouchableOpacity>
+                    )}
+                </View>
 
                 {/* descriptionRichText - with HTML formatting */}
                 {point.descriptionRichText ? (
@@ -309,12 +362,28 @@ const styles = StyleSheet.create({
         borderLeftWidth: 4,
         borderLeftColor: '#2E8B57',
     },
+    pointTitleRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        marginBottom: 8,
+    },
     pointTitle: {
         fontSize: 18,
         fontWeight: '600',
         color: '#2E8B57',
         marginBottom: 16,
         lineHeight: 26,
+    },
+    pointTitleFlex: {
+        flex: 1,
+        marginRight: 8,
+        marginBottom: 0,
+    },
+    copyButton: {
+        padding: 6,
+        borderRadius: 20,
+        backgroundColor: '#e8f5e9',
     },
     stageHeader: {
         flexDirection: 'row',

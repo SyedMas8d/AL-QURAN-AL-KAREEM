@@ -157,10 +157,14 @@ function SignificantStack() {
             <Stack.Screen
                 name="SignificantList"
                 component={SignificantListScreen}
-                options={{
-                    title: 'முக்கியமானவை',
-                    headerShown: false,
-                }}
+                options={({ navigation }) => ({
+                    title: 'முக்கியமான ஸூராக்கள் & வசனங்கள்',
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
             />
             <Stack.Screen
                 name="SignificantDetail"
@@ -371,6 +375,7 @@ export default function App() {
                     options={{
                         title: 'முக்கியமான ஸூராக்கள் & வசனங்கள்',
                         drawerIcon: ({ color }) => <Ionicons name="star" size={24} color={color} />,
+                        headerShown: false,
                     }}
                 />
                 <Drawer.Screen

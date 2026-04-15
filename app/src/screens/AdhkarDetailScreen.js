@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    SafeAreaView,
+    TouchableOpacity,
+    ActivityIndicator,
+    Alert,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import * as Clipboard from 'expo-clipboard';
 import { getAudioSource } from '../utils/audioAssets';
 
 // Helper function to render text with <b> tags as bold
@@ -92,14 +102,50 @@ export default function AdhkarDetailScreen({ route }) {
         }
     };
 
+    const copyToClipboard = async () => {
+        try {
+            let textToCopy = '';
+
+            // Add Arabic text
+            if (item.arabic) {
+                textToCopy += `${item.arabic}\n\n`;
+            }
+
+            // Add Tamil transliteration
+            if (item.tamilTransliteration) {
+                textToCopy += `${item.tamilTransliteration}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (item.tamilTranslation) {
+                textToCopy += `${item.tamilTranslation}`;
+            }
+
+            await Clipboard.setStringAsync(textToCopy);
+            Alert.alert('நகலெடுக்கப்பட்டது', 'திக்ர் உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
+                { text: 'சரி', style: 'default' },
+            ]);
+        } catch (error) {
+            console.error('Error copying to clipboard:', error);
+            Alert.alert('பிழை', 'நகலெடுக்க முடியவில்லை');
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>{title}</Text>
-                    {item.description &&
-                        renderTextWithBold(item.description, styles.headerDescription, styles.boldText)}
+                    <View style={styles.headerRow}>
+                        <View style={styles.headerTextContainer}>
+                            <Text style={styles.headerTitle}>{title}</Text>
+                            {item.description &&
+                                renderTextWithBold(item.description, styles.headerDescription, styles.boldText)}
+                        </View>
+                        <TouchableOpacity style={styles.copyButton} onPress={copyToClipboard} activeOpacity={0.7}>
+                            <Ionicons name="copy-outline" size={24} color="#2E8B57" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Audio Player */}
@@ -200,6 +246,15 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 2,
     },
+    headerRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+    },
+    headerTextContainer: {
+        flex: 1,
+        marginRight: 12,
+    },
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
@@ -211,6 +266,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#555',
         lineHeight: 22,
+    },
+    copyButton: {
+        padding: 8,
+        borderRadius: 20,
+        backgroundColor: '#e8f5e9',
+        marginTop: 4,
     },
     boldText: {
         fontWeight: 'bold',

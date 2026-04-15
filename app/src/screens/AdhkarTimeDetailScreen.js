@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import * as Clipboard from 'expo-clipboard';
 import { getAudioSource } from '../utils/audioAssets';
 
 export default function AdhkarTimeDetailScreen({ route }) {
@@ -69,6 +70,35 @@ export default function AdhkarTimeDetailScreen({ route }) {
         }
     };
 
+    const copyToClipboard = async (item) => {
+        try {
+            let textToCopy = '';
+
+            // Add Arabic text
+            if (item.arabic) {
+                textToCopy += `${item.arabic}\n\n`;
+            }
+
+            // Add Tamil transliteration
+            if (item.tamilTransliteration) {
+                textToCopy += `${item.tamilTransliteration}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (item.tamilTranslation) {
+                textToCopy += `${item.tamilTranslation}`;
+            }
+
+            await Clipboard.setStringAsync(textToCopy);
+            Alert.alert('நகலெடுக்கப்பட்டது', 'திக்ர் உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
+                { text: 'சரி', style: 'default' },
+            ]);
+        } catch (error) {
+            console.error('Error copying to clipboard:', error);
+            Alert.alert('பிழை', 'நகலெடுக்க முடியவில்லை');
+        }
+    };
+
     const renderDuaItem = (item, index) => {
         const audioKey = `${type}-${index}`;
         const isPlaying = !!playingAudios[audioKey];
@@ -79,8 +109,17 @@ export default function AdhkarTimeDetailScreen({ route }) {
             <View key={index} style={styles.duaContainer}>
                 {/* Dua Number */}
                 <View style={styles.duaHeader}>
-                    <Ionicons name="book-outline" size={20} color="#2E8B57" />
-                    <Text style={styles.duaNumber}>துஆ {index + 1}</Text>
+                    <View style={styles.duaNumberRow}>
+                        <Ionicons name="book-outline" size={20} color="#2E8B57" />
+                        <Text style={styles.duaNumber}>துஆ {index + 1}</Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.copyButton}
+                        onPress={() => copyToClipboard(item)}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="copy-outline" size={22} color="#2E8B57" />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Title */}
@@ -192,16 +231,26 @@ const styles = StyleSheet.create({
     duaHeader: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         marginBottom: 12,
         paddingBottom: 12,
         borderBottomWidth: 2,
         borderBottomColor: '#2E8B57',
+    },
+    duaNumberRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     duaNumber: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#2E8B57',
         marginLeft: 8,
+    },
+    copyButton: {
+        padding: 8,
+        borderRadius: 20,
+        backgroundColor: '#e8f5e9',
     },
     titleContainer: {
         marginBottom: 12,

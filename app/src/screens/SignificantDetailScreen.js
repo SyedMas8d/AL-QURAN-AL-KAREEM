@@ -371,9 +371,9 @@ const SignificantDetailScreen = ({ route }) => {
                 contentContainerStyle={[styles.scrollContent, { paddingTop: 80 }]}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.header}>
+                {/* <View style={styles.header}>
                     <Text style={styles.title}>{item.title}</Text>
-                </View>
+                </View> */}
 
                 {/* Hadith Section - Collapsible */}
                 {item.hadith && item.hadith.length > 0 && (
