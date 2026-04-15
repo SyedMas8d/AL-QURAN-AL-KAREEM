@@ -11,7 +11,7 @@ import {
     Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import { useAudioPlayer } from 'expo-audio';
 import * as Clipboard from 'expo-clipboard';
 import { getAudioSource } from '../utils/audioAssets';
 
@@ -38,7 +38,7 @@ const renderTextWithBold = (text, style, boldStyle) => {
         }
     });
 
-    return <Text style={style}>{elements}</Text>;
+    return <>{elements}</>;
 };
 
 export default function AdhkarDetailScreen({ route }) {
@@ -50,7 +50,7 @@ export default function AdhkarDetailScreen({ route }) {
     useEffect(() => {
         return sound
             ? () => {
-                  sound.unloadAsync();
+                  sound.stopAsync();
               }
             : undefined;
     }, [sound]);
@@ -67,7 +67,7 @@ export default function AdhkarDetailScreen({ route }) {
                 // Stop previous audio if any
                 if (sound) {
                     await sound.stopAsync();
-                    await sound.unloadAsync();
+                    await sound.stopAsync();
                 }
 
                 setIsLoading(true);
@@ -82,13 +82,11 @@ export default function AdhkarDetailScreen({ route }) {
                     return;
                 }
 
-                const { sound: newSound } = await Audio.Sound.createAsync(audioSource);
+                const { sound: newSound } = await Audio.Sound.createAsync(audioSource, { shouldPlay: true });
 
                 setSound(newSound);
                 setIsPlaying(true);
                 setIsLoading(false);
-
-                await newSound.playAsync();
 
                 newSound.setOnPlaybackStatusUpdate((status) => {
                     if (status.didJustFinish) {
@@ -121,6 +119,14 @@ export default function AdhkarDetailScreen({ route }) {
             if (item.tamilTranslation) {
                 textToCopy += `${item.tamilTranslation}`;
             }
+
+            // Add reference if available
+            if (item.ref) {
+                textToCopy += `\n\n— ${item.ref}`;
+            }
+
+            // Add source attribution
+            textToCopy += `\n\nSource: https://al-quran-al-kareem-seven.vercel.app/`;
 
             await Clipboard.setStringAsync(textToCopy);
             Alert.alert('நகலெடுக்கப்பட்டது', 'திக்ர் உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
@@ -155,6 +161,14 @@ export default function AdhkarDetailScreen({ route }) {
             if (item.tamilTranslation) {
                 textToShare += `${item.tamilTranslation}`;
             }
+
+            // Add reference if available
+            if (item.ref) {
+                textToShare += `\n\n— ${item.ref}`;
+            }
+
+            // Add source attribution
+            textToShare += `\n\nSource: https://al-quran-al-kareem-seven.vercel.app/`;
 
             await Share.share({
                 message: textToShare,
@@ -278,10 +292,7 @@ const styles = StyleSheet.create({
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
+        boxShadow: '0 2px 3px rgba(0, 0, 0, 0.05)',
         elevation: 2,
     },
     headerRow: {
@@ -395,10 +406,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderLeftWidth: 4,
         borderLeftColor: '#2E8B57',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
+        boxShadow: '0 2px 3px rgba(0, 0, 0, 0.05)',
         elevation: 2,
     },
     translationText: {

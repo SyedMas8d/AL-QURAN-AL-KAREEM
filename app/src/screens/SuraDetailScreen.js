@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Alert, Share } from 'react-native';
-import { Audio } from 'expo-av';
+import { useAudioPlayer, AudioSource } from 'expo-audio';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { getSuraData } from '../data/dataService';
@@ -10,6 +10,7 @@ const SuraDetailScreen = ({ route }) => {
     const [suraData, setSuraData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sound, setSound] = useState(null);
+    const player = useAudioPlayer();
     const [playingAyah, setPlayingAyah] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [playingAll, setPlayingAll] = useState(false);
@@ -28,24 +29,18 @@ const SuraDetailScreen = ({ route }) => {
         loadSuraData();
         setupAudio();
         return () => {
-            if (sound) {
-                sound.unloadAsync();
+            if (player.playing) {
+                player.pause();
+            }
+            if (sound?.interval) {
+                clearInterval(sound.interval);
             }
         };
     }, []);
 
     const setupAudio = async () => {
-        try {
-            await Audio.setAudioModeAsync({
-                allowsRecordingIOS: false,
-                staysActiveInBackground: false,
-                playsInSilentModeIOS: true,
-                shouldDuckAndroid: true,
-                playThroughEarpieceAndroid: false,
-            });
-        } catch (error) {
-            console.error('Error setting up audio mode:', error);
-        }
+        // Note: expo-audio handles audio session automatically
+        // No manual setup required like in expo-av
     };
 
     const loadSuraData = async () => {
@@ -71,9 +66,8 @@ const SuraDetailScreen = ({ route }) => {
     const playAyah = async (ayahNumber) => {
         try {
             // Stop current audio if playing
-            if (sound) {
-                await sound.unloadAsync();
-                setSound(null);
+            if (player.playing) {
+                player.pause();
             }
 
             setPlayingAyah(ayahNumber);
@@ -82,24 +76,21 @@ const SuraDetailScreen = ({ route }) => {
 
             // Load and play new audio
             const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
-            const { sound: newSound } = await Audio.Sound.createAsync(
-                { uri: audioUrl },
-                {
-                    shouldPlay: Boolean(true),
-                    isLooping: Boolean(false),
-                    volume: 1.0,
-                }
-            );
 
-            setSound(newSound);
+            player.replace(audioUrl);
+            player.play();
 
-            newSound.setOnPlaybackStatusUpdate((status) => {
-                if (status.didJustFinish) {
+            // Set up status listener inline
+            const checkStatus = () => {
+                if (!player.playing && player.duration > 0 && player.currentTime >= player.duration) {
                     setIsPlaying(false);
                     setPlayingAyah(null);
                     setShowTranslation(true);
                 }
-            });
+            };
+
+            const interval = setInterval(checkStatus, 500);
+            setSound({ player, interval });
         } catch (error) {
             console.error('Error playing ayah:', error);
             setIsPlaying(false);
@@ -109,13 +100,16 @@ const SuraDetailScreen = ({ route }) => {
 
     const stopAyah = async () => {
         try {
-            if (sound) {
-                await sound.stopAsync();
-                setIsPlaying(false);
-                setPlayingAyah(null);
-                setPlayingAll(false);
-                setShowTranslation(true);
+            if (player.playing) {
+                player.pause();
             }
+            if (sound?.interval) {
+                clearInterval(sound.interval);
+            }
+            setIsPlaying(false);
+            setPlayingAyah(null);
+            setPlayingAll(false);
+            setShowTranslation(true);
         } catch (error) {
             console.error('Error stopping ayah:', error);
         }
@@ -136,8 +130,8 @@ const SuraDetailScreen = ({ route }) => {
             // Resume
             setPaused(false);
             setShowTranslation(false);
-            if (sound) {
-                await sound.playAsync();
+            if (player) {
+                player.play();
             }
             return;
         }
@@ -162,8 +156,8 @@ const SuraDetailScreen = ({ route }) => {
 
     // Pause All
     const pauseAllAyahs = async () => {
-        if (playingAll && !paused && sound) {
-            await sound.pauseAsync();
+        if (playingAll && !paused && player.playing) {
+            player.pause();
             setPaused(true);
             setShowTranslation(true);
         }
@@ -178,9 +172,11 @@ const SuraDetailScreen = ({ route }) => {
             // Play Bismillah first (if needed)
             if (currentAyahIndex === -1 && playingBismillah) {
                 try {
-                    if (sound) {
-                        await sound.unloadAsync();
-                        setSound(null);
+                    if (player.playing) {
+                        player.pause();
+                    }
+                    if (sound?.interval) {
+                        clearInterval(sound.interval);
                     }
 
                     setPlayingAyah('bismillah');
@@ -196,23 +192,25 @@ const SuraDetailScreen = ({ route }) => {
                         }
                     }, 150);
 
-                    const { sound: newSound } = await Audio.Sound.createAsync(
-                        { uri: BISMILLAH_AUDIO_URL },
-                        {
-                            shouldPlay: Boolean(true),
-                            isLooping: Boolean(false),
-                            volume: 1.0,
-                        }
-                    );
+                    player.replace(BISMILLAH_AUDIO_URL);
+                    player.play();
 
-                    setSound(newSound);
-
-                    newSound.setOnPlaybackStatusUpdate((status) => {
-                        if (status.didJustFinish && playingAll && !paused && !isCancelled) {
+                    const checkBismillahStatus = () => {
+                        if (
+                            !player.playing &&
+                            player.duration > 0 &&
+                            player.currentTime >= player.duration &&
+                            playingAll &&
+                            !paused &&
+                            !isCancelled
+                        ) {
                             setPlayingBismillah(false);
                             setCurrentAyahIndex(0); // Move to first ayah
                         }
-                    });
+                    };
+
+                    const interval = setInterval(checkBismillahStatus, 500);
+                    setSound({ player, interval });
                 } catch (error) {
                     console.error('Error playing Bismillah:', error);
                     setPlayingBismillah(false);
@@ -234,8 +232,11 @@ const SuraDetailScreen = ({ route }) => {
             const ayah = ayahs[currentAyahIndex];
             const ayahNumber = Number(ayah.number);
             try {
-                if (sound) {
-                    await sound.unloadAsync();
+                if (player.playing) {
+                    player.pause();
+                }
+                if (sound?.interval) {
+                    clearInterval(sound.interval);
                     setSound(null);
                 }
                 setPlayingAyah(ayahNumber);
@@ -254,20 +255,25 @@ const SuraDetailScreen = ({ route }) => {
                     }
                 }, 150);
                 const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
-                const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: audioUrl },
-                    {
-                        shouldPlay: Boolean(true),
-                        isLooping: Boolean(false),
-                        volume: 1.0,
-                    }
-                );
-                setSound(newSound);
-                newSound.setOnPlaybackStatusUpdate((status) => {
-                    if (status.didJustFinish && playingAll && !paused && !isCancelled) {
+
+                player.replace(audioUrl);
+                player.play();
+
+                const checkAyahStatus = () => {
+                    if (
+                        !player.playing &&
+                        player.duration > 0 &&
+                        player.currentTime >= player.duration &&
+                        playingAll &&
+                        !paused &&
+                        !isCancelled
+                    ) {
                         setCurrentAyahIndex((idx) => idx + 1);
                     }
-                });
+                };
+
+                const interval = setInterval(checkAyahStatus, 500);
+                setSound({ player, interval });
             } catch (error) {
                 console.error('Error playing ayah:', error);
                 if (playingAll && !paused && !isCancelled) {
@@ -302,6 +308,9 @@ const SuraDetailScreen = ({ route }) => {
             const reference = `${suraData.tamilName} (${suraData.number}:${ayah.numberInSurah})`;
             textToCopy += `— ${reference}`;
 
+            // Add source attribution
+            textToCopy += `\n\nSource: https://al-quran-al-kareem-seven.vercel.app/`;
+
             await Clipboard.setStringAsync(textToCopy);
             Alert.alert('நகலெடுக்கப்பட்டது', 'ஆயத் உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
                 { text: 'சரி', style: 'default' },
@@ -329,6 +338,9 @@ const SuraDetailScreen = ({ route }) => {
             // Add reference
             const reference = `${suraData.tamilName} (${suraData.number}:${ayah.numberInSurah})`;
             textToShare += `— ${reference}`;
+
+            // Add source attribution
+            textToShare += `\n\nSource: https://al-quran-al-kareem-seven.vercel.app/`;
 
             await Share.share({
                 message: textToShare,
@@ -515,13 +527,7 @@ const styles = StyleSheet.create({
         padding: 24,
         marginBottom: 20,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
+        boxShadow: '0 2px 3px rgba(0, 0, 0, 0.1)',
         elevation: 3,
     },
     arabicName: {
@@ -563,10 +569,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
+        boxShadow: '0 2px 3px rgba(0, 0, 0, 0.05)',
         elevation: 2,
         zIndex: 2,
     },
@@ -579,10 +582,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 25,
         minWidth: 120,
-        shadowColor: '#2E8B57',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(46, 139, 87, 0.3)',
         elevation: 3,
     },
     pauseButton: {
@@ -599,10 +599,7 @@ const styles = StyleSheet.create({
     pauseButtonActive: {
         backgroundColor: '#fbc02d',
         opacity: 1,
-        shadowColor: '#fbc02d',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(251, 192, 45, 0.3)',
         elevation: 3,
     },
     pauseButtonText: {
@@ -623,10 +620,7 @@ const styles = StyleSheet.create({
     eyeButtonActive: {
         backgroundColor: '#2E8B57',
         opacity: 1,
-        shadowColor: '#2E8B57',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(46, 139, 87, 0.3)',
         elevation: 3,
     },
     playAllText: {
@@ -641,13 +635,7 @@ const styles = StyleSheet.create({
         padding: 20,
         marginBottom: 16,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
         elevation: 1,
     },
     bismillahText: {
@@ -662,21 +650,14 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 20,
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
         elevation: 1,
     },
     ayahContainerHighlight: {
         backgroundColor: '#e8f5e9',
         borderWidth: 2,
         borderColor: '#2E8B57',
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
+        boxShadow: '0 1px 4px rgba(0, 0, 0, 0.15)',
     },
     ayahHeader: {
         flexDirection: 'row',

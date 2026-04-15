@@ -130,10 +130,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderLeftWidth: 4,
         borderLeftColor: '#2E8B57',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
         elevation: 2,
     },
     descriptionIconRow: {
@@ -212,10 +209,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderWidth: 1,
         borderColor: '#e0e0e0',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
         elevation: 3,
     },
     videoIconContainer: {

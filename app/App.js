@@ -16,6 +16,10 @@ import AdhkarDetailScreen from './src/screens/AdhkarDetailScreen';
 import AsSalahListScreen from './src/screens/AsSalahListScreen';
 import AsSalahDetailScreen from './src/screens/AsSalahDetailScreen';
 import DailyDuasListScreen from './src/screens/DailyDuasListScreen';
+import TasbihListScreen from './src/screens/TasbihListScreen';
+import TasbihBeadsScreen from './src/screens/TasbihBeadsScreen';
+import TasbihSingleDetailScreen from './src/screens/TasbihSingleDetailScreen';
+import TasbihMultiDetailScreen from './src/screens/TasbihMultiDetailScreen';
 import ReportIssueScreen from './src/screens/ReportIssueScreen';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -257,6 +261,57 @@ function DailyDuasStack() {
     );
 }
 
+// Stack Navigator for Tasbih Beads
+function TasbihBeadsStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#2E8B57',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Stack.Screen
+                name="TasbihList"
+                component={TasbihListScreen}
+                options={({ navigation }) => ({
+                    title: 'தஸ்பீஹ் மணிகள்',
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
+            />
+            <Stack.Screen
+                name="TasbihSingleDetail"
+                component={TasbihSingleDetailScreen}
+                options={({ route }) => ({
+                    title: route.params?.title || 'ஒற்றை எண்ணிக்கை',
+                })}
+            />
+            <Stack.Screen
+                name="TasbihMultiDetail"
+                component={TasbihMultiDetailScreen}
+                options={({ route }) => ({
+                    title: route.params?.title || 'பல் எண்ணிக்கை',
+                })}
+            />
+            <Stack.Screen
+                name="TasbihBeads"
+                component={TasbihBeadsScreen}
+                options={({ route }) => ({
+                    title: 'தஸ்பீஹ் மணிகள்',
+                })}
+            />
+        </Stack.Navigator>
+    );
+}
+
 // Stack Navigator for Seeking Knowledge
 function KnowledgeStack() {
     return (
@@ -411,6 +466,15 @@ export default function App() {
                     options={{
                         title: 'தினசரி துஆக்கள்',
                         drawerIcon: ({ color }) => <Ionicons name="calendar" size={24} color={color} />,
+                        headerShown: false,
+                    }}
+                />
+                <Drawer.Screen
+                    name="TasbihBeadsNav"
+                    component={TasbihBeadsStack}
+                    options={{
+                        title: 'தஸ்பீஹ் மணிகள்',
+                        drawerIcon: ({ color }) => <Ionicons name="ellipse" size={24} color={color} />,
                         headerShown: false,
                     }}
                 />

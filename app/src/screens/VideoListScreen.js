@@ -26,7 +26,7 @@ const renderTextWithBold = (text, style, boldStyle) => {
         }
     });
 
-    return <Text style={style}>{elements}</Text>;
+    return <>{elements}</>;
 };
 
 export default function VideoListScreen({ route, navigation }) {

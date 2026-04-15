@@ -11,7 +11,7 @@ import {
     Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import { useAudioPlayer } from 'expo-audio';
 import * as Clipboard from 'expo-clipboard';
 import { getAudioSource } from '../utils/audioAssets';
 import RichText from '../components/RichText';
@@ -26,7 +26,7 @@ export default function AsSalahDetailScreen({ route }) {
     useEffect(() => {
         return sound
             ? () => {
-                  sound.unloadAsync();
+                  sound.stopAsync();
               }
             : undefined;
     }, [sound]);
@@ -50,7 +50,7 @@ export default function AsSalahDetailScreen({ route }) {
                 // Stop previous audio if any
                 if (sound) {
                     await sound.stopAsync();
-                    await sound.unloadAsync();
+                    await sound.stopAsync();
                 }
 
                 setLoadingAudio(pointIndex);
@@ -65,13 +65,11 @@ export default function AsSalahDetailScreen({ route }) {
                     return;
                 }
 
-                const { sound: newSound } = await Audio.Sound.createAsync(audioSource);
+                const { sound: newSound } = await Audio.Sound.createAsync(audioSource, { shouldPlay: true });
 
                 setSound(newSound);
                 setPlayingAudio(pointIndex);
                 setLoadingAudio(null);
-
-                await newSound.playAsync();
 
                 newSound.setOnPlaybackStatusUpdate((status) => {
                     if (status.didJustFinish) {
@@ -107,7 +105,7 @@ export default function AsSalahDetailScreen({ route }) {
 
             // Only show alert if we have content to copy
             if (textToCopy.trim()) {
-                await Clipboard.setStringAsync(textToCopy);
+                await Clipboard.setStringAsync(textToCopy + '\n\nSource: https://al-quran-al-kareem-seven.vercel.app/');
                 Alert.alert('நகலெடுக்கப்பட்டது', 'துஆ உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
                     { text: 'சரி', style: 'default' },
                 ]);
@@ -144,7 +142,7 @@ export default function AsSalahDetailScreen({ route }) {
 
             if (textToShare.trim()) {
                 await Share.share({
-                    message: textToShare,
+                    message: textToShare + '\n\nSource: https://al-quran-al-kareem-seven.vercel.app/',
                 });
             }
         } catch (error) {

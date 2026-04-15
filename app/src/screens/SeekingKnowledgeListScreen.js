@@ -26,7 +26,7 @@ const renderTextWithBold = (text, style, boldStyle) => {
         }
     });
 
-    return <Text style={style}>{elements}</Text>;
+    return <>{elements}</>;
 };
 
 const SeekingKnowledgeListScreen = ({ navigation }) => {
@@ -175,13 +175,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 12,
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
         elevation: 3,
         overflow: 'hidden',
     },

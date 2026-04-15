@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import { useAudioPlayer } from 'expo-audio';
 import * as Clipboard from 'expo-clipboard';
 import { dailyDua } from '../data/daily_duas/tableOfContent';
 import { getAudioSource } from '../utils/audioAssets';
@@ -17,7 +17,7 @@ export default function DailyDuasListScreen() {
             // Cleanup: stop all audios when component unmounts
             Object.values(playingAudios).forEach(({ sound }) => {
                 if (sound) {
-                    sound.unloadAsync();
+                    sound.stopAsync();
                 }
             });
         };
@@ -47,7 +47,7 @@ export default function DailyDuasListScreen() {
                 // Stop the audio
                 const { sound } = playingAudios[audioKey];
                 await sound.stopAsync();
-                await sound.unloadAsync();
+                await sound.stopAsync();
                 setPlayingAudios((prev) => {
                     const newState = { ...prev };
                     delete newState[audioKey];
@@ -56,21 +56,20 @@ export default function DailyDuasListScreen() {
             } else {
                 // Start the audio
                 setLoadingAudios((prev) => ({ ...prev, [audioKey]: true }));
-                const { sound } = await Audio.Sound.createAsync(audioSource);
-                await sound.playAsync();
+                const { sound: player } = await Audio.Sound.createAsync(audioSource, { shouldPlay: true });
 
-                sound.setOnPlaybackStatusUpdate((status) => {
+                player.setOnPlaybackStatusUpdate((status) => {
                     if (status.didJustFinish) {
                         setPlayingAudios((prev) => {
                             const newState = { ...prev };
                             delete newState[audioKey];
                             return newState;
                         });
-                        sound.unloadAsync();
+                        player.stopAsync();
                     }
                 });
 
-                setPlayingAudios((prev) => ({ ...prev, [audioKey]: { sound } }));
+                setPlayingAudios((prev) => ({ ...prev, [audioKey]: { sound: player } }));
                 setLoadingAudios((prev) => ({ ...prev, [audioKey]: false }));
             }
         } catch (error) {
@@ -97,6 +96,14 @@ export default function DailyDuasListScreen() {
             if (item.tamilTranslation) {
                 textToCopy += `${item.tamilTranslation}`;
             }
+
+            // Add reference if available
+            if (item.ref) {
+                textToCopy += `\n\n— ${item.ref}`;
+            }
+
+            // Add source attribution
+            textToCopy += `\n\nSource: https://al-quran-al-kareem-seven.vercel.app/`;
 
             await Clipboard.setStringAsync(textToCopy);
             Alert.alert('நகலெடுக்கப்பட்டது', 'துஆ உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
@@ -131,6 +138,14 @@ export default function DailyDuasListScreen() {
             if (item.tamilTranslation) {
                 textToShare += `${item.tamilTranslation}`;
             }
+
+            // Add reference if available
+            if (item.ref) {
+                textToShare += `\n\n— ${item.ref}`;
+            }
+
+            // Add source attribution
+            textToShare += `\n\nSource: https://al-quran-al-kareem-seven.vercel.app/`;
 
             await Share.share({
                 message: textToShare,
@@ -328,10 +343,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderLeftWidth: 4,
         borderLeftColor: '#2E8B57',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
         elevation: 3,
     },
     headerIconRow: {
@@ -377,10 +389,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
         elevation: 2,
         borderLeftWidth: 3,
         borderLeftColor: '#2E8B57',

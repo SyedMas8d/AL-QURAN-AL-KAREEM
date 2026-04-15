@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { Audio } from 'expo-av';
+import { useAudioPlayer } from 'expo-audio';
 import { Ionicons } from '@expo/vector-icons';
 import { getSignificantData } from '../data/dataService';
 
@@ -27,7 +27,7 @@ const renderTextWithBold = (text, style, boldStyle) => {
         }
     });
 
-    return <Text style={style}>{elements}</Text>;
+    return <>{elements}</>;
 };
 
 const SignificantDetailScreen = ({ route }) => {
@@ -35,6 +35,7 @@ const SignificantDetailScreen = ({ route }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sound, setSound] = useState(null);
+    const player = useAudioPlayer();
     const [playingAyah, setPlayingAyah] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [playingAll, setPlayingAll] = useState(false);
@@ -51,23 +52,14 @@ const SignificantDetailScreen = ({ route }) => {
         setupAudio();
         return () => {
             if (sound) {
-                sound.unloadAsync();
+                sound.stopAsync();
             }
         };
     }, []);
 
     const setupAudio = async () => {
-        try {
-            await Audio.setAudioModeAsync({
-                allowsRecordingIOS: false,
-                staysActiveInBackground: false,
-                playsInSilentModeIOS: true,
-                shouldDuckAndroid: true,
-                playThroughEarpieceAndroid: false,
-            });
-        } catch (error) {
-            console.error('Error setting up audio mode:', error);
-        }
+        // Note: expo-audio handles audio session automatically
+        // No manual setup required like in expo-av
     };
 
     const loadData = async () => {
@@ -83,8 +75,8 @@ const SignificantDetailScreen = ({ route }) => {
 
     const playAyah = async (ayahNumber) => {
         try {
-            if (sound) {
-                await sound.unloadAsync();
+            if (player.playing) {
+                player.pause();
                 setSound(null);
             }
 
@@ -92,24 +84,21 @@ const SignificantDetailScreen = ({ route }) => {
             setIsPlaying(true);
 
             const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
-            const { sound: newSound } = await Audio.Sound.createAsync(
-                { uri: audioUrl },
-                {
-                    shouldPlay: true,
-                    isLooping: false,
-                    volume: 1.0,
-                }
-            );
 
-            setSound(newSound);
+            player.replace(audioUrl);
+            player.play();
 
-            newSound.setOnPlaybackStatusUpdate((status) => {
-                if (status.didJustFinish) {
+            // Set up status listener
+            const checkStatus = () => {
+                if (!player.playing && player.duration > 0 && player.currentTime >= player.duration) {
                     setIsPlaying(false);
                     setPlayingAyah(null);
                     setShowTranslation(true);
                 }
-            });
+            };
+
+            const interval = setInterval(checkStatus, 500);
+            setSound({ interval });
         } catch (error) {
             console.error('Error playing audio:', error);
             setIsPlaying(false);
@@ -121,7 +110,6 @@ const SignificantDetailScreen = ({ route }) => {
         try {
             if (sound) {
                 await sound.stopAsync();
-                await sound.unloadAsync();
                 setSound(null);
                 setIsPlaying(false);
                 setPlayingAyah(null);
@@ -193,7 +181,7 @@ const SignificantDetailScreen = ({ route }) => {
 
             try {
                 if (sound) {
-                    await sound.unloadAsync();
+                    await sound.stopAsync();
                     setSound(null);
                 }
                 setPlayingAyah(ayahNumber);
@@ -212,15 +200,9 @@ const SignificantDetailScreen = ({ route }) => {
                 }, 150);
 
                 const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
-                const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: audioUrl },
-                    {
-                        shouldPlay: true,
-                        isLooping: false,
-                        volume: 1.0,
-                    }
-                );
+                const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl }, { shouldPlay: true });
                 setSound(newSound);
+
                 newSound.setOnPlaybackStatusUpdate((status) => {
                     if (status.didJustFinish && playingAll && !paused && !isCancelled) {
                         setCurrentAyahIndex((idx) => idx + 1);
@@ -621,10 +603,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
+        boxShadow: '0 2px 3px rgba(0, 0, 0, 0.05)',
         elevation: 2,
     },
     floatingControls: {
@@ -642,10 +621,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
         elevation: 5,
     },
     playAllButton: {
@@ -657,10 +633,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 25,
         minWidth: 120,
-        shadowColor: '#2E8B57',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(46, 139, 87, 0.3)',
         elevation: 3,
     },
     pauseButton: {
@@ -677,10 +650,7 @@ const styles = StyleSheet.create({
     pauseButtonActive: {
         backgroundColor: '#fbc02d',
         opacity: 1,
-        shadowColor: '#fbc02d',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        boxShadow: '0 2px 4px rgba(251, 192, 45, 0.3)',
         elevation: 3,
     },
     pauseButtonText: {
