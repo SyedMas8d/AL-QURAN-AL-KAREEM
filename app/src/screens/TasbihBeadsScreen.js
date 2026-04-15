@@ -244,60 +244,66 @@ export default function TasbihBeadsScreen() {
                 <View style={styles.ropeContainer}>
                     <Text style={styles.tapInstruction}>👇 தொடவும்</Text>
 
-                    {/* Rope and Beads */}
-                    <View style={styles.ropeWrapper}>
-                        {/* Left side beads */}
-                        <View style={styles.beadGroup}>
-                            {Array.from({ length: Math.min(TOTAL_BEADS - (count % TOTAL_BEADS), 5) }).map((_, i) => (
-                                <View key={`left-${i}`} style={styles.bead}>
-                                    <Ionicons name="ellipse" size={20} color="#2E8B57" />
+                    {/* Horizontal Rope with Beads */}
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.horizontalRope}
+                    >
+                        {/* Left Rope Section */}
+                        <View style={styles.ropeSection} />
+
+                        {/* Beads on Rope */}
+                        {Array.from({ length: 10 }).map((_, i) => {
+                            const beadNumber = i + 1;
+                            const isCompleted = beadNumber <= (count % 10 || (count > 0 && count % 10 === 0 ? 10 : 0));
+                            const isAnimatingBead = isAnimating && beadNumber === (count % 10 || 10);
+
+                            return (
+                                <View key={i} style={styles.beadContainer}>
+                                    {/* Rope before bead */}
+                                    <View style={styles.ropeSection} />
+
+                                    {/* Bead */}
+                                    <Animated.View
+                                        style={[
+                                            styles.horizontalBead,
+                                            isAnimatingBead && {
+                                                transform: [
+                                                    {
+                                                        scale: moveAnim.interpolate({
+                                                            inputRange: [0, 0.5, 1],
+                                                            outputRange: [1, 1.3, 1],
+                                                        }),
+                                                    },
+                                                ],
+                                            },
+                                        ]}
+                                    >
+                                        <Ionicons
+                                            name="ellipse"
+                                            size={28}
+                                            color={isCompleted ? '#FF6B6B' : '#2E8B57'}
+                                        />
+                                    </Animated.View>
+
+                                    {/* Rope after bead */}
+                                    <View style={styles.ropeSection} />
                                 </View>
-                            ))}
-                        </View>
+                            );
+                        })}
 
-                        {/* Rope line */}
-                        <View style={styles.rope} />
+                        {/* Right Rope Section */}
+                        <View style={styles.ropeSection} />
+                    </ScrollView>
 
-                        {/* Center gap with moving bead */}
-                        <View style={styles.centerGap}>
-                            {isAnimating && (
-                                <Animated.View
-                                    style={[
-                                        styles.movingBead,
-                                        {
-                                            transform: [
-                                                {
-                                                    translateX: moveAnim.interpolate({
-                                                        inputRange: [0, 1],
-                                                        outputRange: [-60, 60],
-                                                    }),
-                                                },
-                                            ],
-                                        },
-                                    ]}
-                                >
-                                    <Ionicons name="ellipse" size={24} color="#FF6B6B" />
-                                </Animated.View>
-                            )}
-                        </View>
-
-                        {/* Rope line */}
-                        <View style={styles.rope} />
-
-                        {/* Right side beads */}
-                        <View style={styles.beadGroup}>
-                            {Array.from({ length: Math.min(count % TOTAL_BEADS, 5) }).map((_, i) => (
-                                <View key={`right-${i}`} style={styles.bead}>
-                                    <Ionicons name="ellipse" size={20} color="#999" />
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-
-                    {/* Bead counts */}
-                    <View style={styles.beadCounts}>
-                        <Text style={styles.beadCountText}>{TOTAL_BEADS - (count % TOTAL_BEADS)} மீதம்</Text>
-                        <Text style={styles.beadCountText}>{count % TOTAL_BEADS} முடிந்தது</Text>
+                    {/* Progress Info */}
+                    <View style={styles.progressInfo}>
+                        <Text style={styles.progressText}>
+                            {count % 10 === 0 && count > 0
+                                ? `✓ 10 முடிந்தது! மொத்தம்: ${count}`
+                                : `${count % 10}/10 - மொத்தம்: ${count}`}
+                        </Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -483,49 +489,44 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
     },
-    ropeWrapper: {
+    horizontalRope: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 60,
-        position: 'relative',
+        paddingVertical: 20,
+        paddingHorizontal: 10,
     },
-    beadGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    bead: {
-        marginHorizontal: 2,
-    },
-    rope: {
-        height: 3,
-        flex: 1,
+    ropeSection: {
+        height: 4,
+        width: 20,
         backgroundColor: '#8B7355',
-        marginHorizontal: 8,
+        borderRadius: 2,
+        borderWidth: 1,
+        borderColor: '#654321',
     },
-    centerGap: {
-        width: 120,
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-    },
-    movingBead: {
-        position: 'absolute',
-    },
-    beadCounts: {
+    beadContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    horizontalBead: {
+        marginHorizontal: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    progressInfo: {
+        alignItems: 'center',
         marginTop: 16,
         paddingTop: 16,
         borderTopWidth: 1,
         borderTopColor: '#e0e0e0',
     },
-    beadCountText: {
+    progressText: {
         fontSize: 14,
         color: '#666',
         fontWeight: '500',
+        textAlign: 'center',
     },
     resetButton: {
         backgroundColor: '#d32f2f',

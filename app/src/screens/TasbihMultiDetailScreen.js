@@ -261,12 +261,6 @@ export default function TasbihMultiDetailScreen({ route }) {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Ionicons name="layers" size={28} color="#FF6B6B" />
-                <Text style={styles.headerTitle}>பல் எண்ணிக்கை திக்ர்</Text>
-            </View>
-
             {/* Counter Display */}
             <View style={styles.counterContainer}>
                 <Text style={styles.counterLabel}>தற்போதைய எண்ணிக்கை</Text>
@@ -277,66 +271,66 @@ export default function TasbihMultiDetailScreen({ route }) {
                 <Text style={styles.targetText}>இலக்கு: {currentTargetCount}</Text>
             </View>
 
-            {/* Tasbih Beads - Vertical Rope */}
+            {/* Tasbih Beads - Horizontal Rope */}
             {count < currentTargetCount && (
                 <TouchableOpacity activeOpacity={0.8} onPress={handleBeadPress} disabled={isAnimating}>
                     <View style={styles.ropeContainer}>
                         <Text style={styles.tapInstruction}>👇 தொடவும்</Text>
 
-                        {/* Rope and Beads */}
-                        <View style={styles.ropeWrapper}>
-                            {/* Top beads */}
-                            <View style={styles.beadGroup}>
-                                {Array.from({ length: Math.min(TOTAL_BEADS - (count % TOTAL_BEADS), 3) }).map(
+                        {/* Horizontal Rope and Beads */}
+                        <View style={styles.horizontalRopeWrapper}>
+                            {/* Left side beads */}
+                            <View style={styles.horizontalBeadGroup}>
+                                {Array.from({ length: Math.min(TOTAL_BEADS - (count % TOTAL_BEADS), 5) }).map(
                                     (_, i) => (
-                                        <View key={`top-${i}`} style={styles.bead}>
-                                            <Ionicons name="ellipse" size={20} color="#FF6B6B" />
+                                        <View key={`left-${i}`} style={styles.horizontalBead}>
+                                            <Ionicons name="ellipse" size={32} color="#FF6B6B" />
                                         </View>
                                     )
                                 )}
                             </View>
 
-                            {/* Vertical rope line */}
-                            <View style={styles.verticalRope} />
+                            {/* Horizontal rope line */}
+                            <View style={styles.horizontalRope} />
 
                             {/* Center gap with moving bead */}
-                            <View style={styles.centerGap}>
+                            <View style={styles.horizontalCenterGap}>
                                 {isAnimating && (
                                     <Animated.View
                                         style={[
-                                            styles.movingBead,
+                                            styles.horizontalMovingBead,
                                             {
                                                 transform: [
                                                     {
-                                                        translateY: moveAnim.interpolate({
+                                                        translateX: moveAnim.interpolate({
                                                             inputRange: [0, 1],
-                                                            outputRange: [-60, 60],
+                                                            outputRange: [-80, 80],
                                                         }),
                                                     },
                                                 ],
                                             },
                                         ]}
                                     >
-                                        <Ionicons name="ellipse" size={24} color="#FFD700" />
+                                        <Ionicons name="ellipse" size={36} color="#FFD700" />
                                     </Animated.View>
                                 )}
                             </View>
 
-                            {/* Vertical rope line */}
-                            <View style={styles.verticalRope} />
+                            {/* Horizontal rope line */}
+                            <View style={styles.horizontalRope} />
 
-                            {/* Bottom beads */}
-                            <View style={styles.beadGroup}>
-                                {Array.from({ length: Math.min(count % TOTAL_BEADS, 3) }).map((_, i) => (
-                                    <View key={`bottom-${i}`} style={styles.bead}>
-                                        <Ionicons name="ellipse" size={20} color="#999" />
+                            {/* Right side beads */}
+                            <View style={styles.horizontalBeadGroup}>
+                                {Array.from({ length: Math.min(count % TOTAL_BEADS, 5) }).map((_, i) => (
+                                    <View key={`right-${i}`} style={styles.horizontalBead}>
+                                        <Ionicons name="ellipse" size={32} color="#999" />
                                     </View>
                                 ))}
                             </View>
                         </View>
 
                         {/* Bead counts */}
-                        <View style={styles.beadCounts}>
+                        <View style={styles.horizontalBeadCounts}>
                             <Text style={styles.beadCountText}>{TOTAL_BEADS - (count % TOTAL_BEADS)} மீதம்</Text>
                             <Text style={styles.beadCountText}>{count % TOTAL_BEADS} முடிந்தது</Text>
                         </View>
@@ -427,6 +421,24 @@ export default function TasbihMultiDetailScreen({ route }) {
                     <View style={styles.translationContainer}>
                         <Text style={styles.translationText}>{currentItem.tamilTranslation}</Text>
                     </View>
+
+                    {/* Hadith Section */}
+                    {currentItem.haith && currentItem.haith.length > 0 && (
+                        <View style={styles.hadithContainer}>
+                            <View style={styles.hadithHeader}>
+                                <Ionicons name="book" size={16} color="#8B4513" />
+                                <Text style={styles.hadithHeaderText}>ஹதீஸ்</Text>
+                            </View>
+                            {currentItem.haith.map((hadith, index) => (
+                                <View key={index} style={styles.hadithItem}>
+                                    <Text style={styles.hadithText}>{hadith.text}</Text>
+                                    {hadith.ref && hadith.ref.trim() !== '' && (
+                                        <Text style={styles.hadithRef}>{hadith.ref}</Text>
+                                    )}
+                                </View>
+                            ))}
+                        </View>
+                    )}
                 </View>
             )}
 
@@ -621,6 +633,39 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         color: '#333',
     },
+    hadithContainer: {
+        backgroundColor: '#FFF8DC',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 12,
+        borderLeftWidth: 3,
+        borderLeftColor: '#8B4513',
+    },
+    hadithHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    hadithHeaderText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#8B4513',
+        marginLeft: 6,
+    },
+    hadithItem: {
+        marginBottom: 8,
+    },
+    hadithText: {
+        fontSize: 14,
+        lineHeight: 22,
+        color: '#333',
+        marginBottom: 4,
+    },
+    hadithRef: {
+        fontSize: 12,
+        color: '#8B4513',
+        fontStyle: 'italic',
+    },
     counterContainer: {
         backgroundColor: '#fff',
         marginHorizontal: 16,
@@ -682,29 +727,52 @@ const styles = StyleSheet.create({
     bead: {
         marginVertical: 2,
     },
-    verticalRope: {
-        width: 3,
-        flex: 1,
-        backgroundColor: '#8B7355',
-        marginVertical: 8,
-    },
-    centerGap: {
-        width: 60,
-        height: 120,
+    horizontalRopeWrapper: {
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        minHeight: 80,
+        position: 'relative',
     },
-    movingBead: {
+    horizontalBeadGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    horizontalBead: {
+        marginHorizontal: 3,
+    },
+    horizontalRope: {
+        height: 6,
+        flex: 1,
+        backgroundColor: '#8B7355',
+        marginHorizontal: 12,
+        borderRadius: 3,
+        borderWidth: 1,
+        borderColor: '#654321',
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
+        elevation: 2,
+    },
+    horizontalCenterGap: {
+        width: 160,
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+    horizontalMovingBead: {
         position: 'absolute',
     },
-    beadCounts: {
-        flexDirection: 'column',
-        alignItems: 'center',
+    horizontalBeadCounts: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 16,
-        gap: 8,
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
     },
     beadCountText: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#666',
         fontWeight: '500',
     },

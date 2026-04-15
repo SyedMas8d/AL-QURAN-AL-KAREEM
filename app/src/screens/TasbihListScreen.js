@@ -19,17 +19,25 @@ export default function TasbihListScreen({ navigation }) {
                 arabic: item.arabic,
                 hasHadith: item.haith && item.haith.length > 0,
                 hadithCount: item.haith ? item.haith.length : 0,
+                count: item.count,
                 data: item,
             });
         });
 
         // Add multi_counter as one item
+        const multiHadithCount = tasbih_beads.multi_counter.reduce((count, item) => {
+            return count + (item.haith && item.haith.length > 0 ? item.haith.length : 0);
+        }, 0);
+
         items.push({
             id: 'multi_counter',
             type: 'multi',
-            title: 'பல் எண்ணிக்கை திக்ர்',
-            subtitle: 'ஸுப்ஹானல்லாஹ், அல்ஹம்துலில்லாஹ், அல்லாஹு அக்பர்...',
+            title: 'தஸ்பீஹ்',
+            subtitle: 'ஸுப்ஹானல்லாஹ், அல்ஹம்துலில்லாஹ், அல்லாஹு அக்பர்',
             arabic: 'سُبْحَانَ اللَّهِ، الْحَمْدُ لِلَّهِ، اللَّهُ أَكْبَرُ',
+            count: '33 + 33 + 33 + 1',
+            hasHadith: multiHadithCount > 0,
+            hadithCount: multiHadithCount,
             data: tasbih_beads.multi_counter,
         });
 
@@ -69,16 +77,17 @@ export default function TasbihListScreen({ navigation }) {
                             <Ionicons name="book" size={14} color="#8B4513" />
                             <Text style={styles.hadithHeaderText}>ஹதீஸ் ({item.hadithCount})</Text>
                         </View>
-                        <Text style={styles.hadithPreviewText}>{item.data.haith[0].text.substring(0, 80)}...</Text>
+                        <Text style={styles.hadithPreviewText}>
+                            {item.type === 'single'
+                                ? item.data.haith[0].text.substring(0, 80) + '...'
+                                : 'தொழுகைக்குப் பிறகு விவரங்களுடன் கௗரவேண்டிய ஹதீஸ்'}
+                        </Text>
                     </View>
                 )}
 
                 <View style={styles.typeIndicator}>
                     <View style={[styles.typeBadge, item.type === 'multi' ? styles.multiBadge : styles.singleBadge]}>
-                        <Ionicons name={item.type === 'multi' ? 'layers' : 'radio-button-on'} size={14} color="#fff" />
-                        <Text style={styles.badgeText}>
-                            {item.type === 'multi' ? 'பல் எண்ணிக்கை' : 'ஒற்றை எண்ணிக்கை'}
-                        </Text>
+                        <Text style={styles.countText}>{item.count}</Text>
                     </View>
 
                     {item.hasHadith && (
@@ -210,6 +219,12 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginLeft: 4,
         fontWeight: '600',
+    },
+    countText: {
+        fontSize: 14,
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     hadithIndicator: {
         flexDirection: 'row',

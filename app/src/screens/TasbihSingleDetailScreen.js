@@ -187,12 +187,6 @@ export default function TasbihSingleDetailScreen({ route }) {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Ionicons name="radio-button-on" size={28} color="#4CAF50" />
-                <Text style={styles.headerTitle}>ஒற்றை எண்ணிக்கை திக்ர்</Text>
-            </View>
-
             {/* Counter Display */}
             <View style={styles.counterContainer}>
                 <Text style={styles.counterLabel}>எண்ணிக்கை</Text>
@@ -204,63 +198,63 @@ export default function TasbihSingleDetailScreen({ route }) {
                 </Text>
             </View>
 
-            {/* Tasbih Beads - Vertical Rope */}
+            {/* Tasbih Beads - Horizontal Rope */}
             <TouchableOpacity activeOpacity={0.8} onPress={handleBeadPress} disabled={isAnimating}>
                 <View style={styles.ropeContainer}>
                     <Text style={styles.tapInstruction}>👇 தொடவும்</Text>
 
-                    {/* Rope and Beads */}
-                    <View style={styles.ropeWrapper}>
-                        {/* Top beads */}
-                        <View style={styles.beadGroup}>
-                            {Array.from({ length: Math.min(TOTAL_BEADS - (count % TOTAL_BEADS), 3) }).map((_, i) => (
-                                <View key={`top-${i}`} style={styles.bead}>
-                                    <Ionicons name="ellipse" size={20} color="#4CAF50" />
+                    {/* Horizontal Rope and Beads */}
+                    <View style={styles.horizontalRopeWrapper}>
+                        {/* Left side beads */}
+                        <View style={styles.horizontalBeadGroup}>
+                            {Array.from({ length: Math.min(TOTAL_BEADS - (count % TOTAL_BEADS), 5) }).map((_, i) => (
+                                <View key={`left-${i}`} style={styles.horizontalBead}>
+                                    <Ionicons name="ellipse" size={32} color="#4CAF50" />
                                 </View>
                             ))}
                         </View>
 
-                        {/* Vertical rope line */}
-                        <View style={styles.verticalRope} />
+                        {/* Horizontal rope line */}
+                        <View style={styles.horizontalRope} />
 
                         {/* Center gap with moving bead */}
-                        <View style={styles.centerGap}>
+                        <View style={styles.horizontalCenterGap}>
                             {isAnimating && (
                                 <Animated.View
                                     style={[
-                                        styles.movingBead,
+                                        styles.horizontalMovingBead,
                                         {
                                             transform: [
                                                 {
-                                                    translateY: moveAnim.interpolate({
+                                                    translateX: moveAnim.interpolate({
                                                         inputRange: [0, 1],
-                                                        outputRange: [-60, 60],
+                                                        outputRange: [-80, 80],
                                                     }),
                                                 },
                                             ],
                                         },
                                     ]}
                                 >
-                                    <Ionicons name="ellipse" size={24} color="#FF6B6B" />
+                                    <Ionicons name="ellipse" size={36} color="#FF6B6B" />
                                 </Animated.View>
                             )}
                         </View>
 
-                        {/* Vertical rope line */}
-                        <View style={styles.verticalRope} />
+                        {/* Horizontal rope line */}
+                        <View style={styles.horizontalRope} />
 
-                        {/* Bottom beads */}
-                        <View style={styles.beadGroup}>
-                            {Array.from({ length: Math.min(count % TOTAL_BEADS, 3) }).map((_, i) => (
-                                <View key={`bottom-${i}`} style={styles.bead}>
-                                    <Ionicons name="ellipse" size={20} color="#999" />
+                        {/* Right side beads */}
+                        <View style={styles.horizontalBeadGroup}>
+                            {Array.from({ length: Math.min(count % TOTAL_BEADS, 5) }).map((_, i) => (
+                                <View key={`right-${i}`} style={styles.horizontalBead}>
+                                    <Ionicons name="ellipse" size={32} color="#999" />
                                 </View>
                             ))}
                         </View>
                     </View>
 
                     {/* Bead counts */}
-                    <View style={styles.beadCounts}>
+                    <View style={styles.horizontalBeadCounts}>
                         <Text style={styles.beadCountText}>{TOTAL_BEADS - (count % TOTAL_BEADS)} மீதம்</Text>
                         <Text style={styles.beadCountText}>{count % TOTAL_BEADS} முடிந்தது</Text>
                     </View>
@@ -516,29 +510,52 @@ const styles = StyleSheet.create({
     bead: {
         marginVertical: 2,
     },
-    verticalRope: {
-        width: 3,
-        flex: 1,
-        backgroundColor: '#8B7355',
-        marginVertical: 8,
-    },
-    centerGap: {
-        width: 60,
-        height: 120,
+    horizontalRopeWrapper: {
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        minHeight: 80,
+        position: 'relative',
     },
-    movingBead: {
+    horizontalBeadGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    horizontalBead: {
+        marginHorizontal: 3,
+    },
+    horizontalRope: {
+        height: 6,
+        flex: 1,
+        backgroundColor: '#8B7355',
+        marginHorizontal: 12,
+        borderRadius: 3,
+        borderWidth: 1,
+        borderColor: '#654321',
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
+        elevation: 2,
+    },
+    horizontalCenterGap: {
+        width: 160,
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+    horizontalMovingBead: {
         position: 'absolute',
     },
-    beadCounts: {
-        flexDirection: 'column',
-        alignItems: 'center',
+    horizontalBeadCounts: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 16,
-        gap: 8,
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
     },
     beadCountText: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#666',
         fontWeight: '500',
     },
