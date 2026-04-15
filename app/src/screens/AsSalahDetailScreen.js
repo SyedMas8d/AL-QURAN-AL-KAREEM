@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Alert,
+    Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
@@ -117,6 +118,40 @@ export default function AsSalahDetailScreen({ route }) {
         }
     };
 
+    const shareContent = async (point) => {
+        try {
+            let textToShare = '';
+
+            // Add title if available
+            if (point.title) {
+                textToShare += `${point.title}\n\n`;
+            }
+
+            // Add Arabic text
+            if (point.arabic) {
+                textToShare += `${point.arabic}\n\n`;
+            }
+
+            // Add Tamil transliteration
+            if (point.tamilTransliteration) {
+                textToShare += `${point.tamilTransliteration}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (point.tamilTranslation) {
+                textToShare += `${point.tamilTranslation}`;
+            }
+
+            if (textToShare.trim()) {
+                await Share.share({
+                    message: textToShare,
+                });
+            }
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
+
     const renderPoint = (point, index) => {
         // Check if point has a stage array
         if (point.stage && Array.isArray(point.stage)) {
@@ -159,13 +194,22 @@ export default function AsSalahDetailScreen({ route }) {
                 <View style={styles.pointTitleRow}>
                     <Text style={[styles.pointTitle, styles.pointTitleFlex]}>{point.title}</Text>
                     {(point.arabic || point.tamilTransliteration || point.tamilTranslation) && (
-                        <TouchableOpacity
-                            style={styles.copyButton}
-                            onPress={() => copyToClipboard(point)}
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="copy-outline" size={20} color="#2E8B57" />
-                        </TouchableOpacity>
+                        <View style={styles.buttonRow}>
+                            <TouchableOpacity
+                                style={styles.copyButton}
+                                onPress={() => copyToClipboard(point)}
+                                activeOpacity={0.7}
+                            >
+                                <Ionicons name="copy-outline" size={20} color="#2E8B57" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.copyButton}
+                                onPress={() => shareContent(point)}
+                                activeOpacity={0.7}
+                            >
+                                <Ionicons name="share-outline" size={20} color="#2E8B57" />
+                            </TouchableOpacity>
+                        </View>
                     )}
                 </View>
 
@@ -384,6 +428,10 @@ const styles = StyleSheet.create({
         padding: 6,
         borderRadius: 20,
         backgroundColor: '#e8f5e9',
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        gap: 8,
     },
     stageHeader: {
         flexDirection: 'row',

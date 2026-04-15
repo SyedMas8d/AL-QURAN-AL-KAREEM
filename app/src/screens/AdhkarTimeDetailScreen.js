@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import * as Clipboard from 'expo-clipboard';
@@ -99,6 +99,38 @@ export default function AdhkarTimeDetailScreen({ route }) {
         }
     };
 
+    const shareContent = async (item) => {
+        try {
+            let textToShare = '';
+
+            // Add title if available
+            if (item.title) {
+                textToShare += `${item.title}\n\n`;
+            }
+
+            // Add Arabic text
+            if (item.arabic) {
+                textToShare += `${item.arabic}\n\n`;
+            }
+
+            // Add Tamil transliteration
+            if (item.tamilTransliteration) {
+                textToShare += `${item.tamilTransliteration}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (item.tamilTranslation) {
+                textToShare += `${item.tamilTranslation}`;
+            }
+
+            await Share.share({
+                message: textToShare,
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
+
     const renderDuaItem = (item, index) => {
         const audioKey = `${type}-${index}`;
         const isPlaying = !!playingAudios[audioKey];
@@ -113,13 +145,22 @@ export default function AdhkarTimeDetailScreen({ route }) {
                         <Ionicons name="book-outline" size={20} color="#2E8B57" />
                         <Text style={styles.duaNumber}>துஆ {index + 1}</Text>
                     </View>
-                    <TouchableOpacity
-                        style={styles.copyButton}
-                        onPress={() => copyToClipboard(item)}
-                        activeOpacity={0.7}
-                    >
-                        <Ionicons name="copy-outline" size={22} color="#2E8B57" />
-                    </TouchableOpacity>
+                    <View style={styles.buttonRow}>
+                        <TouchableOpacity
+                            style={styles.copyButton}
+                            onPress={() => copyToClipboard(item)}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons name="copy-outline" size={22} color="#2E8B57" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.copyButton}
+                            onPress={() => shareContent(item)}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons name="share-outline" size={22} color="#2E8B57" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Title */}
@@ -251,6 +292,10 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 20,
         backgroundColor: '#e8f5e9',
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        gap: 8,
     },
     titleContainer: {
         marginBottom: 12,

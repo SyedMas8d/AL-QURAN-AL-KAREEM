@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import * as Clipboard from 'expo-clipboard';
@@ -108,6 +108,38 @@ export default function DailyDuasListScreen() {
         }
     };
 
+    const shareContent = async (item) => {
+        try {
+            let textToShare = '';
+
+            // Add title if available
+            if (item.title) {
+                textToShare += `${item.title}\n\n`;
+            }
+
+            // Add Arabic text
+            if (item.arabic) {
+                textToShare += `${item.arabic}\n\n`;
+            }
+
+            // Add Tamil transliteration
+            if (item.tamilTransliteration) {
+                textToShare += `${item.tamilTransliteration}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (item.tamilTranslation) {
+                textToShare += `${item.tamilTranslation}`;
+            }
+
+            await Share.share({
+                message: textToShare,
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
+
     const renderDuaItem = (item, index) => {
         const audioKey = `dua-${index}`;
         const isPlaying = !!playingAudios[audioKey];
@@ -134,6 +166,16 @@ export default function DailyDuasListScreen() {
                         activeOpacity={0.7}
                     >
                         <Ionicons name="copy-outline" size={22} color="#2E8B57" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.copyButton}
+                        onPress={(e) => {
+                            e.stopPropagation();
+                            shareContent(item);
+                        }}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="share-outline" size={22} color="#2E8B57" />
                     </TouchableOpacity>
                     <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color="#2E8B57" />
                 </TouchableOpacity>

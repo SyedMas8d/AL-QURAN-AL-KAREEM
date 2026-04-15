@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Alert, Share } from 'react-native';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
 import { getSuraData } from '../data/dataService';
 
 const SuraDetailScreen = ({ route }) => {
@@ -283,6 +284,60 @@ const SuraDetailScreen = ({ route }) => {
         // eslint-disable-next-line
     }, [playingAll, paused, currentAyahIndex, playingBismillah, suraData]);
 
+    const copyToClipboard = async (ayah) => {
+        try {
+            let textToCopy = '';
+
+            // Add Arabic text
+            if (ayah.text) {
+                textToCopy += `${ayah.text}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (ayah.tamilTranslation) {
+                textToCopy += `${ayah.tamilTranslation}\n\n`;
+            }
+
+            // Add reference
+            const reference = `${suraData.tamilName} (${suraData.number}:${ayah.numberInSurah})`;
+            textToCopy += `— ${reference}`;
+
+            await Clipboard.setStringAsync(textToCopy);
+            Alert.alert('நகலெடுக்கப்பட்டது', 'ஆயத் உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது', [
+                { text: 'சரி', style: 'default' },
+            ]);
+        } catch (error) {
+            console.error('Error copying to clipboard:', error);
+            Alert.alert('பிழை', 'நகலெடுக்க முடியவில்லை');
+        }
+    };
+
+    const shareContent = async (ayah) => {
+        try {
+            let textToShare = '';
+
+            // Add Arabic text
+            if (ayah.text) {
+                textToShare += `${ayah.text}\n\n`;
+            }
+
+            // Add Tamil translation
+            if (ayah.tamilTranslation) {
+                textToShare += `${ayah.tamilTranslation}\n\n`;
+            }
+
+            // Add reference
+            const reference = `${suraData.tamilName} (${suraData.number}:${ayah.numberInSurah})`;
+            textToShare += `— ${reference}`;
+
+            await Share.share({
+                message: textToShare,
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
+
     const renderAyah = (ayah) => {
         const ayahNumber = Number(ayah.number);
         const isCurrentlyPlaying = playingAyah === ayahNumber && isPlaying;
@@ -313,6 +368,22 @@ const SuraDetailScreen = ({ route }) => {
                     </TouchableOpacity>
                     <View style={styles.ayahNumber}>
                         <Text style={styles.ayahNumberText}>{String(ayah.numberInSurah)}</Text>
+                    </View>
+                    <View style={styles.ayahActions}>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={() => copyToClipboard(ayah)}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons name="copy-outline" size={20} color="#2E8B57" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={() => shareContent(ayah)}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons name="share-outline" size={20} color="#2E8B57" />
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -633,6 +704,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
         color: '#666',
+    },
+    ayahActions: {
+        flexDirection: 'row',
+        marginLeft: 'auto',
+        gap: 8,
+    },
+    actionButton: {
+        padding: 8,
+        borderRadius: 20,
+        backgroundColor: '#e8f5e9',
     },
     ayahContent: {
         paddingLeft: 8,
