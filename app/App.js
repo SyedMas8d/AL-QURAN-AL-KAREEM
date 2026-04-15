@@ -41,10 +41,14 @@ function QuranStack() {
             <Stack.Screen
                 name="SuraList"
                 component={SuraListScreen}
-                options={{
+                options={({ navigation }) => ({
                     title: 'அல் குர்ஆன் அல் கரீம்',
-                    headerShown: false,
-                }}
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
             />
             <Stack.Screen
                 name="SuraDetail"
@@ -73,16 +77,20 @@ function LearnQuranStack() {
                 name="VideoList"
                 component={VideoListScreen}
                 initialParams={{ categoryKey: 'learn_to_read_quran' }}
-                options={{
+                options={({ navigation }) => ({
                     title: 'குர்ஆனை வாசிக்க கற்றுக்கொள்வோம்',
-                    headerShown: false,
-                }}
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
             />
             <Stack.Screen
                 name="VideoDetail"
                 component={VideoDetailScreen}
                 options={({ route }) => ({
-                    title: route.params?.categoryTitle || 'Video',
+                    title: route.params?.title || 'Video',
                 })}
             />
         </Stack.Navigator>
@@ -266,10 +274,14 @@ function KnowledgeStack() {
             <Stack.Screen
                 name="KnowledgeList"
                 component={SeekingKnowledgeListScreen}
-                options={{
+                options={({ navigation }) => ({
                     title: 'கல்வியைத் தேடுதல்',
-                    headerShown: false,
-                }}
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
             />
             <Stack.Screen
                 name="VideoDetail"
@@ -299,10 +311,14 @@ function ReportIssueStack() {
             <Stack.Screen
                 name="ReportIssue"
                 component={ReportIssueScreen}
-                options={{
+                options={({ navigation }) => ({
                     title: 'தவறுகளை சுட்டிக்காட்டு',
-                    headerShown: false,
-                }}
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ marginLeft: 15 }}>
+                            <Ionicons name="menu" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    ),
+                })}
             />
         </Stack.Navigator>
     );
@@ -350,6 +366,7 @@ export default function App() {
                     options={{
                         title: 'அல் குர்ஆன்',
                         drawerIcon: ({ color }) => <Ionicons name="book" size={24} color={color} />,
+                        headerShown: false,
                     }}
                 />
                 <Drawer.Screen
@@ -358,6 +375,7 @@ export default function App() {
                     options={{
                         title: 'குர்ஆனை வாசிக்க கற்றுக்கொள்வோம். (20 நாட்களில்)',
                         drawerIcon: ({ color }) => <Ionicons name="school" size={24} color={color} />,
+                        headerShown: false,
                     }}
                 />
                 <Drawer.Screen
@@ -402,6 +420,7 @@ export default function App() {
                     options={{
                         title: 'கல்வியைத் தேடுதல்',
                         drawerIcon: ({ color }) => <Ionicons name="bulb" size={24} color={color} />,
+                        headerShown: false,
                     }}
                 />
                 <Drawer.Screen
@@ -410,6 +429,7 @@ export default function App() {
                     options={{
                         title: 'தவறுகளை சுட்டிக்காட்டு',
                         drawerIcon: ({ color }) => <Ionicons name="alert-circle" size={24} color={color} />,
+                        headerShown: false,
                     }}
                 />
             </Drawer.Navigator>
