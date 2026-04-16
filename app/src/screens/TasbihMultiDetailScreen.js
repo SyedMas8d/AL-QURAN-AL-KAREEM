@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Alert, Share } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Alert, Share, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import * as Clipboard from 'expo-clipboard';
@@ -8,6 +8,31 @@ import { getAudioSource } from '../utils/audioAssets';
 
 const TOTAL_BEADS = 33; // Total beads to display
 const STORAGE_KEY = 'tasbih_multi_count';
+
+// Platform-specific storage functions
+const PlatformStorage = {
+    async getItem(key) {
+        if (Platform.OS === 'web') {
+            return localStorage.getItem(key);
+        } else {
+            return await AsyncStorage.getItem(key);
+        }
+    },
+    async setItem(key, value) {
+        if (Platform.OS === 'web') {
+            localStorage.setItem(key, value);
+        } else {
+            await AsyncStorage.setItem(key, value);
+        }
+    },
+    async removeItem(key) {
+        if (Platform.OS === 'web') {
+            localStorage.removeItem(key);
+        } else {
+            await AsyncStorage.removeItem(key);
+        }
+    },
+};
 const STORAGE_DATE_KEY = 'tasbih_multi_date';
 const STORAGE_CURRENT_INDEX_KEY = 'tasbih_multi_current_index';
 
@@ -16,10 +41,13 @@ export default function TasbihMultiDetailScreen({ route }) {
     const [count, setCount] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [sound, setSound] = useState(null);
+    const [isResetting, setIsResetting] = useState(false);
     const player = useAudioPlayer();
     const moveAnim = useRef(new Animated.Value(0)).current;
     const [isAnimating, setIsAnimating] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false);
+    const countRef = useRef(0); // Keep track of current count
+    const currentIndexRef = useRef(0); // Keep track of current index
 
     const currentItem = items[currentIndex];
     const currentTargetCount = currentItem?.count || 33;
@@ -30,12 +58,18 @@ export default function TasbihMultiDetailScreen({ route }) {
             if (player.playing) {
                 player.pause();
             }
+            // Don't save on unmount - it's unreliable and causes resets
         };
     }, []);
 
     useEffect(() => {
-        saveState();
-    }, [count, currentIndex]);
+        if (!isResetting) {
+            // Update refs and save immediately
+            countRef.current = count;
+            currentIndexRef.current = currentIndex;
+            saveState();
+        }
+    }, [count, currentIndex, isResetting]);
 
     useEffect(() => {
         // Check if current item is completed and move to next
@@ -53,35 +87,56 @@ export default function TasbihMultiDetailScreen({ route }) {
             // All items completed
             if (!isCompleted) {
                 setIsCompleted(true);
-                Alert.alert(
-                    '🎉 அனைத்தும் முடிந்தது!',
-                    'பல் எண்ணிக்கை தஸ்பீஹ் முழுமையாக முடிந்தது. அல்லாஹ் ஏற்றுக்கொள்ளட்டும்!',
-                    [
-                        { text: 'மீட்டமை', onPress: () => resetAll() },
-                        { text: 'சரி', style: 'default' },
-                    ]
-                );
+                if (Platform.OS === 'web') {
+                    // Use browser alert for web
+                    window.alert(
+                        '🎉 அனைத்தும் முடிந்தது!\n\nபல் எண்ணிக்கை தஸ்பீஹ் முழுமையாக முடிந்தது. அல்லாஹ் ஏற்றுக்கொள்ளட்டும்!'
+                    );
+                } else {
+                    // Use React Native Alert for mobile
+                    Alert.alert(
+                        '🎉 அனைத்தும் முடிந்தது!',
+                        'பல் எண்ணிக்கை தஸ்பீஹ் முழுமையாக முடிந்தது. அல்லாஹ் ஏற்றுக்கொள்ளட்டும்!',
+                        [
+                            { text: 'மீட்டமை', onPress: () => resetAll() },
+                            { text: 'சரி', style: 'default' },
+                        ]
+                    );
+                }
             }
         }
     }, [count, currentIndex, currentTargetCount, isCompleted]);
 
     const loadState = async () => {
         try {
-            const storedDate = await AsyncStorage.getItem(STORAGE_DATE_KEY);
+            const storedDate = await PlatformStorage.getItem(STORAGE_DATE_KEY);
+            const storedCount = await PlatformStorage.getItem(STORAGE_KEY);
+            const storedIndex = await PlatformStorage.getItem(STORAGE_CURRENT_INDEX_KEY);
             const today = new Date().toDateString();
 
-            if (storedDate === today) {
-                const storedCount = await AsyncStorage.getItem(STORAGE_KEY);
-                const storedIndex = await AsyncStorage.getItem(STORAGE_CURRENT_INDEX_KEY);
+            console.log('Loading multi-tasbih state:');
+            console.log('- Stored date:', storedDate);
+            console.log('- Today:', today);
+            console.log('- Stored count:', storedCount);
+            console.log('- Stored index:', storedIndex);
 
+            if (storedDate === today) {
+                // Same day - load the stored values
                 if (storedCount !== null) {
-                    setCount(parseInt(storedCount, 10));
+                    const parsedCount = parseInt(storedCount, 10);
+                    console.log('- Loading stored count:', parsedCount);
+                    setCount(parsedCount);
+                    countRef.current = parsedCount; // Update ref
                 }
                 if (storedIndex !== null) {
-                    setCurrentIndex(parseInt(storedIndex, 10));
+                    const parsedIndex = parseInt(storedIndex, 10);
+                    console.log('- Loading stored index:', parsedIndex);
+                    setCurrentIndex(parsedIndex);
+                    currentIndexRef.current = parsedIndex; // Update ref
                 }
             } else {
-                // Reset if it's a new day
+                // Different day - reset for new day
+                console.log('- New day detected, resetting multi-tasbih');
                 resetAll();
             }
         } catch (error) {
@@ -91,24 +146,35 @@ export default function TasbihMultiDetailScreen({ route }) {
 
     const saveState = async () => {
         try {
-            await AsyncStorage.setItem(STORAGE_KEY, count.toString());
-            await AsyncStorage.setItem(STORAGE_CURRENT_INDEX_KEY, currentIndex.toString());
-            await AsyncStorage.setItem(STORAGE_DATE_KEY, new Date().toDateString());
+            const today = new Date().toDateString();
+            console.log(`Saving multi-tasbih state: count=${count}, index=${currentIndex}, date=${today}`);
+            await PlatformStorage.setItem(STORAGE_KEY, count.toString());
+            await PlatformStorage.setItem(STORAGE_CURRENT_INDEX_KEY, currentIndex.toString());
+            await PlatformStorage.setItem(STORAGE_DATE_KEY, today);
         } catch (error) {
             console.error('Error saving state:', error);
         }
     };
 
     const resetAll = async () => {
-        setCount(0);
-        setCurrentIndex(0);
-        setIsCompleted(false);
         try {
-            await AsyncStorage.setItem(STORAGE_KEY, '0');
-            await AsyncStorage.setItem(STORAGE_CURRENT_INDEX_KEY, '0');
-            await AsyncStorage.setItem(STORAGE_DATE_KEY, new Date().toDateString());
+            setIsResetting(true);
+            // Reset state first
+            setCount(0);
+            setCurrentIndex(0);
+            setIsCompleted(false);
+            // Update refs
+            countRef.current = 0;
+            currentIndexRef.current = 0;
+            // Then directly reset PlatformStorage
+            await PlatformStorage.setItem(STORAGE_KEY, '0');
+            await PlatformStorage.setItem(STORAGE_CURRENT_INDEX_KEY, '0');
+            await PlatformStorage.setItem(STORAGE_DATE_KEY, new Date().toDateString());
+            console.log('Multi reset successful');
+            setIsResetting(false);
         } catch (error) {
             console.error('Error resetting:', error);
+            setIsResetting(false);
         }
     };
 
@@ -163,19 +229,42 @@ export default function TasbihMultiDetailScreen({ route }) {
         }
     };
 
-    const handleReset = () => {
-        Alert.alert(
-            'எண்ணிக்கையை மீட்டமைக்கவா?',
-            'இது முழு பல் எண்ணிக்கை தஸ்பீஹையும் மீட்டமைக்கும். உறுதிப்படுத்த விரும்புகிறீர்களா?',
-            [
-                { text: 'இல்லை', style: 'cancel' },
-                {
-                    text: 'ஆம்',
-                    onPress: () => resetAll(),
-                    style: 'destructive',
-                },
-            ]
-        );
+    const handleReset = async () => {
+        const resetConfirmed = () => {
+            return new Promise((resolve) => {
+                if (Platform.OS === 'web') {
+                    // Use browser's confirm for web
+                    const confirmed = window.confirm(
+                        'எண்ணிக்கையை மீட்டமைக்கவா?\n\nஇது முழு பல் எண்ணிக்கை தஸ்பீஹையும் மீட்டமைக்கும். தொடர விரும்புகிறீர்களா?'
+                    );
+                    resolve(confirmed);
+                } else {
+                    // Use React Native Alert for mobile
+                    Alert.alert(
+                        'எண்ணிக்கையை மீட்டமைக்கவா?',
+                        'இது முழு பல் எண்ணிக்கை தஸ்பீஹையும் மீட்டமைக்கும். தொடர விரும்புகிறீர்களா?',
+                        [
+                            { text: 'இல்லை', style: 'cancel', onPress: () => resolve(false) },
+                            {
+                                text: 'மீட்டமை',
+                                onPress: () => resolve(true),
+                                style: 'destructive',
+                            },
+                        ],
+                        { cancelable: false }
+                    );
+                }
+            });
+        };
+
+        try {
+            const confirmed = await resetConfirmed();
+            if (confirmed) {
+                resetAll();
+            }
+        } catch (error) {
+            console.error('Error in reset confirmation:', error);
+        }
     };
 
     const copyToClipboard = async () => {
@@ -429,14 +518,17 @@ export default function TasbihMultiDetailScreen({ route }) {
                                 <Ionicons name="book" size={16} color="#8B4513" />
                                 <Text style={styles.hadithHeaderText}>ஹதீஸ்</Text>
                             </View>
-                            {currentItem.haith.map((hadith, index) => (
-                                <View key={index} style={styles.hadithItem}>
-                                    <Text style={styles.hadithText}>{hadith.text}</Text>
-                                    {hadith.ref && hadith.ref.trim() !== '' && (
-                                        <Text style={styles.hadithRef}>{hadith.ref}</Text>
-                                    )}
-                                </View>
-                            ))}
+                            {currentItem.haith &&
+                                currentItem.haith.map((hadith, index) => (
+                                    <View key={index} style={styles.hadithItem}>
+                                        {hadith.text && hadith.text.trim() !== '' && (
+                                            <Text style={styles.hadithText}>{hadith.text}</Text>
+                                        )}
+                                        {hadith.ref && hadith.ref.trim() !== '' && (
+                                            <Text style={styles.hadithRef}>{hadith.ref}</Text>
+                                        )}
+                                    </View>
+                                ))}
                         </View>
                     )}
                 </View>

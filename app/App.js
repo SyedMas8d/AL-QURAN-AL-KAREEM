@@ -17,7 +17,6 @@ import AsSalahListScreen from './src/screens/AsSalahListScreen';
 import AsSalahDetailScreen from './src/screens/AsSalahDetailScreen';
 import DailyDuasListScreen from './src/screens/DailyDuasListScreen';
 import TasbihListScreen from './src/screens/TasbihListScreen';
-import TasbihBeadsScreen from './src/screens/TasbihBeadsScreen';
 import TasbihSingleDetailScreen from './src/screens/TasbihSingleDetailScreen';
 import TasbihMultiDetailScreen from './src/screens/TasbihMultiDetailScreen';
 import ReportIssueScreen from './src/screens/ReportIssueScreen';
@@ -299,13 +298,6 @@ function TasbihBeadsStack() {
                 component={TasbihMultiDetailScreen}
                 options={({ route }) => ({
                     title: route.params?.title || 'பல் எண்ணிக்கை',
-                })}
-            />
-            <Stack.Screen
-                name="TasbihBeads"
-                component={TasbihBeadsScreen}
-                options={({ route }) => ({
-                    title: 'தஸ்பீஹ் மணிகள்',
                 })}
             />
         </Stack.Navigator>

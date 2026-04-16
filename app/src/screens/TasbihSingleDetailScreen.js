@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Alert, Share } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Alert, Share, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
 import * as Clipboard from 'expo-clipboard';
@@ -8,54 +8,124 @@ import { getAudioSource } from '../utils/audioAssets';
 
 const TOTAL_BEADS = 33; // Total beads to display
 
+// Platform-specific storage functions
+const PlatformStorage = {
+    async getItem(key) {
+        if (Platform.OS === 'web') {
+            return localStorage.getItem(key);
+        } else {
+            return await AsyncStorage.getItem(key);
+        }
+    },
+    async setItem(key, value) {
+        if (Platform.OS === 'web') {
+            localStorage.setItem(key, value);
+        } else {
+            await AsyncStorage.setItem(key, value);
+        }
+    },
+    async removeItem(key) {
+        if (Platform.OS === 'web') {
+            localStorage.removeItem(key);
+        } else {
+            await AsyncStorage.removeItem(key);
+        }
+    },
+};
+
 export default function TasbihSingleDetailScreen({ route }) {
     const { item, index, title } = route.params;
     const [count, setCount] = useState(0);
     const [sound, setSound] = useState(null);
+    const [isResetting, setIsResetting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); // Prevent saves until loaded
     const player = useAudioPlayer();
     const moveAnim = useRef(new Animated.Value(0)).current;
     const [isAnimating, setIsAnimating] = useState(false);
+    const countRef = useRef(0); // Keep track of current count for reliable saves
+    const hasLoadedRef = useRef(false); // Prevent multiple loads
 
     const STORAGE_KEY = `tasbih_single_count_${index}`;
     const STORAGE_DATE_KEY = `tasbih_single_date_${index}`;
 
     useEffect(() => {
-        loadCount();
+        if (!hasLoadedRef.current) {
+            console.log(`Component mounting for item ${index}`);
+            hasLoadedRef.current = true;
+            loadCount();
+        }
         return () => {
             if (player.playing) {
                 player.pause();
             }
+            console.log(`Component unmounting for item ${index}`);
         };
     }, []);
 
     useEffect(() => {
-        saveCount();
-    }, [count]);
+        if (!isResetting && !isLoading) {
+            console.log(`Count changed to ${count}, isResetting: ${isResetting}, isLoading: ${isLoading}, saving...`);
+            // Update ref and save immediately
+            countRef.current = count;
+            saveCount();
+        } else {
+            console.log(
+                `Count changed to ${count} but isResetting: ${isResetting}, isLoading: ${isLoading}, not saving`
+            );
+        }
+    }, [count, isResetting, isLoading]);
 
     const loadCount = async () => {
         try {
-            const storedDate = await AsyncStorage.getItem(STORAGE_DATE_KEY);
+            console.log(`Loading count for item ${index} (hasLoadedRef: ${hasLoadedRef.current})`);
+            const storedDate = await PlatformStorage.getItem(STORAGE_DATE_KEY);
+            const storedCount = await PlatformStorage.getItem(STORAGE_KEY);
             const today = new Date().toDateString();
 
+            console.log(`Loading count for item ${index}:`);
+            console.log('- Stored date:', storedDate);
+            console.log('- Today:', today);
+            console.log('- Stored count:', storedCount);
+
             if (storedDate === today) {
-                const storedCount = await AsyncStorage.getItem(STORAGE_KEY);
+                // Same day - load the stored count
                 if (storedCount !== null) {
-                    setCount(parseInt(storedCount, 10));
+                    const parsedCount = parseInt(storedCount, 10);
+                    console.log('- Loading stored count:', parsedCount);
+                    setCount(parsedCount);
+                    countRef.current = parsedCount; // Update ref
+                } else {
+                    console.log('- No stored count found, starting at 0');
+                    setCount(0);
+                    countRef.current = 0; // Update ref
                 }
             } else {
-                // Reset if it's a new day
-                await AsyncStorage.setItem(STORAGE_DATE_KEY, today);
-                await AsyncStorage.setItem(STORAGE_KEY, '0');
+                // Different day - reset for new day
+                console.log('- New day detected, resetting count');
+                setCount(0);
+                countRef.current = 0; // Update ref
+                await PlatformStorage.setItem(STORAGE_DATE_KEY, today);
+                await PlatformStorage.setItem(STORAGE_KEY, '0');
             }
+
+            // Mark loading as complete so saves can begin
+            console.log('- Load complete, enabling saves');
+            setIsLoading(false);
         } catch (error) {
             console.error('Error loading count:', error);
+            setCount(0);
+            countRef.current = 0; // Update ref
+            // Even on error, enable saves
+            setIsLoading(false);
         }
     };
 
     const saveCount = async () => {
         try {
-            await AsyncStorage.setItem(STORAGE_KEY, count.toString());
-            await AsyncStorage.setItem(STORAGE_DATE_KEY, new Date().toDateString());
+            const today = new Date().toDateString();
+            console.log(`Saving count for item ${index}: ${count} on ${today}`);
+            await PlatformStorage.setItem(STORAGE_KEY, count.toString());
+            await PlatformStorage.setItem(STORAGE_DATE_KEY, today);
         } catch (error) {
             console.error('Error saving count:', error);
         }
@@ -112,15 +182,64 @@ export default function TasbihSingleDetailScreen({ route }) {
         }
     };
 
-    const handleReset = () => {
-        Alert.alert('எண்ணிக்கையை மீட்டமைக்கவா?', 'உறுதிப்படுத்த விரும்புகிறீர்களா?', [
-            { text: 'இல்லை', style: 'cancel' },
-            {
-                text: 'ஆம்',
-                onPress: () => setCount(0),
-                style: 'destructive',
-            },
-        ]);
+    const handleReset = async () => {
+        console.log('Reset button clicked');
+
+        const resetConfirmed = () => {
+            return new Promise((resolve) => {
+                if (Platform.OS === 'web') {
+                    // Use browser's confirm for web
+                    const confirmed = window.confirm(
+                        'எண்ணிக்கையை மீட்டமைக்கவா?\n\nஎண்ணிக்கையை பூஜ்ஜியமாக மீட்டமைக்க விரும்புகிறீர்களா?'
+                    );
+                    resolve(confirmed);
+                } else {
+                    // Use React Native Alert for mobile
+                    Alert.alert(
+                        'எண்ணிக்கையை மீட்டமைக்கவா?',
+                        'எண்ணிக்கையை பூஜ்ஜியமாக மீட்டமைக்க விரும்புகிறீர்களா?',
+                        [
+                            {
+                                text: 'இல்லை',
+                                style: 'cancel',
+                                onPress: () => {
+                                    console.log('Reset cancelled');
+                                    resolve(false);
+                                },
+                            },
+                            {
+                                text: 'மீட்டமை',
+                                onPress: () => {
+                                    console.log('Reset confirmed via Alert');
+                                    resolve(true);
+                                },
+                                style: 'destructive',
+                            },
+                        ],
+                        { cancelable: false }
+                    );
+                }
+            });
+        };
+
+        try {
+            const confirmed = await resetConfirmed();
+            if (confirmed) {
+                console.log('Reset confirmed - proceeding');
+                setIsResetting(true);
+                setCount(0);
+                countRef.current = 0; // Update ref
+                await PlatformStorage.setItem(STORAGE_KEY, '0');
+                await PlatformStorage.setItem(STORAGE_DATE_KEY, new Date().toDateString());
+                console.log('Reset successful');
+                setIsResetting(false);
+            } else {
+                console.log('Reset cancelled by user');
+            }
+        } catch (error) {
+            console.error('Error resetting count:', error);
+            setIsResetting(false);
+        }
     };
 
     const copyToClipboard = async () => {
@@ -280,35 +399,41 @@ export default function TasbihSingleDetailScreen({ route }) {
                 </View>
 
                 <View style={styles.transliterationContainer}>
-                    <Text style={styles.transliterationText}>{item.tamilTransliteration}</Text>
+                    <Text style={styles.transliterationText}>{item.tamilTransliteration || ''}</Text>
                 </View>
 
-                <View style={styles.translationContainer}>
-                    <Text style={styles.translationText}>{item.tamilTranslation}</Text>
-                </View>
+                {item.tamilTranslation && item.tamilTranslation.trim() !== '' ? (
+                    <View style={styles.translationContainer}>
+                        <Text style={styles.translationText}>{item.tamilTranslation}</Text>
+                    </View>
+                ) : null}
 
-                {item.haith && item.haith.length > 0 && (
+                {item.haith && item.haith.length > 0 ? (
                     <View style={styles.hadithContainer}>
                         <View style={styles.hadithHeader}>
                             <Ionicons name="book" size={16} color="#8B4513" />
                             <Text style={styles.hadithHeaderText}>ஹதீஸ்</Text>
                         </View>
-                        {item.haith.map((hadith, index) => (
-                            <View key={index} style={styles.hadithItem}>
-                                <Text style={styles.hadithText}>{hadith.text}</Text>
-                                {hadith.ref && hadith.ref.trim() !== '' && (
-                                    <Text style={styles.hadithRef}>{hadith.ref}</Text>
-                                )}
-                            </View>
-                        ))}
+                        {item.haith
+                            ? item.haith.map((hadith, index) => (
+                                  <View key={index} style={styles.hadithItem}>
+                                      {hadith.text && hadith.text.trim() !== '' ? (
+                                          <Text style={styles.hadithText}>{hadith.text}</Text>
+                                      ) : null}
+                                      {hadith.ref && hadith.ref.trim() !== '' ? (
+                                          <Text style={styles.hadithRef}>{hadith.ref}</Text>
+                                      ) : null}
+                                  </View>
+                              ))
+                            : null}
                     </View>
-                )}
+                ) : null}
             </View>
 
             {/* Reset Button */}
             <TouchableOpacity style={styles.resetButton} onPress={handleReset} activeOpacity={0.7}>
                 <Ionicons name="reload" size={24} color="#fff" />
-                <Text style={styles.resetButtonText}>மீட்டமை</Text>
+                <Text style={styles.resetButtonText}>மீட்டமை (Reset)</Text>
             </TouchableOpacity>
 
             {/* Instructions */}
@@ -317,10 +442,10 @@ export default function TasbihSingleDetailScreen({ route }) {
                     <Ionicons name="hand-left" size={20} color="#4CAF50" />
                     <Text style={styles.instructionText}>கயிற்றைத் தொட்டு மணி ஒன்றை நகர்த்தவும்</Text>
                 </View>
-                <View style={styles.instructionItem}>
+                {/* <View style={styles.instructionItem}>
                     <Ionicons name="arrow-down" size={20} color="#4CAF50" />
                     <Text style={styles.instructionText}>மேலிருந்து கீழாக மணிகள் நகரும்</Text>
-                </View>
+                </View> */}
                 <View style={styles.instructionItem}>
                     <Ionicons name="musical-note" size={20} color="#4CAF50" />
                     <Text style={styles.instructionText}>ஒவ்வொரு 10 எண்ணிக்கையிலும் ஒலி ஒலிக்கும்</Text>

@@ -63,39 +63,43 @@ export default function TasbihListScreen({ navigation }) {
         <TouchableOpacity style={styles.itemCard} onPress={() => handleItemPress(item)} activeOpacity={0.7}>
             <View style={styles.cardContent}>
                 <View style={styles.titleSection}>
-                    <Text style={styles.itemTitle}>{item.title}</Text>
-                    {item.subtitle && <Text style={styles.itemSubtitle}>{item.subtitle}</Text>}
+                    <Text style={styles.itemTitle}>{item.title || ''}</Text>
+                    {item.subtitle && item.subtitle.trim() !== '' ? (
+                        <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
+                    ) : null}
                 </View>
 
                 <View style={styles.arabicSection}>
-                    <Text style={styles.arabicText}>{item.arabic}</Text>
+                    <Text style={styles.arabicText}>{item.arabic || ''}</Text>
                 </View>
 
-                {item.hasHadith && (
+                {item.hasHadith ? (
                     <View style={styles.hadithPreview}>
                         <View style={styles.hadithHeader}>
                             <Ionicons name="book" size={14} color="#8B4513" />
-                            <Text style={styles.hadithHeaderText}>ஹதீஸ் ({item.hadithCount})</Text>
+                            <Text style={styles.hadithHeaderText}>ஹதீஸ் ({item.hadithCount || 0})</Text>
                         </View>
                         <Text style={styles.hadithPreviewText}>
                             {item.type === 'single'
-                                ? item.data.haith[0].text.substring(0, 80) + '...'
+                                ? item.data && item.data.haith && item.data.haith[0] && item.data.haith[0].text
+                                    ? item.data.haith[0].text.substring(0, 80) + '...'
+                                    : 'ஹதீஸ் உரை கிடைக்கவில்லை'
                                 : 'தொழுகைக்குப் பிறகு விவரங்களுடன் கௗரவேண்டிய ஹதீஸ்'}
                         </Text>
                     </View>
-                )}
+                ) : null}
 
                 <View style={styles.typeIndicator}>
                     <View style={[styles.typeBadge, item.type === 'multi' ? styles.multiBadge : styles.singleBadge]}>
-                        <Text style={styles.countText}>{item.count}</Text>
+                        <Text style={styles.countText}>{item.count || 0}</Text>
                     </View>
 
-                    {item.hasHadith && (
+                    {item.hasHadith ? (
                         <View style={styles.hadithIndicator}>
                             <Ionicons name="book" size={14} color="#8B4513" />
-                            <Text style={styles.hadithText}>ஹதீஸ் ({item.hadithCount})</Text>
+                            <Text style={styles.hadithText}>ஹதீஸ் ({item.hadithCount || 0})</Text>
                         </View>
-                    )}
+                    ) : null}
                 </View>
 
                 <View style={styles.arrowSection}>
