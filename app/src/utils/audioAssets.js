@@ -32,6 +32,11 @@ export const getAudioSource = (audioPath) => {
         '/assets/audios/daily_duas/DUA_AFT_MEAL.mp3': require('../../assets/audios/daily_duas/DUA_AFT_MEAL.mp3'),
         '/assets/audios/daily_duas/DUA_LEAVE_HOUSE.mp3': require('../../assets/audios/daily_duas/DUA_LEAVE_HOUSE.mp3'),
         '/assets/audios/daily_duas/DUA_TRAVEL.mp3': require('../../assets/audios/daily_duas/DUA_TRAVEL.mp3'),
+        '/assets/audios/tasbih_beads/SUBHANALLAH.mp3': require('../../assets/audios/tasbih_beads/SUBHANALLAH.mp3'),
+        '/assets/audios/tasbih_beads/ALHAMDULILLAH.mp3': require('../../assets/audios/tasbih_beads/ALHAMDULILLAH.mp3'),
+        // '/assets/audios/tasbih_beads/ALLAHU_AKBAR.mp3': require('../../assets/audios/tasbih_beads/ALLAHU_AKBAR.mp3'), // File doesn't exist yet
+        '/assets/audios/tasbih_beads/KALIMAH.mp3': require('../../assets/audios/tasbih_beads/KALIMAH.mp3'),
+        '/assets/audios/tasbih_beads/TASBIH_BEADS.mp3': require('../../assets/audios/tasbih_beads/TASBIH_BEADS.mp3'),
     };
 
     if (audioRequireMap[audioPath]) {

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Alert, Share, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAudioPlayer } from 'expo-audio';
+import { useAudioPlayer } from 'expo-audio'; // Same as other working screens
 import * as Clipboard from 'expo-clipboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAudioSource } from '../utils/audioAssets';
+import TasbihChart from '../components/TasbihChart';
+import { tasbih_beads } from '../data/tasbih_beads/tableOfContent';
 
 const TOTAL_BEADS = 33; // Total beads to display
 
@@ -39,7 +41,9 @@ export default function TasbihSingleDetailScreen({ route }) {
     const [sound, setSound] = useState(null);
     const [isResetting, setIsResetting] = useState(false);
     const [isLoading, setIsLoading] = useState(true); // Prevent saves until loaded
-    const player = useAudioPlayer();
+    const [dailyHistory, setDailyHistory] = useState({}); // Store last 5 days
+    const [showChart, setShowChart] = useState(false); // Toggle chart visibility
+    const player = useAudioPlayer(); // Same as other working screens
     const moveAnim = useRef(new Animated.Value(0)).current;
     const [isAnimating, setIsAnimating] = useState(false);
     const countRef = useRef(0); // Keep track of current count for reliable saves
@@ -47,10 +51,26 @@ export default function TasbihSingleDetailScreen({ route }) {
 
     const STORAGE_KEY = `tasbih_single_count_${index}`;
     const STORAGE_DATE_KEY = `tasbih_single_date_${index}`;
+    const STORAGE_HISTORY_KEY = `tasbih_single_history_${index}`;
+
+    // Get last 7 days including today (keeping for backward compatibility)
+    const getLast5Days = () => {
+        const today = new Date();
+        const days = [];
+        for (let i = 4; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            days.push({
+                date: date.toDateString(),
+                shortDate: date.getDate().toString(),
+                isToday: i === 0,
+            });
+        }
+        return days;
+    };
 
     useEffect(() => {
         if (!hasLoadedRef.current) {
-            console.log(`Component mounting for item ${index}`);
             hasLoadedRef.current = true;
             loadCount();
         }
@@ -58,13 +78,11 @@ export default function TasbihSingleDetailScreen({ route }) {
             if (player.playing) {
                 player.pause();
             }
-            console.log(`Component unmounting for item ${index}`);
         };
     }, []);
 
     useEffect(() => {
         if (!isResetting && !isLoading) {
-            console.log(`Count changed to ${count}, isResetting: ${isResetting}, isLoading: ${isLoading}, saving...`);
             // Update ref and save immediately
             countRef.current = count;
             saveCount();
@@ -77,31 +95,34 @@ export default function TasbihSingleDetailScreen({ route }) {
 
     const loadCount = async () => {
         try {
-            console.log(`Loading count for item ${index} (hasLoadedRef: ${hasLoadedRef.current})`);
             const storedDate = await PlatformStorage.getItem(STORAGE_DATE_KEY);
             const storedCount = await PlatformStorage.getItem(STORAGE_KEY);
+            const storedHistory = await PlatformStorage.getItem(STORAGE_HISTORY_KEY);
             const today = new Date().toDateString();
 
-            console.log(`Loading count for item ${index}:`);
-            console.log('- Stored date:', storedDate);
-            console.log('- Today:', today);
-            console.log('- Stored count:', storedCount);
+            // Load history
+            let history = {};
+            if (storedHistory) {
+                try {
+                    history = JSON.parse(storedHistory);
+                } catch (e) {
+                    console.error('Error parsing history:', e);
+                }
+            }
+            setDailyHistory(history);
 
             if (storedDate === today) {
                 // Same day - load the stored count
                 if (storedCount !== null) {
                     const parsedCount = parseInt(storedCount, 10);
-                    console.log('- Loading stored count:', parsedCount);
                     setCount(parsedCount);
                     countRef.current = parsedCount; // Update ref
                 } else {
-                    console.log('- No stored count found, starting at 0');
                     setCount(0);
                     countRef.current = 0; // Update ref
                 }
             } else {
-                // Different day - reset for new day
-                console.log('- New day detected, resetting count');
+                // Different day - reset for new day but keep history
                 setCount(0);
                 countRef.current = 0; // Update ref
                 await PlatformStorage.setItem(STORAGE_DATE_KEY, today);
@@ -109,23 +130,38 @@ export default function TasbihSingleDetailScreen({ route }) {
             }
 
             // Mark loading as complete so saves can begin
-            console.log('- Load complete, enabling saves');
             setIsLoading(false);
         } catch (error) {
             console.error('Error loading count:', error);
             setCount(0);
             countRef.current = 0; // Update ref
-            // Even on error, enable saves
-            setIsLoading(false);
+            setDailyHistory({});
         }
     };
-
     const saveCount = async () => {
         try {
             const today = new Date().toDateString();
-            console.log(`Saving count for item ${index}: ${count} on ${today}`);
+
+            // Save current count
             await PlatformStorage.setItem(STORAGE_KEY, count.toString());
             await PlatformStorage.setItem(STORAGE_DATE_KEY, today);
+
+            // Update daily history
+            const updatedHistory = { ...dailyHistory };
+            updatedHistory[today] = count;
+
+            // Keep only last 30 days to prevent storage bloat
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            Object.keys(updatedHistory).forEach((date) => {
+                if (new Date(date) < thirtyDaysAgo) {
+                    delete updatedHistory[date];
+                }
+            });
+
+            setDailyHistory(updatedHistory);
+            await PlatformStorage.setItem(STORAGE_HISTORY_KEY, JSON.stringify(updatedHistory));
         } catch (error) {
             console.error('Error saving count:', error);
         }
@@ -133,31 +169,62 @@ export default function TasbihSingleDetailScreen({ route }) {
 
     const playAudio = async () => {
         try {
+            // Stop previous audio if any
             if (sound) {
                 await player.pause();
                 setSound(null);
             }
 
+            // Check if item has audio
             if (!item.audio || item.audio === '') {
                 return;
             }
 
+            // Get the audio source using your existing audioAssets system
             const audioSource = getAudioSource(item.audio);
             if (!audioSource) {
                 return;
             }
 
+            console.log(`🔊 Playing audio: ${item.audio} for "${item.arabic}"`);
+
+            // Use same pattern as other working screens (AdhkarDetailScreen)
             if (typeof audioSource === 'string') {
                 player.replace(audioSource);
             } else {
                 player.replace(audioSource.uri);
             }
+
             player.play();
         } catch (error) {
             console.error('Error playing audio:', error);
         }
     };
+    // Play tasbih beads click sound (general click sound for every tap)
+    const playTasbihClickSound = async () => {
+        try {
+            // Only play click sound if no specific dhikr audio is currently playing
+            if (player.playing) {
+                return; // Don't play click sound if dhikr audio is playing
+            }
 
+            const clickAudioSource = getAudioSource(tasbih_beads.audio);
+            if (!clickAudioSource) {
+                return;
+            }
+
+            // Play the general tasbih click sound
+            if (typeof clickAudioSource === 'string') {
+                player.replace(clickAudioSource);
+            } else {
+                player.replace(clickAudioSource.uri);
+            }
+
+            player.play();
+        } catch (error) {
+            console.error('Error playing tasbih click sound:', error);
+        }
+    };
     const handleBeadPress = () => {
         if (isAnimating) return; // Prevent multiple clicks during animation
 
@@ -178,13 +245,14 @@ export default function TasbihSingleDetailScreen({ route }) {
 
         // Play audio at first count and every 10 counts for single dhikr
         if (newCount === 1 || newCount % 10 === 0) {
-            playAudio();
+            playAudio(); // Re-enabled with stable expo-av
+        } else {
+            // Play general tasbih click sound for other taps (when no dhikr audio)
+            playTasbihClickSound();
         }
     };
 
     const handleReset = async () => {
-        console.log('Reset button clicked');
-
         const resetConfirmed = () => {
             return new Promise((resolve) => {
                 if (Platform.OS === 'web') {
@@ -203,14 +271,12 @@ export default function TasbihSingleDetailScreen({ route }) {
                                 text: 'இல்லை',
                                 style: 'cancel',
                                 onPress: () => {
-                                    console.log('Reset cancelled');
                                     resolve(false);
                                 },
                             },
                             {
-                                text: 'மீட்டமை',
+                                text: 'மீட்டமை (Reset for today)',
                                 onPress: () => {
-                                    console.log('Reset confirmed via Alert');
                                     resolve(true);
                                 },
                                 style: 'destructive',
@@ -225,13 +291,20 @@ export default function TasbihSingleDetailScreen({ route }) {
         try {
             const confirmed = await resetConfirmed();
             if (confirmed) {
-                console.log('Reset confirmed - proceeding');
                 setIsResetting(true);
                 setCount(0);
                 countRef.current = 0; // Update ref
+
+                // Clear current count and today's history
+                const today = new Date().toDateString();
+                const updatedHistory = { ...dailyHistory };
+                updatedHistory[today] = 0; // Reset today's count in history
+                setDailyHistory(updatedHistory);
+
                 await PlatformStorage.setItem(STORAGE_KEY, '0');
-                await PlatformStorage.setItem(STORAGE_DATE_KEY, new Date().toDateString());
-                console.log('Reset successful');
+                await PlatformStorage.setItem(STORAGE_DATE_KEY, today);
+                await PlatformStorage.setItem(STORAGE_HISTORY_KEY, JSON.stringify(updatedHistory));
+
                 setIsResetting(false);
             } else {
                 console.log('Reset cancelled by user');
@@ -308,14 +381,29 @@ export default function TasbihSingleDetailScreen({ route }) {
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             {/* Counter Display */}
             <View style={styles.counterContainer}>
-                <Text style={styles.counterLabel}>எண்ணிக்கை</Text>
-                <Text style={styles.counterText}>{count}</Text>
-                <Text style={styles.counterSubtext}>
-                    {count % 100 === 0 && count > 0
-                        ? '✓ 100 முடிந்தது!'
-                        : `அடுத்த 100க்கு ${100 - (count % 100)} மீதம்`}
-                </Text>
+                <View style={styles.counterHeader}>
+                    <View style={styles.counterInfo}>
+                        <Text style={styles.counterLabel}>எண்ணிக்கை</Text>
+                        <Text style={styles.counterText}>{count}</Text>
+                        <Text style={styles.counterSubtext}>
+                            {count % 100 === 0 && count > 0
+                                ? '✓ 100 முடிந்தது!'
+                                : `அடுத்த 100க்கு ${100 - (count % 100)} மீதம்`}
+                        </Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.chartToggleButton}
+                        onPress={() => setShowChart(!showChart)}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name={showChart ? 'bar-chart' : 'bar-chart-outline'} size={24} color="#4CAF50" />
+                        <Text style={styles.chartToggleText}>{showChart ? 'அட்டவணை மறை' : 'அட்டவணை காட்டு'}</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
+
+            {/* Chart Display - Conditionally rendered */}
+            {showChart && <TasbihChart dailyHistory={dailyHistory} title={`${item.title} - முன்னேற்ற அட்டவணை`} />}
 
             {/* Tasbih Beads - Horizontal Rope */}
             <TouchableOpacity activeOpacity={0.8} onPress={handleBeadPress} disabled={isAnimating}>
@@ -486,7 +574,10 @@ const styles = StyleSheet.create({
         margin: 16,
         padding: 16,
         borderRadius: 12,
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
         elevation: 3,
     },
     contentHeader: {
@@ -505,7 +596,8 @@ const styles = StyleSheet.create({
     },
     actionButtons: {
         flexDirection: 'row',
-        gap: 8,
+        justifyContent: 'space-between',
+        paddingHorizontal: 4,
     },
     iconButton: {
         padding: 8,
@@ -585,9 +677,21 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         padding: 24,
         borderRadius: 12,
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
         elevation: 3,
+    },
+    counterHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+    },
+    counterInfo: {
+        alignItems: 'center',
+        flex: 1,
     },
     counterLabel: {
         fontSize: 16,
@@ -604,13 +708,31 @@ const styles = StyleSheet.create({
         color: '#999',
         marginTop: 8,
     },
+    chartToggleButton: {
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 8,
+        backgroundColor: '#e8f5e9',
+        borderWidth: 1,
+        borderColor: '#4CAF50',
+    },
+    chartToggleText: {
+        fontSize: 10,
+        color: '#4CAF50',
+        fontWeight: '600',
+        marginTop: 4,
+        textAlign: 'center',
+    },
     ropeContainer: {
         backgroundColor: '#fff',
         marginHorizontal: 16,
         marginVertical: 16,
         padding: 20,
         borderRadius: 12,
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
         elevation: 3,
     },
     tapInstruction: {
@@ -630,7 +752,7 @@ const styles = StyleSheet.create({
     beadGroup: {
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 8,
+        justifyContent: 'space-between',
     },
     bead: {
         marginVertical: 2,
@@ -645,7 +767,7 @@ const styles = StyleSheet.create({
     horizontalBeadGroup: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+        justifyContent: 'space-between',
     },
     horizontalBead: {
         marginHorizontal: 3,
@@ -658,7 +780,10 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         borderWidth: 1,
         borderColor: '#654321',
-        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
         elevation: 2,
     },
     horizontalCenterGap: {
@@ -695,7 +820,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         padding: 16,
         borderRadius: 12,
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
         elevation: 3,
     },
     resetButtonText: {
@@ -710,7 +838,10 @@ const styles = StyleSheet.create({
         marginTop: 16,
         padding: 16,
         borderRadius: 12,
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
         elevation: 3,
     },
     instructionItem: {

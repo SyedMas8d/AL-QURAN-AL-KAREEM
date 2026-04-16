@@ -1,4 +1,5 @@
 export const tasbih_beads = {
+    audio: '/assets/audios/tasbih_beads/TASBIH_BEADS.mp3',
     single_counter: [
         {
             arabic: 'أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',
@@ -37,7 +38,7 @@ export const tasbih_beads = {
             arabic: 'سُبْحَانَ اللَّهِ',
             tamilTransliteration: 'சுப்ஹானல்லாஹ்',
             tamilTranslation: 'அல்லாஹ் பரிசுத்தமானவன்.',
-            audio: '',
+            audio: '/assets/audios/tasbih_beads/SUBHANALLAH.mp3',
             count: 33,
             haith: [],
         },
@@ -45,7 +46,7 @@ export const tasbih_beads = {
             arabic: 'الْحَمْدُ لِلَّهِ',
             tamilTransliteration: 'அல்ஹம்துலில்லாஹ்',
             tamilTranslation: 'எல்லாப் புகழும் அல்லாஹ்வுக்கே.',
-            audio: '',
+            audio: '/assets/audios/tasbih_beads/ALHAMDULILLAH.mp3',
             count: 33,
             haith: [],
         },
@@ -53,7 +54,7 @@ export const tasbih_beads = {
             arabic: 'اللَّهُ أَكْبَرُ',
             tamilTransliteration: 'அல்லாஹு அக்பர்',
             tamilTranslation: 'அல்லாஹ் மிகப்பெரியவன்.',
-            audio: '',
+            audio: '', // Audio file not available yet
             count: 33,
             haith: [],
         },
@@ -67,7 +68,7 @@ export const tasbih_beads = {
 வ ஹுவா அலா குல்லி ஷெய்இன் கதீர்`,
             tamilTranslation: `அல்லாஹ்வைத் தவிர வேறு வணக்கத்திற்குரியவன் இல்லை; அவன் ஒருவனே, அவனுக்கு இணை இல்லை.
 அரசும் புகழும் அவனுக்கே; அவன் எல்லாவற்றையும் செய்ய வல்லவன்.`,
-            audio: '',
+            audio: '/assets/audios/tasbih_beads/KALIMAH.mp3',
             count: 1,
             haith: [
                 {

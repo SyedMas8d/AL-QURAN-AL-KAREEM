@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Alert, Share, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAudioPlayer } from 'expo-audio';
+import { useAudioPlayer } from 'expo-audio'; // Same as other working screens
 import * as Clipboard from 'expo-clipboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAudioSource } from '../utils/audioAssets';
+import { tasbih_beads } from '../data/tasbih_beads/tableOfContent';
 
 const TOTAL_BEADS = 33; // Total beads to display
 const STORAGE_KEY = 'tasbih_multi_count';
@@ -42,7 +43,7 @@ export default function TasbihMultiDetailScreen({ route }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [sound, setSound] = useState(null);
     const [isResetting, setIsResetting] = useState(false);
-    const player = useAudioPlayer();
+    const player = useAudioPlayer(); // Same as other working screens
     const moveAnim = useRef(new Animated.Value(0)).current;
     const [isAnimating, setIsAnimating] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false);
@@ -55,10 +56,10 @@ export default function TasbihMultiDetailScreen({ route }) {
     useEffect(() => {
         loadState();
         return () => {
+            // Cleanup audio when component unmounts
             if (player.playing) {
                 player.pause();
             }
-            // Don't save on unmount - it's unreliable and causes resets
         };
     }, []);
 
@@ -114,29 +115,20 @@ export default function TasbihMultiDetailScreen({ route }) {
             const storedIndex = await PlatformStorage.getItem(STORAGE_CURRENT_INDEX_KEY);
             const today = new Date().toDateString();
 
-            console.log('Loading multi-tasbih state:');
-            console.log('- Stored date:', storedDate);
-            console.log('- Today:', today);
-            console.log('- Stored count:', storedCount);
-            console.log('- Stored index:', storedIndex);
-
             if (storedDate === today) {
                 // Same day - load the stored values
                 if (storedCount !== null) {
                     const parsedCount = parseInt(storedCount, 10);
-                    console.log('- Loading stored count:', parsedCount);
                     setCount(parsedCount);
                     countRef.current = parsedCount; // Update ref
                 }
                 if (storedIndex !== null) {
                     const parsedIndex = parseInt(storedIndex, 10);
-                    console.log('- Loading stored index:', parsedIndex);
                     setCurrentIndex(parsedIndex);
                     currentIndexRef.current = parsedIndex; // Update ref
                 }
             } else {
                 // Different day - reset for new day
-                console.log('- New day detected, resetting multi-tasbih');
                 resetAll();
             }
         } catch (error) {
@@ -147,7 +139,6 @@ export default function TasbihMultiDetailScreen({ route }) {
     const saveState = async () => {
         try {
             const today = new Date().toDateString();
-            console.log(`Saving multi-tasbih state: count=${count}, index=${currentIndex}, date=${today}`);
             await PlatformStorage.setItem(STORAGE_KEY, count.toString());
             await PlatformStorage.setItem(STORAGE_CURRENT_INDEX_KEY, currentIndex.toString());
             await PlatformStorage.setItem(STORAGE_DATE_KEY, today);
@@ -180,31 +171,64 @@ export default function TasbihMultiDetailScreen({ route }) {
 
     const playAudio = async () => {
         try {
+            // Stop previous audio if any
             if (sound) {
-                await sound.stopAsync();
+                await sound.pauseAsync();
                 setSound(null);
             }
 
-            if (!currentItem.audio || currentItem.audio === '') {
+            // Check if current item has audio
+            if (!currentItem?.audio || currentItem.audio === '') {
+                console.log(`📢 No audio file for: ${currentItem?.arabic || 'Unknown dhikr'}`);
                 return;
             }
 
+            // Get the audio source using your existing audioAssets system
             const audioSource = getAudioSource(currentItem.audio);
             if (!audioSource) {
+                console.log(`⚠️  Audio mapping not found for: ${currentItem.audio}`);
                 return;
             }
 
+            console.log(`🔊 Playing audio: ${currentItem.audio} for "${currentItem.arabic}"`);
+
+            // Use same pattern as other working screens (AdhkarDetailScreen)
             if (typeof audioSource === 'string') {
                 player.replace(audioSource);
             } else {
                 player.replace(audioSource.uri);
             }
+
             player.play();
         } catch (error) {
             console.error('Error playing audio:', error);
         }
     };
+    // Play tasbih beads click sound (general click sound for every tap)
+    const playTasbihClickSound = async () => {
+        try {
+            // Only play click sound if no specific dhikr audio is currently playing
+            if (player.playing) {
+                return; // Don't play click sound if dhikr audio is playing
+            }
 
+            const clickAudioSource = getAudioSource(tasbih_beads.audio);
+            if (!clickAudioSource) {
+                return;
+            }
+
+            // Play the general tasbih click sound
+            if (typeof clickAudioSource === 'string') {
+                player.replace(clickAudioSource);
+            } else {
+                player.replace(clickAudioSource.uri);
+            }
+
+            player.play();
+        } catch (error) {
+            console.error('Error playing tasbih click sound:', error);
+        }
+    };
     const handleBeadPress = () => {
         if (isAnimating || count >= currentTargetCount) return; // Prevent multiple clicks during animation or if completed
 
@@ -223,9 +247,12 @@ export default function TasbihMultiDetailScreen({ route }) {
             moveAnim.setValue(0);
         });
 
-        // Play audio on first count and at completion
+        // Play audio at START (first count) and END (completion) of each dhikr
         if (newCount === 1 || newCount === currentTargetCount) {
-            playAudio();
+            playAudio(); // Will show console log until stable audio solution is found
+        } else {
+            // Play general tasbih click sound for other taps (when no dhikr audio)
+            playTasbihClickSound();
         }
     };
 
