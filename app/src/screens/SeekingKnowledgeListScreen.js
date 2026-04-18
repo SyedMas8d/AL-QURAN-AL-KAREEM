@@ -35,14 +35,11 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
     const [expandedCategories, setExpandedCategories] = useState({});
 
     useEffect(() => {
-        console.log('SeekingKnowledgeListScreen mounted');
         loadKnowledgeData();
     }, []);
 
     const loadKnowledgeData = async () => {
         try {
-            console.log('Loading knowledge data...');
-            console.log('Data loaded:', knowledgeData);
             // Transform the object into an array for FlatList
             const transformedData = Object.keys(knowledgeData).map((key) => ({
                 id: key,
@@ -50,7 +47,6 @@ const SeekingKnowledgeListScreen = ({ navigation }) => {
                 description: knowledgeData[key].description || null,
                 episodes: knowledgeData[key].data,
             }));
-            console.log('Transformed data:', transformedData);
             setCategories(transformedData);
         } catch (error) {
             console.error('Error loading knowledge data:', error);

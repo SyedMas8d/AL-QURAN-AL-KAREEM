@@ -372,8 +372,6 @@ function ReportIssueStack() {
 }
 
 export default function App() {
-    console.log('App rendering...');
-
     return (
         <NavigationContainer>
             <Drawer.Navigator

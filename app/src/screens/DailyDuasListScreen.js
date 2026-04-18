@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer } from 'expo-audio';
@@ -8,20 +8,33 @@ import { getAudioSource } from '../utils/audioAssets';
 import RichText from '../components/RichText';
 
 export default function DailyDuasListScreen() {
-    const [playingAudios, setPlayingAudios] = useState({});
+    const player = useAudioPlayer();
+    const [activeAudioKey, setActiveAudioKey] = useState(null);
+    const pollIntervalRef = useRef(null);
     const [loadingAudios, setLoadingAudios] = useState({});
     const [expandedItems, setExpandedItems] = useState({});
 
+    const clearPlayback = () => {
+        if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
+        }
+        if (player.playing) {
+            player.pause();
+        }
+        setActiveAudioKey(null);
+    };
+
     useEffect(() => {
         return () => {
-            // Cleanup: stop all audios when component unmounts
-            Object.values(playingAudios).forEach(({ sound }) => {
-                if (sound) {
-                    sound.stopAsync();
-                }
-            });
+            if (player.playing) {
+                player.pause();
+            }
+            if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current);
+            }
         };
-    }, [playingAudios]);
+    }, []);
 
     const toggleItem = (index) => {
         setExpandedItems((prev) => ({
@@ -43,35 +56,34 @@ export default function DailyDuasListScreen() {
         }
 
         try {
-            if (playingAudios[audioKey]) {
-                // Stop the audio
-                const { sound } = playingAudios[audioKey];
-                await sound.stopAsync();
-                await sound.stopAsync();
-                setPlayingAudios((prev) => {
-                    const newState = { ...prev };
-                    delete newState[audioKey];
-                    return newState;
-                });
-            } else {
-                // Start the audio
-                setLoadingAudios((prev) => ({ ...prev, [audioKey]: true }));
-                const { sound: player } = await Audio.Sound.createAsync(audioSource, { shouldPlay: true });
-
-                player.setOnPlaybackStatusUpdate((status) => {
-                    if (status.didJustFinish) {
-                        setPlayingAudios((prev) => {
-                            const newState = { ...prev };
-                            delete newState[audioKey];
-                            return newState;
-                        });
-                        player.stopAsync();
-                    }
-                });
-
-                setPlayingAudios((prev) => ({ ...prev, [audioKey]: { sound: player } }));
-                setLoadingAudios((prev) => ({ ...prev, [audioKey]: false }));
+            if (activeAudioKey === audioKey) {
+                clearPlayback();
+                return;
             }
+            if (activeAudioKey) {
+                clearPlayback();
+            }
+            setLoadingAudios((prev) => ({ ...prev, [audioKey]: true }));
+
+            if (typeof audioSource === 'object' && audioSource !== null && 'uri' in audioSource) {
+                player.replace(audioSource.uri);
+            } else {
+                player.replace(audioSource);
+            }
+            player.play();
+            setActiveAudioKey(audioKey);
+            setLoadingAudios((prev) => ({ ...prev, [audioKey]: false }));
+
+            const checkStatus = () => {
+                if (!player.playing && player.duration > 0 && player.currentTime >= player.duration) {
+                    if (pollIntervalRef.current) {
+                        clearInterval(pollIntervalRef.current);
+                        pollIntervalRef.current = null;
+                    }
+                    setActiveAudioKey((current) => (current === audioKey ? null : current));
+                }
+            };
+            pollIntervalRef.current = setInterval(checkStatus, 500);
         } catch (error) {
             console.error('Error playing audio:', error);
             setLoadingAudios((prev) => ({ ...prev, [audioKey]: false }));
@@ -157,7 +169,7 @@ export default function DailyDuasListScreen() {
 
     const renderDuaItem = (item, index) => {
         const audioKey = `dua-${index}`;
-        const isPlaying = !!playingAudios[audioKey];
+        const isPlaying = activeAudioKey === audioKey;
         const isLoading = !!loadingAudios[audioKey];
         const audioSource = item.audio ? getAudioSource(item.audio) : null;
         const isExpanded = expandedItems[index];

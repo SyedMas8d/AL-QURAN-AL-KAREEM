@@ -186,8 +186,6 @@ export default function TasbihSingleDetailScreen({ route }) {
                 return;
             }
 
-            console.log(`🔊 Playing audio: ${item.audio} for "${item.arabic}"`);
-
             // Use same pattern as other working screens (AdhkarDetailScreen)
             if (typeof audioSource === 'string') {
                 player.replace(audioSource);

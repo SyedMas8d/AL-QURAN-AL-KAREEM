@@ -145,7 +145,7 @@ export default function TasbihMultiDetailScreen({ route }) {
             await PlatformStorage.setItem(STORAGE_KEY, '0');
             await PlatformStorage.setItem(STORAGE_CURRENT_INDEX_KEY, '0');
             await PlatformStorage.setItem(STORAGE_DATE_KEY, new Date().toDateString());
-            console.log('Multi reset successful');
+
             setIsResetting(false);
         } catch (error) {
             console.error('Error resetting:', error);
@@ -173,8 +173,6 @@ export default function TasbihMultiDetailScreen({ route }) {
                 console.log(`⚠️  Audio mapping not found for: ${currentItem.audio}`);
                 return;
             }
-
-            console.log(`🔊 Playing audio: ${currentItem.audio} for "${currentItem.arabic}"`);
 
             // Use same pattern as other working screens (AdhkarDetailScreen)
             if (typeof audioSource === 'string') {
