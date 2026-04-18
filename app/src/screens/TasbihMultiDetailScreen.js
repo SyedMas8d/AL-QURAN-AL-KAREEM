@@ -85,25 +85,9 @@ export default function TasbihMultiDetailScreen({ route }) {
                 );
             }, 500);
         } else if (count >= currentTargetCount && currentIndex === items.length - 1) {
-            // All items completed
+            // All items completed - just mark as completed without popup
             if (!isCompleted) {
                 setIsCompleted(true);
-                if (Platform.OS === 'web') {
-                    // Use browser alert for web
-                    window.alert(
-                        '🎉 அனைத்தும் முடிந்தது!\n\nபல் எண்ணிக்கை தஸ்பீஹ் முழுமையாக முடிந்தது. அல்லாஹ் ஏற்றுக்கொள்ளட்டும்!'
-                    );
-                } else {
-                    // Use React Native Alert for mobile
-                    Alert.alert(
-                        '🎉 அனைத்தும் முடிந்தது!',
-                        'பல் எண்ணிக்கை தஸ்பீஹ் முழுமையாக முடிந்தது. அல்லாஹ் ஏற்றுக்கொள்ளட்டும்!',
-                        [
-                            { text: 'மீட்டமை', onPress: () => resetAll() },
-                            { text: 'சரி', style: 'default' },
-                        ]
-                    );
-                }
             }
         }
     }, [count, currentIndex, currentTargetCount, isCompleted]);
@@ -247,8 +231,8 @@ export default function TasbihMultiDetailScreen({ route }) {
             moveAnim.setValue(0);
         });
 
-        // Play audio at START (first count) and END (completion) of each dhikr
-        if (newCount === 1 || newCount === currentTargetCount) {
+        // Play audio only at START (first count) of each dhikr
+        if (newCount === 1) {
             playAudio(); // Will show console log until stable audio solution is found
         } else {
             // Play general tasbih click sound for other taps (when no dhikr audio)
@@ -377,6 +361,16 @@ export default function TasbihMultiDetailScreen({ route }) {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            {/* Current Dhikr Display at Top */}
+            <View style={styles.topDhikrDisplay}>
+                <Text style={styles.topDhikrLabel}>தற்போது ஓதுவது</Text>
+                <Text style={styles.topDhikrArabic}>{currentItem?.arabic}</Text>
+                <Text style={styles.topDhikrTransliteration}>{currentItem?.tamilTransliteration}</Text>
+                <Text style={styles.topDhikrCount}>
+                    {currentIndex + 1} / {items.length} • {currentTargetCount} முறை
+                </Text>
+            </View>
+
             {/* Counter Display */}
             <View style={styles.counterContainer}>
                 <Text style={styles.counterLabel}>தற்போதைய எண்ணிக்கை</Text>
@@ -593,6 +587,46 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f8f9fa',
     },
+    topDhikrDisplay: {
+        backgroundColor: '#2E8B57',
+        paddingHorizontal: 16,
+        paddingVertical: 20,
+        alignItems: 'center',
+        borderBottomLeftRadius: 16,
+        borderBottomRightRadius: 16,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        elevation: 4,
+    },
+    topDhikrLabel: {
+        fontSize: 12,
+        color: '#fff',
+        opacity: 0.9,
+        marginBottom: 8,
+        fontWeight: '600',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+    },
+    topDhikrArabic: {
+        fontSize: 28,
+        color: '#fff',
+        fontWeight: 'bold',
+        marginBottom: 8,
+        textAlign: 'center',
+        lineHeight: 40,
+    },
+    topDhikrTransliteration: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: '600',
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    topDhikrCount: {
+        fontSize: 12,
+        color: '#fff',
+        opacity: 0.9,
+        fontWeight: '500',
+    },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -788,6 +822,7 @@ const styles = StyleSheet.create({
     counterContainer: {
         backgroundColor: '#fff',
         marginHorizontal: 16,
+        marginTop: 16,
         padding: 24,
         borderRadius: 12,
         alignItems: 'center',

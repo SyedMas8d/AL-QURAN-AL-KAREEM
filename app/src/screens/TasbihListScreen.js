@@ -8,23 +8,7 @@ export default function TasbihListScreen({ navigation }) {
     const getListItems = () => {
         const items = [];
 
-        // Add single_counter items individually
-        tasbih_beads.single_counter.forEach((item, index) => {
-            items.push({
-                id: `single_${index}`,
-                type: 'single',
-                index: index,
-                title: item.tamilTransliteration || 'திக்ர்',
-                subtitle: item.tamilTranslation ? item.tamilTranslation.substring(0, 60) + '...' : '',
-                arabic: item.arabic,
-                hasHadith: item.haith && item.haith.length > 0,
-                hadithCount: item.haith ? item.haith.length : 0,
-                count: item.count,
-                data: item,
-            });
-        });
-
-        // Add multi_counter as one item
+        // Add multi_counter as one item (first)
         const multiHadithCount = tasbih_beads.multi_counter.reduce((count, item) => {
             return count + (item.haith && item.haith.length > 0 ? item.haith.length : 0);
         }, 0);
@@ -39,6 +23,22 @@ export default function TasbihListScreen({ navigation }) {
             hasHadith: multiHadithCount > 0,
             hadithCount: multiHadithCount,
             data: tasbih_beads.multi_counter,
+        });
+
+        // Add single_counter items individually (after multi_counter)
+        tasbih_beads.single_counter.forEach((item, index) => {
+            items.push({
+                id: `single_${index}`,
+                type: 'single',
+                index: index,
+                title: item.tamilTransliteration || 'திக்ர்',
+                subtitle: item.tamilTranslation ? item.tamilTranslation.substring(0, 60) + '...' : '',
+                arabic: item.arabic,
+                hasHadith: item.haith && item.haith.length > 0,
+                hadithCount: item.haith ? item.haith.length : 0,
+                count: item.count,
+                data: item,
+            });
         });
 
         return items;
