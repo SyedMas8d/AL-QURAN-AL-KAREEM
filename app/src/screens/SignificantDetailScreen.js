@@ -46,13 +46,19 @@ const SignificantDetailScreen = ({ route }) => {
     const scrollViewRef = useRef(null);
     const ayahRefs = useRef({});
     const ayahPositions = useRef({});
+    const soundRef = useRef(sound);
+    soundRef.current = sound;
 
     useEffect(() => {
         loadData();
         setupAudio();
         return () => {
-            if (sound) {
-                sound.stopAsync();
+            if (player.playing) {
+                player.pause();
+            }
+            const s = soundRef.current;
+            if (s?.interval) {
+                clearInterval(s.interval);
             }
         };
     }, []);
@@ -77,7 +83,9 @@ const SignificantDetailScreen = ({ route }) => {
         try {
             if (player.playing) {
                 player.pause();
-                setSound(null);
+            }
+            if (sound?.interval) {
+                clearInterval(sound.interval);
             }
 
             setPlayingAyah(ayahNumber);
@@ -88,7 +96,6 @@ const SignificantDetailScreen = ({ route }) => {
             player.replace(audioUrl);
             player.play();
 
-            // Set up status listener
             const checkStatus = () => {
                 if (!player.playing && player.duration > 0 && player.currentTime >= player.duration) {
                     setIsPlaying(false);
@@ -97,7 +104,7 @@ const SignificantDetailScreen = ({ route }) => {
             };
 
             const interval = setInterval(checkStatus, 500);
-            setSound({ interval });
+            setSound({ player, interval });
         } catch (error) {
             console.error('Error playing audio:', error);
             setIsPlaying(false);
@@ -107,14 +114,17 @@ const SignificantDetailScreen = ({ route }) => {
 
     const stopAudio = async () => {
         try {
-            if (sound) {
-                await sound.stopAsync();
-                setSound(null);
-                setIsPlaying(false);
-                setPlayingAyah(null);
-                setPlayingAll(false);
-                setPaused(false);
+            if (player.playing) {
+                player.pause();
             }
+            if (sound?.interval) {
+                clearInterval(sound.interval);
+            }
+            setSound(null);
+            setIsPlaying(false);
+            setPlayingAyah(null);
+            setPlayingAll(false);
+            setPaused(false);
         } catch (error) {
             console.error('Error stopping audio:', error);
         }
@@ -133,11 +143,8 @@ const SignificantDetailScreen = ({ route }) => {
             return;
         }
         if (paused) {
-            // Resume
             setPaused(false);
-            if (sound) {
-                await sound.playAsync();
-            }
+            player.play();
             return;
         }
         if (!data || ayahs.length === 0) return;
@@ -149,10 +156,9 @@ const SignificantDetailScreen = ({ route }) => {
         setCurrentAyahIndex(0);
     };
 
-    // Pause All
     const pauseAllAyahs = async () => {
-        if (playingAll && !paused && sound) {
-            await sound.pauseAsync();
+        if (playingAll && !paused && player.playing) {
+            player.pause();
             setPaused(true);
         }
     };
@@ -161,12 +167,22 @@ const SignificantDetailScreen = ({ route }) => {
     useEffect(() => {
         let isCancelled = false;
         const ayahs = data?.data || data?.ayahs || [];
+        let playAllPoll = null;
 
         const playCurrentAyah = async () => {
             if (!playingAll || paused || !ayahs) return;
             if (currentAyahIndex >= ayahs.length) {
+                if (player.playing) {
+                    player.pause();
+                }
+                if (sound?.interval) {
+                    clearInterval(sound.interval);
+                }
+                setSound(null);
                 setPlayingAll(false);
                 setPaused(false);
+                setIsPlaying(false);
+                setPlayingAyah(null);
                 setCurrentAyahIndex(0);
                 return;
             }
@@ -174,14 +190,16 @@ const SignificantDetailScreen = ({ route }) => {
             const ayahNumber = ayah.number || ayah.numberInSurah;
 
             try {
-                if (sound) {
-                    await sound.stopAsync();
+                if (player.playing) {
+                    player.pause();
+                }
+                if (sound?.interval) {
+                    clearInterval(sound.interval);
                     setSound(null);
                 }
                 setPlayingAyah(ayahNumber);
                 setIsPlaying(true);
 
-                // Auto-scroll
                 setTimeout(() => {
                     const ayahY = ayahPositions.current[ayahNumber];
                     if (ayahY !== undefined && scrollViewRef.current) {
@@ -194,14 +212,25 @@ const SignificantDetailScreen = ({ route }) => {
                 }, 150);
 
                 const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
-                const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl }, { shouldPlay: true });
-                setSound(newSound);
+                player.replace(audioUrl);
+                player.play();
 
-                newSound.setOnPlaybackStatusUpdate((status) => {
-                    if (status.didJustFinish && playingAll && !paused && !isCancelled) {
+                const checkAyahStatus = () => {
+                    if (
+                        !player.playing &&
+                        player.duration > 0 &&
+                        player.currentTime >= player.duration &&
+                        playingAll &&
+                        !paused &&
+                        !isCancelled
+                    ) {
                         setCurrentAyahIndex((idx) => idx + 1);
                     }
-                });
+                };
+
+                const interval = setInterval(checkAyahStatus, 500);
+                playAllPoll = interval;
+                setSound({ player, interval });
             } catch (error) {
                 console.error('Error playing ayah:', error);
                 if (playingAll && !paused && !isCancelled) {
@@ -214,7 +243,11 @@ const SignificantDetailScreen = ({ route }) => {
         }
         return () => {
             isCancelled = true;
+            if (playAllPoll) {
+                clearInterval(playAllPoll);
+            }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [playingAll, paused, currentAyahIndex, data]);
 
     const renderAyah = (ayah, index) => {
