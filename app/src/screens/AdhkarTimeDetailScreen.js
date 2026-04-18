@@ -7,19 +7,18 @@ import { getAudioSource } from '../utils/audioAssets';
 
 export default function AdhkarTimeDetailScreen({ route }) {
     const { type, title, data } = route.params;
-    const [playingAudios, setPlayingAudios] = useState({});
+    const player = useAudioPlayer();
+    const [playingAudio, setPlayingAudio] = useState(null);
     const [loadingAudios, setLoadingAudios] = useState({});
 
     useEffect(() => {
         return () => {
-            // Cleanup: stop all audios when component unmounts
-            Object.values(playingAudios).forEach(({ sound }) => {
-                if (sound) {
-                    sound.stopAsync();
-                }
-            });
+            // Cleanup: stop audio when component unmounts
+            if (player.playing) {
+                player.pause();
+            }
         };
-    }, [playingAudios]);
+    }, []);
 
     const toggleAudio = async (index, audioPath) => {
         const audioKey = `${type}-${index}`;
@@ -34,33 +33,28 @@ export default function AdhkarTimeDetailScreen({ route }) {
         }
 
         try {
-            if (playingAudios[audioKey]) {
+            if (playingAudio === audioKey) {
                 // Stop the audio
-                const { sound } = playingAudios[audioKey];
-                await sound.stopAsync();
-                await sound.stopAsync();
-                setPlayingAudios((prev) => {
-                    const newState = { ...prev };
-                    delete newState[audioKey];
-                    return newState;
-                });
+                player.pause();
+                setPlayingAudio(null);
             } else {
                 // Start the audio
                 setLoadingAudios((prev) => ({ ...prev, [audioKey]: true }));
-                const { sound: player } = await Audio.Sound.createAsync(audioSource, { shouldPlay: true });
 
-                player.setOnPlaybackStatusUpdate((status) => {
-                    if (status.didJustFinish) {
-                        setPlayingAudios((prev) => {
-                            const newState = { ...prev };
-                            delete newState[audioKey];
-                            return newState;
-                        });
-                        player.stopAsync();
-                    }
-                });
+                // Stop any currently playing audio
+                if (player.playing) {
+                    player.pause();
+                }
 
-                setPlayingAudios((prev) => ({ ...prev, [audioKey]: { sound: player } }));
+                // Load and play new audio using expo-audio
+                if (typeof audioSource === 'string') {
+                    player.replace(audioSource);
+                } else {
+                    player.replace(audioSource.uri || audioSource);
+                }
+
+                player.play();
+                setPlayingAudio(audioKey);
                 setLoadingAudios((prev) => ({ ...prev, [audioKey]: false }));
             }
         } catch (error) {
@@ -148,7 +142,7 @@ export default function AdhkarTimeDetailScreen({ route }) {
 
     const renderDuaItem = (item, index) => {
         const audioKey = `${type}-${index}`;
-        const isPlaying = !!playingAudios[audioKey];
+        const isPlaying = playingAudio === audioKey;
         const isLoading = !!loadingAudios[audioKey];
         const audioSource = item.audio ? getAudioSource(item.audio) : null;
 

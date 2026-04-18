@@ -93,7 +93,6 @@ const SignificantDetailScreen = ({ route }) => {
                 if (!player.playing && player.duration > 0 && player.currentTime >= player.duration) {
                     setIsPlaying(false);
                     setPlayingAyah(null);
-                    setShowTranslation(true);
                 }
             };
 
@@ -115,7 +114,6 @@ const SignificantDetailScreen = ({ route }) => {
                 setPlayingAyah(null);
                 setPlayingAll(false);
                 setPaused(false);
-                setShowTranslation(true);
             }
         } catch (error) {
             console.error('Error stopping audio:', error);
@@ -137,7 +135,6 @@ const SignificantDetailScreen = ({ route }) => {
         if (paused) {
             // Resume
             setPaused(false);
-            setShowTranslation(false);
             if (sound) {
                 await sound.playAsync();
             }
@@ -149,7 +146,6 @@ const SignificantDetailScreen = ({ route }) => {
         setHadithExpanded(false);
         setPlayingAll(true);
         setPaused(false);
-        setShowTranslation(false);
         setCurrentAyahIndex(0);
     };
 
@@ -158,7 +154,6 @@ const SignificantDetailScreen = ({ route }) => {
         if (playingAll && !paused && sound) {
             await sound.pauseAsync();
             setPaused(true);
-            setShowTranslation(true);
         }
     };
 
@@ -173,7 +168,6 @@ const SignificantDetailScreen = ({ route }) => {
                 setPlayingAll(false);
                 setPaused(false);
                 setCurrentAyahIndex(0);
-                setShowTranslation(true);
                 return;
             }
             const ayah = ayahs[currentAyahIndex];
