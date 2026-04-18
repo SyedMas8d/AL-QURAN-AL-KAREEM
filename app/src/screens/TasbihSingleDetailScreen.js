@@ -243,8 +243,8 @@ export default function TasbihSingleDetailScreen({ route }) {
             moveAnim.setValue(0);
         });
 
-        // Play audio at first count and every 10 counts for single dhikr
-        if (newCount === 1 || newCount % 10 === 0) {
+        // Play audio at first count and every 30 counts for single dhikr
+        if (newCount === 1 || newCount % 30 === 0) {
             playAudio(); // Re-enabled with stable expo-av
         } else {
             // Play general tasbih click sound for other taps (when no dhikr audio)
@@ -536,7 +536,7 @@ export default function TasbihSingleDetailScreen({ route }) {
                 </View> */}
                 <View style={styles.instructionItem}>
                     <Ionicons name="musical-note" size={20} color="#4CAF50" />
-                    <Text style={styles.instructionText}>ஒவ்வொரு 10 எண்ணிக்கையிலும் ஒலி ஒலிக்கும்</Text>
+                    <Text style={styles.instructionText}>ஒவ்வொரு 30 எண்ணிக்கையிலும் ஒலி ஒலிக்கும்</Text>
                 </View>
                 <View style={styles.instructionItem}>
                     <Ionicons name="calendar" size={20} color="#4CAF50" />

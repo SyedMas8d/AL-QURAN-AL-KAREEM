@@ -364,11 +364,11 @@ export default function TasbihMultiDetailScreen({ route }) {
             {/* Current Dhikr Display at Top */}
             <View style={styles.topDhikrDisplay}>
                 <Text style={styles.topDhikrLabel}>தற்போது ஓதுவது</Text>
-                <Text style={styles.topDhikrArabic}>{currentItem?.arabic}</Text>
+                {/* <Text style={styles.topDhikrArabic}>{currentItem?.arabic}</Text> */}
                 <Text style={styles.topDhikrTransliteration}>{currentItem?.tamilTransliteration}</Text>
-                <Text style={styles.topDhikrCount}>
+                {/* <Text style={styles.topDhikrCount}>
                     {currentIndex + 1} / {items.length} • {currentTargetCount} முறை
-                </Text>
+                </Text> */}
             </View>
 
             {/* Counter Display */}
@@ -457,7 +457,7 @@ export default function TasbihMultiDetailScreen({ route }) {
                     </Text>
                     <Text style={styles.completionSubtext}>
                         {currentIndex === items.length - 1
-                            ? 'அல்லாஹ் ஏற்றுக்கொள்ளட்டும்!'
+                            ? 'அல்லாஹ் ஏற்றுக்கொள்வானாக, ஆமீன்'
                             : 'அடுத்த திக்ர் தொடங்கும்...'}
                     </Text>
                 </View>

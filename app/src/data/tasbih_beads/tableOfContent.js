@@ -21,7 +21,7 @@ export const tasbih_beads = {
             arabic: 'اللَّهُ أَكْبَرُ',
             tamilTransliteration: 'அல்லாஹு அக்பர்',
             tamilTranslation: 'அல்லாஹ் மிகப்பெரியவன்.',
-            audio: '', // Audio file not available yet
+            audio: '/assets/audios/tasbih_beads/ALLAHU_AKBAR.mp3',
             count: 33,
             haith: [],
         },
@@ -61,7 +61,7 @@ export const tasbih_beads = {
                     ref: '',
                 },
             ],
-            audio: '',
+            audio: '/assets/audios/tasbih_beads/ASTAKFIRULLAHA_WA_ATHOOBU_ILAIH.mp3',
             count: '70+',
         },
         {
@@ -79,7 +79,7 @@ export const tasbih_beads = {
                     ref: 'ஆதாரம்: ஸஹீஹுல் புகாரி: 6406, ஸஹீஹ் முஸ்லிம்: 2694',
                 },
             ],
-            audio: '',
+            audio: '/assets/audios/tasbih_beads/SUBHANALLAHI_AZEEMI_WABIHAMDHIHI.mp3',
             count: '100',
         },
     ],

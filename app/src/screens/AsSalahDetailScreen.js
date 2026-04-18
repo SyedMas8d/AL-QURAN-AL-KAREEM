@@ -18,18 +18,18 @@ import RichText from '../components/RichText';
 
 export default function AsSalahDetailScreen({ route }) {
     const { section } = route.params;
-    const [sound, setSound] = useState(null);
+    const player = useAudioPlayer();
     const [playingAudio, setPlayingAudio] = useState(null);
     const [loadingAudio, setLoadingAudio] = useState(null);
     const [expandedStages, setExpandedStages] = useState({});
 
     useEffect(() => {
-        return sound
-            ? () => {
-                  sound.stopAsync();
-              }
-            : undefined;
-    }, [sound]);
+        return () => {
+            if (player.playing) {
+                player.pause();
+            }
+        };
+    }, []);
 
     const toggleStage = (pointIndex) => {
         setExpandedStages((prev) => ({
@@ -42,15 +42,14 @@ export default function AsSalahDetailScreen({ route }) {
         try {
             if (playingAudio === pointIndex) {
                 // Pause if already playing
-                if (sound) {
-                    await sound.pauseAsync();
+                if (player.playing) {
+                    player.pause();
                     setPlayingAudio(null);
                 }
             } else {
                 // Stop previous audio if any
-                if (sound) {
-                    await sound.stopAsync();
-                    await sound.stopAsync();
+                if (player.playing) {
+                    player.pause();
                 }
 
                 setLoadingAudio(pointIndex);
@@ -65,17 +64,19 @@ export default function AsSalahDetailScreen({ route }) {
                     return;
                 }
 
-                const { sound: newSound } = await Audio.Sound.createAsync(audioSource, { shouldPlay: true });
+                // Load and play audio using expo-audio
+                if (typeof audioSource === 'string') {
+                    player.replace(audioSource);
+                } else {
+                    player.replace(audioSource.uri || audioSource);
+                }
 
-                setSound(newSound);
+                player.play();
                 setPlayingAudio(pointIndex);
                 setLoadingAudio(null);
 
-                newSound.setOnPlaybackStatusUpdate((status) => {
-                    if (status.didJustFinish) {
-                        setPlayingAudio(null);
-                    }
-                });
+                // Note: expo-audio doesn't have setOnPlaybackStatusUpdate
+                // You can use player.playing to check status if needed
             }
         } catch (error) {
             console.error('Error playing audio:', error);
