@@ -72,7 +72,6 @@ const SuraDetailScreen = ({ route }) => {
 
             setPlayingAyah(ayahNumber);
             setIsPlaying(true);
-            setShowTranslation(false);
 
             // Load and play new audio
             const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`;
@@ -85,7 +84,6 @@ const SuraDetailScreen = ({ route }) => {
                 if (!player.playing && player.duration > 0 && player.currentTime >= player.duration) {
                     setIsPlaying(false);
                     setPlayingAyah(null);
-                    setShowTranslation(true);
                 }
             };
 
@@ -109,7 +107,6 @@ const SuraDetailScreen = ({ route }) => {
             setIsPlaying(false);
             setPlayingAyah(null);
             setPlayingAll(false);
-            setShowTranslation(true);
         } catch (error) {
             console.error('Error stopping ayah:', error);
         }
@@ -129,7 +126,6 @@ const SuraDetailScreen = ({ route }) => {
         if (paused) {
             // Resume
             setPaused(false);
-            setShowTranslation(false);
             if (player) {
                 player.play();
             }
@@ -139,7 +135,6 @@ const SuraDetailScreen = ({ route }) => {
 
         setPlayingAll(true);
         setPaused(false);
-        setShowTranslation(false);
 
         // Check if we need to play Bismillah first
         // All Suras except Sura 1 (Al-Fatihah) and Sura 9 (At-Tawbah) should start with Bismillah
@@ -159,7 +154,6 @@ const SuraDetailScreen = ({ route }) => {
         if (playingAll && !paused && player.playing) {
             player.pause();
             setPaused(true);
-            setShowTranslation(true);
         }
     };
 
@@ -226,7 +220,6 @@ const SuraDetailScreen = ({ route }) => {
                 setIsPlaying(false);
                 setCurrentAyahIndex(0);
                 setPlayingBismillah(false);
-                setShowTranslation(true);
                 return;
             }
             const ayah = ayahs[currentAyahIndex];
